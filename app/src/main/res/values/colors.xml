@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#0066FF</color>
+    <color name="primary_variant">#0040C1</color>
+    <color name="background_dark">#0B0E14</color>
+    <color name="surface_dark">#131822</color>
+    <color name="background_light">#F4F7FC</color>
+    <color name="surface_light">#FFFFFF</color>
+    <color name="cyber_cyan">#00D4FF</color>
+    <color name="text_primary_dark">#FFFFFF</color>
+    <color name="text_secondary_dark">#8E9EB5</color>
+    <color name="text_primary_light">#0D131E</color>
+    <color name="text_secondary_light">#5C6B7E</color>
+</resources>

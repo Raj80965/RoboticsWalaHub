@@ -1,0 +1,21 @@
+*.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/build
+/*/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+.kotlin
+
+# Keystore & Signing Secrets
+*.jks
+*.keystore
+secrets.properties
+
+# Android Studio Navigation / Layout editor caches
+.navigation/
+.gradletasknamecache

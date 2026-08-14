@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robotics Wala Hub - Day 3 Firebase Auth & Firestore Live Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0066FF;
+      --primary-light: #3385FF;
+      --cyber-cyan: #00D4FF;
+      --cyber-cyan-glow: #00E5FF;
+      --deep-cobalt: #0038A8;
+      
+      --bg: #0A0D14;
+      --surface: #121824;
+      --surface-elevated: #1A2232;
+      --surface-border: #222F44;
+      --text-primary: #FFFFFF;
+      --text-secondary: #8E9EB5;
+      --text-tertiary: #5A6C84;
+      --input-bg: rgba(26, 34, 50, 0.75);
+      --card-bg: rgba(18, 24, 36, 0.95);
+      
+      --success: #00E676;
+      --error: #FF3B30;
+      --warning: #FFB300;
+      
+      --phone-width: 400px;
+      --phone-height: 840px;
+    }
+
+    [data-theme="light"] {
+      --bg: #F5F8FC;
+      --surface: #FFFFFF;
+      --surface-elevated: #EDF2F9;
+      --surface-border: #D7E2EE;
+      --text-primary: #0B1320;
+      --text-secondary: #536479;
+      --text-tertiary: #8D9EAE;
+      --input-bg: rgba(237, 242, 249, 0.85);
+      --card-bg: rgba(255, 255, 255, 0.98);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 20%, #162032 0%, #06080D 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 480px;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 212, 255, 0.12);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      color: var(--cyber-cyan);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .btn-toggle {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .device-frame {
+      width: var(--phone-width);
+      height: var(--phone-height);
+      background: #000;
+      border-radius: 48px;
+      padding: 12px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(0, 102, 255, 0.35);
+      position: relative;
+    }
+
+    .screen-container {
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      border-radius: 38px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.3s ease;
+    }
+
+    .grid-bg {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      background-image: linear-gradient(to right, rgba(0, 102, 255, 0.04) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(0, 102, 255, 0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    .status-bar {
+      height: 36px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      z-index: 10;
+    }
+
+    .notch {
+      width: 90px;
+      height: 22px;
+      background: #000;
+      border-radius: 14px;
+    }
+
+    .app-viewport {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      z-index: 2;
+    }
+
+    .screen {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(30px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-y: auto;
+    }
+
+    .screen.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+    }
+
+    .robot-emblem-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .robot-emblem {
+      width: 84px;
+      height: 84px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .robot-shield {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(180deg, #162238 0%, #0D1624 100%);
+      border: 2px solid var(--cyber-cyan);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .robot-visor {
+      width: 46px;
+      height: 16px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--cyber-cyan-glow) 100%);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+    }
+
+    .robot-eye {
+      width: 5px;
+      height: 5px;
+      background: #FFFFFF;
+      border-radius: 50%;
+    }
+
+    .app-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-primary);
+      text-align: center;
+      letter-spacing: -0.5px;
+    }
+
+    .app-tagline {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cyber-cyan);
+      text-align: center;
+      margin-top: 2px;
+    }
+
+    [data-theme="light"] .app-tagline { color: var(--primary); }
+
+    .m3-card {
+      background: var(--card-bg);
+      border: 1px solid var(--surface-border);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(10px);
+      margin-top: 12px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      height: 46px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--cyber-cyan) 100%);
+      border: none;
+      border-radius: 12px;
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-outlined {
+      width: 100%;
+      height: 44px;
+      background: transparent;
+      border: 1.5px solid var(--cyber-cyan);
+      border-radius: 12px;
+      color: var(--cyber-cyan);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    [data-theme="light"] .btn-outlined {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .field-group { margin-bottom: 12px; }
+    .field-label { display: block; font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+    .input-wrapper { position: relative; display: flex; align-items: center; }
+    .input-icon { position: absolute; left: 12px; color: var(--text-secondary); }
+    .m3-input {
+      width: 100%; height: 44px;
+      background: var(--input-bg);
+      border: 1.5px solid var(--surface-border);
+      border-radius: 10px;
+      padding: 0 12px 0 36px;
+      font-size: 13px;
+      color: var(--text-primary);
+      outline: none;
+    }
+    .m3-input:focus { border-color: var(--cyber-cyan); }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .chip.active, .chip.confirmed {
+      background: rgba(0, 230, 118, 0.15);
+      border: 1px solid rgba(0, 230, 118, 0.4);
+      color: var(--success);
+    }
+
+    .chip.pending {
+      background: rgba(255, 179, 0, 0.15);
+      border: 1px solid rgba(255, 179, 0, 0.4);
+      color: var(--warning);
+    }
+
+    .bottom-nav {
+      height: 58px;
+      background: var(--surface);
+      border-top: 1px solid var(--surface-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 20;
+    }
+
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 2px; background: none; border: none;
+      color: var(--text-secondary); cursor: pointer;
+      font-size: 10px; font-weight: 600; padding: 4px 12px; border-radius: 10px;
+    }
+    .nav-item.active { color: var(--cyber-cyan); background: var(--surface-elevated); }
+    [data-theme="light"] .nav-item.active { color: var(--primary); }
+
+    .toast-msg {
+      position: absolute; bottom: 64px; left: 16px; right: 16px;
+      background: #101827; border: 1px solid var(--cyber-cyan);
+      color: #fff; padding: 10px 14px; border-radius: 12px;
+      font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 8px;
+      transform: translateY(80px); opacity: 0; transition: all 0.25s; z-index: 90;
+    }
+    .toast-msg.show { transform: translateY(0); opacity: 1; }
+
+    @keyframes pulseIcon {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <div class="header-bar">
+    <div class="badge">🔥 Day 3: Firebase Auth & Firestore</div>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn-toggle" onclick="toggleTheme()"><span id="theme-icon">☀️</span> <span id="theme-text">Light</span></button>
+      <button class="btn-toggle" onclick="restartSplash()">🔄 Splash</button>
+    </div>
+  </div>
+
+  <div class="device-frame">
+    <div class="screen-container">
+      <div class="grid-bg"></div>
+
+      <!-- Android Status Bar -->
+      <div class="status-bar">
+        <span id="live-clock">10:18</span>
+        <div class="notch"></div>
+        <div style="font-size: 11px;">5G 📶 98%</div>
+      </div>
+
+      <div class="app-viewport">
+
+        <!-- 1. SPLASH SCREEN -->
+        <div class="screen active" id="screen-splash" onclick="goToScreen('login')">
+          <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div class="robot-emblem-wrap">
+              <div class="robot-emblem"><div class="robot-shield"><div class="robot-visor"><div class="robot-eye"></div><div class="robot-eye"></div></div></div></div>
+            </div>
+            <h1 class="app-title">Robotics Wala Hub</h1>
+            <p class="app-tagline">Powering Next-Gen Automation</p>
+            <div style="width: 140px; height: 4px; background: var(--surface-border); border-radius: 4px; overflow: hidden; margin-top: 24px;">
+              <div style="width: 60%; height: 100%; background: var(--cyber-cyan);"></div>
+            </div>
+            <div style="font-size: 10px; font-family: 'JetBrains Mono'; color: var(--text-secondary); margin-top: 10px;">
+              VERIFYING FIREBASE SESSION...
+            </div>
+          </div>
+          <div style="text-align: center; font-size: 11px; color: var(--text-tertiary); padding-bottom: 20px;">
+            Tap to Continue • Firebase Edition
+          </div>
+        </div>
+
+        <!-- 2. LOGIN SCREEN -->
+        <div class="screen" id="screen-login">
+          <div class="robot-emblem-wrap">
+            <div class="robot-emblem" style="transform: scale(0.7);">
+              <div class="robot-shield"><div class="robot-visor"><div class="robot-eye"></div><div class="robot-eye"></div></div></div>
+            </div>
+          </div>
+          <h2 class="app-title" style="font-size: 20px;">Robotics Wala Hub</h2>
+          <p style="font-size: 12px; color: var(--text-secondary); text-align: center; margin-top: 2px;">
+            Firebase Authentication & Firestore Sync
+          </p>
+
+          <!-- Quick Test Credentials Hint -->
+          <div class="m3-card" style="margin-top: 8px; background: rgba(0, 212, 255, 0.08); padding: 10px 14px;">
+            <div style="font-size: 10px; font-weight: 700; color: var(--cyber-cyan); letter-spacing: 0.8px;">⚡ QUICK TEST ACCOUNTS:</div>
+            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">
+              • <b>student@hub.com</b> (Pending status ➔ Approval Screen)<br>
+              • <b>aarav@hub.com</b> (Approved status ➔ Student Dashboard)<br>
+              • <b>admin@hub.com</b> (Role: Admin ➔ Admin Dashboard)
+            </div>
+          </div>
+
+          <div class="m3-card">
+            <form onsubmit="handleFirebaseLogin(event)">
+              <div class="field-group">
+                <label class="field-label">Firebase Email</label>
+                <div class="input-wrapper"><span class="input-icon">✉️</span><input type="email" id="login-email" class="m3-input" value="student@hub.com"></div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Password</label>
+                <div class="input-wrapper"><span class="input-icon">🔒</span><input type="password" id="login-pass" class="m3-input" value="pass1234"></div>
+              </div>
+              <button type="submit" class="btn-primary" id="btn-login" style="margin-top: 8px;">
+                <span>Sign In via Firebase</span> ➔
+              </button>
+            </form>
+          </div>
+
+          <button class="btn-outlined" style="margin-top: 10px;" onclick="goToScreen('register')">
+            <span>👤 Register New Student</span>
+          </button>
+        </div>
+
+        <!-- 3. REGISTRATION SCREEN -->
+        <div class="screen" id="screen-register">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+            <button class="btn-toggle" onclick="goToScreen('login')">⬅️ Back</button>
+            <span class="chip pending">Default: Pending</span>
+          </div>
+          <h2 class="app-title" style="font-size: 19px;">Student Registration</h2>
+          <p style="font-size: 11px; color: var(--text-secondary); text-align: center;">Creates Firebase User + Firestore /users/{uid}</p>
+
+          <div class="m3-card" style="margin-top: 8px;">
+            <form onsubmit="handleFirebaseRegister(event)">
+              <div class="field-group">
+                <label class="field-label">Full Name</label>
+                <div class="input-wrapper"><span class="input-icon">👤</span><input type="text" id="reg-name" class="m3-input" value="Rohan Verma"></div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Email Address</label>
+                <div class="input-wrapper"><span class="input-icon">✉️</span><input type="email" id="reg-email" class="m3-input" value="rohan.verma@hub.com"></div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Password (min 6 chars)</label>
+                <div class="input-wrapper"><span class="input-icon">🔒</span><input type="password" id="reg-pass" class="m3-input" value="rohanPass123"></div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Confirm Password</label>
+                <div class="input-wrapper"><span class="input-icon">🔒</span><input type="password" id="reg-confirm" class="m3-input" value="rohanPass123"></div>
+              </div>
+              <button type="submit" class="btn-primary" id="btn-reg">
+                <span>🚀 Register in Firebase</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- 4. PENDING APPROVAL SCREEN (DAY 3 SPECIAL) -->
+        <div class="screen" id="screen-pending">
+          <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+            <div style="width: 76px; height: 76px; border-radius: 50%; background: rgba(255, 179, 0, 0.15); border: 2px solid var(--warning); display: flex; align-items: center; justify-content: center; font-size: 36px; animation: pulseIcon 2s infinite;">
+              ⏳
+            </div>
+            
+            <h2 class="app-title" style="font-size: 20px; margin-top: 14px;">Waiting for Admin Approval</h2>
+            <div style="margin-top: 6px;"><span class="chip pending" id="pending-chip">Status: Pending Review</span></div>
+
+            <div class="m3-card" style="text-align: left; margin-top: 16px;">
+              <div style="font-size: 12px; font-weight: 700; color: var(--cyber-cyan);">ℹ️ ACCOUNT UNDER REVIEW</div>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px; line-height: 1.4;">
+                Your student profile is saved in Firestore. The Lab Administrator must verify and approve your RFID access before you can enter the lab dashboard.
+              </div>
+              <div style="margin-top: 10px; padding: 8px 12px; background: var(--surface-elevated); border-radius: 8px; font-size: 11px;">
+                Student: <b id="pending-name" style="color:var(--text-primary);">Rohan Verma</b><br>
+                Role: <b style="color:var(--cyber-cyan);">Student</b> | Status: <b id="pending-status-text" style="color:var(--warning);">Pending</b>
+              </div>
+            </div>
+
+            <button class="btn-primary" style="margin-top: 20px;" onclick="checkApprovalStatus()">
+              🔄 Check Status / Refresh
+            </button>
+            
+            <button class="btn-outlined" style="margin-top: 10px;" onclick="goToScreen('login'); showToast('Logged out', '👋');">
+              🚪 Log Out
+            </button>
+          </div>
+        </div>
+
+        <!-- 5. STUDENT DASHBOARD CONTAINER -->
+        <div class="screen" id="screen-student" style="padding: 0;">
+          <div style="padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--surface-border); background: var(--surface);">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 20px;">🤖</span>
+              <div>
+                <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">Robotics Wala Hub</div>
+                <div style="font-size: 10px; color: var(--cyber-cyan); font-weight: 700;">STUDENT (APPROVED)</div>
+              </div>
+            </div>
+            <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="goToScreen('login'); showToast('Logged out', '👋');">🚪 Logout</button>
+          </div>
+
+          <div style="padding: 14px; overflow-y: auto; height: calc(100% - 110px);">
+            <div class="m3-card" style="margin-top: 0;">
+              <div style="font-size: 10px; font-weight: 700; color: var(--cyber-cyan);">WELCOME,</div>
+              <div style="font-size: 18px; font-weight: 800; color: var(--text-primary);" id="student-name-display">Aarav Sharma</div>
+              <div style="font-size: 11px; color: var(--text-secondary);">Role: Student • Status: Approved (Full Lab Access)</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+              <div class="m3-card" style="margin-top: 0;">
+                <div style="font-size: 11px; color: var(--text-secondary);">Attendance</div>
+                <div style="font-size: 20px; font-weight: 800; color: var(--success);">94.5%</div>
+              </div>
+              <div class="m3-card" style="margin-top: 0;">
+                <div style="font-size: 11px; color: var(--text-secondary);">Total Hours</div>
+                <div style="font-size: 20px; font-weight: 800; color: var(--cyber-cyan);">128 hrs</div>
+              </div>
+            </div>
+
+            <div class="m3-card">
+              <div style="font-size: 12px; font-weight: 700; color: var(--cyber-cyan);">⏰ TODAY'S LAB SLOT</div>
+              <div style="font-size: 14px; font-weight: 700; margin-top: 4px;">02:00 PM - 05:00 PM (Bay 3)</div>
+              <div style="font-size: 11px; color: var(--text-secondary);">Topic: Autonomous SLAM & LiDAR Bench</div>
+            </div>
+          </div>
+
+          <div class="bottom-nav">
+            <button class="nav-item active"><span style="font-size:16px;">🏠</span><span>Home</span></button>
+            <button class="nav-item"><span style="font-size:16px;">🛠️</span><span>Projects</span></button>
+            <button class="nav-item"><span style="font-size:16px;">📊</span><span>Activity</span></button>
+            <button class="nav-item"><span style="font-size:16px;">👤</span><span>Profile</span></button>
+          </div>
+        </div>
+
+        <!-- 6. ADMIN DASHBOARD CONTAINER -->
+        <div class="screen" id="screen-admin" style="padding: 0;">
+          <div style="padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--surface-border); background: var(--surface);">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 20px;">🛡️</span>
+              <div>
+                <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">Robotics Wala Hub</div>
+                <div style="font-size: 10px; color: var(--warning); font-weight: 700;">ADMIN DASHBOARD</div>
+              </div>
+            </div>
+            <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="goToScreen('login'); showToast('Logged out', '👋');">🚪 Logout</button>
+          </div>
+
+          <div style="padding: 14px; overflow-y: auto; height: calc(100% - 110px);">
+            <div class="m3-card" style="margin-top: 0; border-color: rgba(255, 179, 0, 0.4);">
+              <div style="font-size: 10px; font-weight: 700; color: var(--warning);">CLOUD FIRESTORE ADMIN</div>
+              <div style="font-size: 16px; font-weight: 800;">Pending Student Approvals</div>
+            </div>
+
+            <!-- Pending student approval item in Admin -->
+            <div class="m3-card" id="admin-pending-item">
+              <div style="display: flex; justify-content: space-between;">
+                <div>
+                  <div style="font-size: 13px; font-weight: 700;" id="admin-req-name">Rohan Verma</div>
+                  <div style="font-size: 11px; color: var(--text-secondary);" id="admin-req-email">rohan.verma@hub.com</div>
+                </div>
+                <span class="chip pending">Pending</span>
+              </div>
+              <button class="btn-primary" style="height: 36px; font-size: 12px; margin-top: 10px;" onclick="adminApproveUser()">
+                ✓ Approve Student in Firestore
+              </button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+              <div class="m3-card" style="margin-top: 0;">
+                <div style="font-size: 11px; color: var(--text-secondary);">Total Students</div>
+                <div style="font-size: 20px; font-weight: 800; color: var(--cyber-cyan);">248</div>
+              </div>
+              <div class="m3-card" style="margin-top: 0;">
+                <div style="font-size: 11px; color: var(--text-secondary);">Active in Lab</div>
+                <div style="font-size: 20px; font-weight: 800; color: var(--success);">186</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bottom-nav">
+            <button class="nav-item active"><span style="font-size:16px;">📊</span><span>Dashboard</span></button>
+            <button class="nav-item"><span style="font-size:16px;">👥</span><span>Students</span></button>
+            <button class="nav-item"><span style="font-size:16px;">📑</span><span>Bookings</span></button>
+            <button class="nav-item"><span style="font-size:16px;">⚙️</span><span>More</span></button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Toast Feedback -->
+      <div class="toast-msg" id="toast">
+        <span>⚡</span> <span id="toast-text">Message</span>
+      </div>
+
+      <div style="height: 18px; display: flex; align-items: center; justify-content: center;">
+        <div style="width: 110px; height: 4px; background: var(--text-secondary); border-radius: 4px; opacity: 0.3;"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Live Clock
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('live-clock').textContent = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    }
+    updateClock();
+    setInterval(updateClock, 10000);
+
+    // Theme Toggle
+    let isDark = true;
+    function toggleTheme() {
+      isDark = !isDark;
+      document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
+      document.getElementById('theme-text').textContent = isDark ? 'Light' : 'Dark';
+    }
+
+    // Simulated Firestore Database
+    let simulatedUser = {
+      name: "Rohan Verma",
+      email: "rohan.verma@hub.com",
+      role: "Student",
+      status: "Pending" // "Pending" or "Approved"
+    };
+
+    function goToScreen(screenName) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(`screen-${screenName}`);
+      if (target) target.classList.add('active');
+    }
+
+    function restartSplash() {
+      goToScreen('splash');
+      setTimeout(() => goToScreen('login'), 2000);
+    }
+    setTimeout(() => goToScreen('login'), 2200);
+
+    // Handle Login
+    function handleFirebaseLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim().toLowerCase();
+      const btn = document.getElementById('btn-login');
+      btn.innerHTML = '<span>Verifying with Firebase...</span>';
+
+      setTimeout(() => {
+        btn.innerHTML = '<span>Sign In via Firebase</span> ➔';
+        
+        if (email.includes('admin')) {
+          showToast('Admin authenticated via Firebase!', '🛡️');
+          goToScreen('admin');
+        } else if (email.includes('aarav') || simulatedUser.status === 'Approved') {
+          showToast('Welcome back! Student access granted.', '🎓');
+          document.getElementById('student-name-display').textContent = email.includes('aarav') ? "Aarav Sharma" : simulatedUser.name;
+          goToScreen('student');
+        } else {
+          showToast('Account is Pending Admin Approval', '⏳');
+          document.getElementById('pending-name').textContent = simulatedUser.name;
+          goToScreen('pending');
+        }
+      }, 900);
+    }
+
+    // Handle Registration
+    function handleFirebaseRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+
+      simulatedUser = {
+        name: name,
+        email: email,
+        role: "Student",
+        status: "Pending"
+      };
+
+      document.getElementById('pending-name').textContent = name;
+      document.getElementById('admin-req-name').textContent = name;
+      document.getElementById('admin-req-email').textContent = email;
+
+      const btn = document.getElementById('btn-reg');
+      btn.innerHTML = '<span>Creating Firestore Doc...</span>';
+
+      setTimeout(() => {
+        btn.innerHTML = '<span>🚀 Register in Firebase</span>';
+        showToast('Registered in Firebase! Status: Pending Approval', '🎉');
+        goToScreen('pending');
+      }, 1000);
+    }
+
+    // Check Status in Pending Screen
+    function checkApprovalStatus() {
+      showToast('Querying Cloud Firestore /users/{uid}...', '🔍');
+      setTimeout(() => {
+        if (simulatedUser.status === 'Approved') {
+          showToast('Status: Approved! Unlocking Dashboard...', '✅');
+          document.getElementById('student-name-display').textContent = simulatedUser.name;
+          setTimeout(() => goToScreen('student'), 800);
+        } else {
+          showToast('Status: Still Pending Admin Review', '⏳');
+        }
+      }, 700);
+    }
+
+    // Admin Approves User in Firestore
+    function adminApproveUser() {
+      simulatedUser.status = 'Approved';
+      document.getElementById('admin-pending-item').innerHTML = '<div style="font-size: 13px; color: var(--success); font-weight: bold;">✓ Student Approved in Firestore! (Status = Approved)</div>';
+      showToast('Student status updated to "Approved" in Firestore!', '✅');
+    }
+
+    // Toast
+    let toastTimeout = null;
+    function showToast(text, icon = '⚡') {
+      const toast = document.getElementById('toast');
+      toast.querySelector('span:first-child').textContent = icon;
+      document.getElementById('toast-text').textContent = text;
+      toast.classList.add('show');
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>
