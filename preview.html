@@ -621,7 +621,7 @@
           <button class="btn-toggle" style="padding: 4px 10px; font-size: 11px; background: var(--primary); border: none;" onclick="openCreateNoticeModal()">➕ New</button>
         </div>
 
-        <div style="flex: 1; overflow-y: auto; padding: 14px;">
+        <div style="flex: 1; overflow-y: auto; padding: 14px;" id="admin-notices-container">
           <div class="m3-card" style="margin-top: 0;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <span class="chip approved">PUBLISHED</span>
@@ -631,7 +631,7 @@
             <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Target: All Students • Published: 2026-08-15</div>
             <div style="display: flex; gap: 6px; margin-top: 8px;">
               <button class="btn-outlined" style="height: 28px; font-size: 11px; flex: 1;" onclick="showToast('Edit notice modal opened', '✏️')">Edit</button>
-              <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4); flex: 1;" onclick="showToast('Notice deleted', '🗑️')">Delete</button>
+              <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4); flex: 1;" onclick="this.closest('.m3-card').remove(); showToast('Notice deleted', '🗑️')">Delete</button>
             </div>
           </div>
         </div>
@@ -651,7 +651,7 @@
           <button class="btn-toggle" style="padding: 4px 10px; font-size: 11px; background: var(--primary); border: none;" onclick="openCreateEventModal()">➕ New</button>
         </div>
 
-        <div style="flex: 1; overflow-y: auto; padding: 14px;">
+        <div style="flex: 1; overflow-y: auto; padding: 14px;" id="admin-events-container">
           <div class="m3-card" style="margin-top: 0;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <span class="chip approved">UPCOMING</span>
@@ -662,7 +662,7 @@
             <div style="display: flex; gap: 6px; margin-top: 8px;">
               <button class="btn-outlined" style="height: 28px; font-size: 11px; flex: 1;" onclick="showToast('Edit event opened', '✏️')">Edit</button>
               <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--warning); border-color: rgba(255,179,0,0.4); flex: 1;" onclick="showToast('Event cancelled', '🚫')">Cancel</button>
-              <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4); flex: 1;" onclick="showToast('Event deleted', '🗑️')">Delete</button>
+              <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4); flex: 1;" onclick="this.closest('.m3-card').remove(); showToast('Event deleted', '🗑️')">Delete</button>
             </div>
           </div>
         </div>
@@ -841,22 +841,46 @@
 
       closeCreateNoticeModal();
 
-      const container = document.getElementById('notices-container');
-      const card = document.createElement('div');
-      card.className = 'm3-card';
-      card.style.marginTop = '0';
-      card.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div style="display: flex; gap: 6px;">
+      // 1. Add to Admin Notices list
+      const adminContainer = document.getElementById('admin-notices-container');
+      if (adminContainer) {
+        const admCard = document.createElement('div');
+        admCard.className = 'm3-card';
+        admCard.style.marginTop = '0';
+        admCard.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="chip approved">PUBLISHED</span>
             <span class="chip ${prio.toLowerCase()}">${prio.toUpperCase()}</span>
-            <span class="chip tag">${cat}</span>
           </div>
-          <span style="font-size: 10px; color: var(--text-secondary);">Today</span>
-        </div>
-        <div style="font-size: 14px; font-weight: 800; margin-top: 8px;">${title}</div>
-        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">${desc}</div>
-      `;
-      container.prepend(card);
+          <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">${title}</div>
+          <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Category: ${cat} • Target: All Students • Published: Today</div>
+          <div style="display: flex; gap: 6px; margin-top: 8px;">
+            <button class="btn-outlined" style="height: 28px; font-size: 11px; flex: 1;" onclick="showToast('Edit notice modal opened', '✏️')">Edit</button>
+            <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4); flex: 1;" onclick="this.closest('.m3-card').remove(); showToast('Notice deleted', '🗑️')">Delete</button>
+          </div>
+        `;
+        adminContainer.prepend(admCard);
+      }
+
+      // 2. Add to Student Notice Board
+      const container = document.getElementById('notices-container');
+      if (container) {
+        const card = document.createElement('div');
+        card.className = 'm3-card';
+        card.style.marginTop = '0';
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; gap: 6px;">
+              <span class="chip ${prio.toLowerCase()}">${prio.toUpperCase()}</span>
+              <span class="chip tag">${cat}</span>
+            </div>
+            <span style="font-size: 10px; color: var(--text-secondary);">Today</span>
+          </div>
+          <div style="font-size: 14px; font-weight: 800; margin-top: 8px;">${title}</div>
+          <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">${desc}</div>
+        `;
+        container.prepend(card);
+      }
 
       showToast(`Notice "${title}" broadcasted to lab!`, '📢');
     }
@@ -864,7 +888,57 @@
     function handleSaveEvent(e) {
       e.preventDefault();
       const title = document.getElementById('ce-title').value;
+      const date = document.getElementById('ce-date').value;
+      const cat = document.getElementById('ce-cat').value;
+      const loc = document.getElementById('ce-loc').value;
+
       closeCreateEventModal();
+
+      // 1. Add to Admin Events list
+      const adminContainer = document.getElementById('admin-events-container');
+      if (adminContainer) {
+        const admCard = document.createElement('div');
+        admCard.className = 'm3-card';
+        admCard.style.marginTop = '0';
+        admCard.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="chip approved">UPCOMING</span>
+            <span class="chip medium">${cat}</span>
+          </div>
+          <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">${title}</div>
+          <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">📅 ${date} • 📍 ${loc} • 👥 0 Registered</div>
+          <div style="display: flex; gap: 6px; margin-top: 8px;">
+            <button class="btn-outlined" style="height: 28px; font-size: 11px; flex: 1;" onclick="showToast('Edit event opened', '✏️')">Edit</button>
+            <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--warning); border-color: rgba(255,179,0,0.4); flex: 1;" onclick="showToast('Event cancelled', '🚫')">Cancel</button>
+            <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4); flex: 1;" onclick="this.closest('.m3-card').remove(); showToast('Event deleted', '🗑️')">Delete</button>
+          </div>
+        `;
+        adminContainer.prepend(admCard);
+      }
+
+      // 2. Add to Student Events list
+      const container = document.getElementById('events-container');
+      if (container) {
+        const evId = 'ev_' + Date.now();
+        const card = document.createElement('div');
+        card.className = 'm3-card';
+        card.style.marginTop = '0';
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="chip medium">${cat}</span>
+            <span class="chip approved">UPCOMING</span>
+          </div>
+          <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">${title}</div>
+          <div style="font-size: 11px; color: var(--cyber-cyan); margin-top: 2px;">📅 ${date} • 10:00 AM - 04:00 PM</div>
+          <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">📍 ${loc}</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+            <span style="font-size: 11px; color: var(--text-secondary);" id="${evId}-seats">Seats: 0 / 30</span>
+            <button class="btn-primary" style="width: auto; height: 28px; padding: 0 14px; font-size: 11px;" id="${evId}-btn" onclick="toggleEventRegistration('${evId}')">Register</button>
+          </div>
+        `;
+        container.prepend(card);
+      }
+
       showToast(`Event "${title}" scheduled and published!`, '🎪');
     }
 
