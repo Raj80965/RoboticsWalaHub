@@ -27,6 +27,8 @@ import com.roboticswala.hub.ui.screens.student.booking.StudentBookingViewModel
 import com.roboticswala.hub.ui.screens.student.booking.StudentBookingViewModelFactory
 import com.roboticswala.hub.ui.screens.student.achievements.CreateAchievementScreen
 import com.roboticswala.hub.ui.screens.student.achievements.StudentAchievementsScreen
+import com.roboticswala.hub.ui.screens.student.events.StudentEventsScreen
+import com.roboticswala.hub.ui.screens.student.notices.StudentNoticesScreen
 import com.roboticswala.hub.ui.screens.student.projects.CreateProjectScreen
 import com.roboticswala.hub.ui.screens.student.projects.ProjectDetailsScreen
 import com.roboticswala.hub.ui.screens.student.qr.StudentQRScannerScreen
@@ -271,6 +273,16 @@ fun AppNavigation(
                 },
                 onNavigateToCreateAchievement = {
                     navController.navigate(Screen.CreateAchievement.route) {
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToNotices = {
+                    navController.navigate(Screen.StudentNotices.route) {
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToEvents = {
+                    navController.navigate(Screen.StudentEvents.route) {
                         launchSingleTop = true
                     }
                 }
@@ -560,7 +572,73 @@ fun AppNavigation(
             )
         }
 
-        // 14. Admin Main Dashboard
+        // 14. Student Notices Screen (Day 11)
+        composable(
+            route = Screen.StudentNotices.route,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(350)
+                ) + fadeIn(animationSpec = tween(350))
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(350)
+                ) + fadeOut(animationSpec = tween(350))
+            }
+        ) {
+            val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            val studentProfile = UserProfile(
+                uid = currentUid,
+                fullName = currentUser?.displayName ?: "Student",
+                email = currentUser?.email ?: "",
+                status = "Approved"
+            )
+
+            StudentNoticesScreen(
+                userProfile = studentProfile,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // 15. Student Events Screen (Day 11)
+        composable(
+            route = Screen.StudentEvents.route,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(350)
+                ) + fadeIn(animationSpec = tween(350))
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(350)
+                ) + fadeOut(animationSpec = tween(350))
+            }
+        ) {
+            val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            val studentProfile = UserProfile(
+                uid = currentUid,
+                fullName = currentUser?.displayName ?: "Student",
+                email = currentUser?.email ?: "",
+                status = "Approved"
+            )
+
+            StudentEventsScreen(
+                userProfile = studentProfile,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // 16. Admin Main Dashboard
         composable(
             route = Screen.AdminMain.route,
             enterTransition = {

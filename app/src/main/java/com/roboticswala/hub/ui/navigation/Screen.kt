@@ -17,4 +17,6 @@ sealed class Screen(val route: String) {
     object StudentTasks : Screen("student_tasks")
     object StudentAchievements : Screen("student_achievements")
     object CreateAchievement : Screen("create_achievement")
+    object StudentNotices : Screen("student_notices")
+    object StudentEvents : Screen("student_events")
 }

@@ -22,6 +22,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.PrecisionManufacturing
@@ -65,6 +66,60 @@ fun AdminMoreScreen(
     var showingProjects by remember { mutableStateOf(false) }
     var showingTasks by remember { mutableStateOf(false) }
     var showingAchievements by remember { mutableStateOf(false) }
+    var showingNotices by remember { mutableStateOf(false) }
+    var showingEvents by remember { mutableStateOf(false) }
+
+    if (showingNotices) {
+        Column(modifier = modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { showingNotices = false }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back to Settings",
+                        tint = if (isDark) CyberCyan else ElectricBlue
+                    )
+                }
+                Text(
+                    text = "Back to Admin Options",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    color = if (isDark) CyberCyan else ElectricBlue
+                )
+            }
+            AdminNoticesScreen()
+        }
+        return
+    }
+
+    if (showingEvents) {
+        Column(modifier = modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { showingEvents = false }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back to Settings",
+                        tint = if (isDark) CyberCyan else ElectricBlue
+                    )
+                }
+                Text(
+                    text = "Back to Admin Options",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    color = if (isDark) CyberCyan else ElectricBlue
+                )
+            }
+            AdminEventsScreen()
+        }
+        return
+    }
 
     if (showingProjects) {
         Column(modifier = modifier.fillMaxSize()) {
@@ -203,13 +258,24 @@ fun AdminMoreScreen(
             isDark = isDark
         )
 
+        // Day 11 Highlight Card: Notice Board Management
+        AdminOptionCard(
+            title = "📢 Notice Board & Broadcasts",
+            subtitle = "Publish facility alerts, safety guidelines & announcements",
+            icon = Icons.Filled.Campaign,
+            isDark = isDark,
+            onClick = { showingNotices = true }
+        )
+
         Spacer(modifier = Modifier.height(12.dp))
 
+        // Day 11 Highlight Card: Event & Workshop Management
         AdminOptionCard(
-            title = "Broadcast Lab Notice",
-            subtitle = "Publish facility alerts, safety guidelines & workshop dates",
-            icon = Icons.Filled.Campaign,
-            isDark = isDark
+            title = "📅 Event & Workshop Scheduler",
+            subtitle = "Create hackathons, seminars, and track student registrations",
+            icon = Icons.Filled.Event,
+            isDark = isDark,
+            onClick = { showingEvents = true }
         )
 
         Spacer(modifier = Modifier.height(12.dp))

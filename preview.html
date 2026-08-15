@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Robotics Wala Hub - Day 10 Achievements & Certificates Management Simulator</title>
+  <title>Robotics Wala Hub - Day 11 Notice Board & Events Management Simulator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -299,11 +299,10 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    .chip.approved, .chip.verified { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); }
-    .chip.pending, .chip.urgent { background: rgba(255, 179, 0, 0.15); color: var(--warning); border: 1px solid rgba(255, 179, 0, 0.3); }
-    .chip.rejected { background: rgba(255, 59, 48, 0.15); color: var(--error); border: 1px solid rgba(255, 59, 48, 0.3); }
-    .chip.correction { background: rgba(0, 212, 255, 0.15); color: var(--cyber-cyan); border: 1px solid rgba(0, 212, 255, 0.3); }
-    .chip.tag { background: var(--surface-elevated); color: var(--text-secondary); border: 1px solid var(--surface-border); font-size: 10px; cursor: pointer; }
+    .chip.approved, .chip.upcoming { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); }
+    .chip.pending, .chip.ongoing, .chip.high { background: rgba(255, 179, 0, 0.15); color: var(--warning); border: 1px solid rgba(255, 179, 0, 0.3); }
+    .chip.urgent, .chip.rejected, .chip.cancelled { background: rgba(255, 59, 48, 0.15); color: var(--error); border: 1px solid rgba(255, 59, 48, 0.3); }
+    .chip.normal, .chip.tag { background: var(--surface-elevated); color: var(--text-secondary); border: 1px solid var(--surface-border); font-size: 10px; cursor: pointer; }
     .chip.tag.selected { background: var(--cyber-cyan); color: #000; border-color: var(--cyber-cyan); font-weight: 800; }
 
     .fab {
@@ -390,7 +389,7 @@
 
   <div class="header-bar">
     <div class="badge">
-      <span>🏆</span> <b>Day 10: Achievements & Certificates</b>
+      <span>📢</span> <b>Day 11: Notices & Events Live</b>
     </div>
     <div style="display: flex; gap: 6px;">
       <button class="btn-toggle" onclick="toggleTheme()" id="btn-theme">
@@ -402,10 +401,10 @@
 
   <!-- Quick Screen Switcher -->
   <div class="quick-nav-bar">
-    <button class="quick-nav-btn" onclick="goToScreen('achievements')">🏆 My Achievements</button>
-    <button class="quick-nav-btn" onclick="openSubmitAchievementModal()">➕ Submit Achievement</button>
-    <button class="quick-nav-btn" onclick="goToScreen('admin-achievements')">🛡️ Admin Approvals</button>
-    <button class="quick-nav-btn" onclick="goToScreen('profile')">👤 Student Profile</button>
+    <button class="quick-nav-btn" onclick="goToScreen('notices')">📢 Student Notices</button>
+    <button class="quick-nav-btn" onclick="goToScreen('events')">📅 Student Events</button>
+    <button class="quick-nav-btn" onclick="goToScreen('admin-notices')">🛠️ Admin Notices</button>
+    <button class="quick-nav-btn" onclick="goToScreen('admin-events')">🎪 Admin Events</button>
     <button class="quick-nav-btn" onclick="goToScreen('student')">🎓 Student Dashboard</button>
   </div>
 
@@ -414,7 +413,7 @@
 
     <!-- Status Bar -->
     <div class="status-bar">
-      <span id="live-clock">11:05</span>
+      <span id="live-clock">11:15</span>
       <div style="display: flex; gap: 4px; align-items: center;">
         <span style="font-size: 10px;">5G</span>
         <span style="font-size: 11px;">📶</span>
@@ -430,21 +429,21 @@
           🤖
         </div>
         <h1 style="font-size: 26px; font-weight: 800; background: linear-gradient(135deg, #00D4FF 0%, #0066FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Robotics Wala Hub</h1>
-        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 6px; letter-spacing: 1px;">ACHIEVEMENTS & CERTIFICATES</p>
+        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 6px; letter-spacing: 1px;">NOTICE BOARD & EVENTS SYSTEM</p>
       </div>
 
-      <!-- 2. STUDENT DASHBOARD (INTEGRATED WITH ACHIEVEMENTS) -->
+      <!-- 2. STUDENT DASHBOARD (INTEGRATED NOTICES & EVENTS) -->
       <div class="screen" id="screen-student" style="padding: 0;">
         <div style="padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--surface-border); background: var(--surface);">
           <div style="display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 22px;">🤖</span>
             <div>
               <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">Robotics Wala Hub</div>
-              <div style="font-size: 10px; color: var(--cyber-cyan); font-weight: 700;">DAY 10: CERTIFICATES LIVE</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan); font-weight: 700;">DAY 11: NOTICES & EVENTS</div>
             </div>
           </div>
           <div style="display: flex; gap: 6px;">
-            <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="openSubmitAchievementModal()">➕</button>
+            <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="goToScreen('notices')">📢</button>
             <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="restartSplash()">🚪</button>
           </div>
         </div>
@@ -464,53 +463,56 @@
             </div>
           </div>
 
-          <!-- Achievements Summary Card (Day 10) -->
+          <!-- Latest Notice Card (Day 11) -->
           <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; margin-bottom: 4px;">
-            <span style="font-size: 14px; font-weight: 800;">Achievements & Certs</span>
-            <span style="font-size: 11px; color: var(--cyber-cyan); font-weight: 700; cursor: pointer;" onclick="goToScreen('achievements')">View All (2) ➔</span>
+            <span style="font-size: 14px; font-weight: 800;">Latest Notice</span>
+            <span style="font-size: 11px; color: var(--cyber-cyan); font-weight: 700; cursor: pointer;" onclick="goToScreen('notices')">Notice Board ➔</span>
           </div>
 
-          <div class="m3-card" style="cursor: pointer; border-color: var(--cyber-cyan); background: rgba(0, 212, 255, 0.05);" onclick="goToScreen('achievements')">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(0, 212, 255, 0.15); display: flex; align-items: center; justify-content: center; font-size: 22px;">
-                🏆
-              </div>
-              <div style="flex: 1;">
-                <div style="font-size: 14px; font-weight: 800;" id="dash-ach-title">1st Place - National Robotics Olympiad</div>
-                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Verified by Lab Admin • 2 Total Approved</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Active Task Card -->
-          <div class="m3-card" style="margin-top: 10px;">
+          <div class="m3-card" style="cursor: pointer; border-color: rgba(255, 59, 48, 0.4); margin-top: 0;" onclick="goToScreen('notices')">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <b style="font-size: 13px;">📋 Weekly Milestone Task</b>
-              <span class="chip inprogress">In Progress</span>
+              <span class="chip urgent">URGENT</span>
+              <span style="font-size: 10px; color: var(--text-secondary);">2026-08-15</span>
             </div>
-            <div style="font-size: 12px; color: var(--cyber-cyan); margin-top: 4px;">Calibrate RPLiDAR A1 Sensor</div>
+            <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">Lab Power Grid Maintenance & LiPo Safety</div>
+            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Main robotics arena will undergo circuit upgrades from 02:00 PM to 06:00 PM today.</div>
+          </div>
+
+          <!-- Upcoming Event Card (Day 11) -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; margin-bottom: 4px;">
+            <span style="font-size: 14px; font-weight: 800;">Upcoming Event</span>
+            <span style="font-size: 11px; color: var(--cyber-cyan); font-weight: 700; cursor: pointer;" onclick="goToScreen('events')">All Events ➔</span>
+          </div>
+
+          <div class="m3-card" style="cursor: pointer; border-color: var(--cyber-cyan); margin-top: 0;" onclick="goToScreen('events')">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="chip upcoming">Robotics Hackathon</span>
+              <span class="chip approved">UPCOMING</span>
+            </div>
+            <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">National Autonomous Drone Hackathon 2026</div>
+            <div style="font-size: 11px; color: var(--cyber-cyan); margin-top: 2px;">📅 2026-08-22 • 10:00 AM - 05:00 PM</div>
+            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">📍 Robotics Testing Arena - Bay 4</div>
           </div>
         </div>
 
         <div class="bottom-nav">
           <button class="nav-item active"><span style="font-size:16px;">🏠</span><span>Home</span></button>
-          <button class="nav-item" onclick="goToScreen('achievements')"><span style="font-size:16px;">🏆</span><span>Certs</span></button>
-          <button class="nav-item" onclick="goToScreen('profile')"><span style="font-size:16px;">👤</span><span>Profile</span></button>
-          <button class="nav-item" onclick="goToScreen('admin-achievements')"><span style="font-size:16px;">🛡️</span><span>Admin</span></button>
+          <button class="nav-item" onclick="goToScreen('notices')"><span style="font-size:16px;">📢</span><span>Notices</span></button>
+          <button class="nav-item" onclick="goToScreen('events')"><span style="font-size:16px;">📅</span><span>Events</span></button>
+          <button class="nav-item" onclick="goToScreen('admin-notices')"><span style="font-size:16px;">🛡️</span><span>Admin</span></button>
         </div>
       </div>
 
-      <!-- 3. STUDENT ACHIEVEMENTS LIST SCREEN (DAY 10) -->
-      <div class="screen" id="screen-achievements" style="padding: 0;">
+      <!-- 3. STUDENT NOTICES SCREEN (DAY 11) -->
+      <div class="screen" id="screen-notices" style="padding: 0;">
         <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
           <div style="display: flex; align-items: center; gap: 8px;">
             <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
             <div>
-              <div style="font-size: 15px; font-weight: 800;">My Achievements & Certs</div>
-              <div style="font-size: 10px; color: var(--cyber-cyan);">FIRESTORE /achievements</div>
+              <div style="font-size: 15px; font-weight: 800;">Notice Board</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan);">FIRESTORE /notices</div>
             </div>
           </div>
-          <button class="btn-toggle" style="padding: 4px 10px; font-size: 11px; background: var(--primary); border: none;" onclick="openSubmitAchievementModal()">➕ Add</button>
         </div>
 
         <div style="flex: 1; overflow-y: auto; padding: 14px;">
@@ -518,211 +520,239 @@
           <div class="field-group" style="margin-bottom: 8px;">
             <div class="input-wrapper">
               <span class="input-icon">🔍</span>
-              <input type="text" class="m3-input" placeholder="Search by title, organization..." id="ach-search-input">
+              <input type="text" class="m3-input" placeholder="Search notices..." id="sn-search">
             </div>
           </div>
 
-          <!-- Status Filters -->
+          <!-- Priority Filter Chips -->
           <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px;">
-            <span class="chip tag selected" onclick="filterAchStatus('All', this)">All</span>
-            <span class="chip tag" onclick="filterAchStatus('Approved', this)">Approved</span>
-            <span class="chip tag" onclick="filterAchStatus('Pending', this)">Pending</span>
-            <span class="chip tag" onclick="filterAchStatus('Needs Correction', this)">Needs Correction</span>
-            <span class="chip tag" onclick="filterAchStatus('Rejected', this)">Rejected</span>
+            <span class="chip tag selected" onclick="filterNoticePrio('All', this)">All</span>
+            <span class="chip tag" onclick="filterNoticePrio('Urgent', this)">Urgent</span>
+            <span class="chip tag" onclick="filterNoticePrio('High', this)">High</span>
+            <span class="chip tag" onclick="filterNoticePrio('Normal', this)">Normal</span>
           </div>
 
-          <div style="font-size: 13px; font-weight: 800; margin-top: 4px; margin-bottom: 6px;">
-            Achievements (<span id="ach-count">2</span>)
-          </div>
-
-          <!-- Achievement Cards Container -->
-          <div id="achievements-container" style="display: flex; flex-direction: column; gap: 10px;">
-            <!-- Achievement 1 (Approved) -->
-            <div class="m3-card" style="margin-top: 0;">
+          <div style="display: flex; flex-direction: column; gap: 10px;" id="notices-container">
+            <!-- Notice 1 -->
+            <div class="m3-card" style="margin-top: 0; border-color: rgba(255, 59, 48, 0.4);">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; gap: 6px;">
-                  <span class="chip medium">Competition</span>
-                  <span class="chip tag">National</span>
+                  <span class="chip urgent">URGENT</span>
+                  <span class="chip tag">Lab</span>
                 </div>
-                <span class="chip approved" id="ach1-status">Approved</span>
+                <span style="font-size: 10px; color: var(--text-secondary);">2026-08-15</span>
               </div>
-              <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">1st Place - National Robotics Olympiad</div>
-              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">🏛️ IEEE Robotics Society • 📅 2026-08-10</div>
-              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">Won gold medal in autonomous obstacle navigation track against 45 university teams.</div>
-              <div style="margin-top: 8px; font-size: 11px; color: var(--cyber-cyan);">📄 Certificate_NRO2026_Gold.pdf</div>
+              <div style="font-size: 14px; font-weight: 800; margin-top: 8px;">Lab Power Grid Maintenance & LiPo Safety</div>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Main robotics arena will undergo circuit upgrades from 02:00 PM to 06:00 PM today. Please disconnect all lithium battery chargers.</div>
+              <div style="margin-top: 8px; font-size: 11px; color: var(--cyber-cyan);">📄 Safety_Protocol_Aug2026.pdf</div>
             </div>
 
-            <!-- Achievement 2 (Pending / Review) -->
+            <!-- Notice 2 -->
             <div class="m3-card" style="margin-top: 0;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; gap: 6px;">
-                  <span class="chip medium">Certification</span>
-                  <span class="chip tag">International</span>
+                  <span class="chip high">HIGH</span>
+                  <span class="chip tag">Project</span>
                 </div>
-                <span class="chip pending" id="ach2-status">Pending</span>
+                <span style="font-size: 10px; color: var(--text-secondary);">2026-08-14</span>
               </div>
-              <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">NVIDIA Deep Learning Institute - ROS2 & Isaac</div>
-              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">🏛️ NVIDIA Corporation • 📅 2026-08-12</div>
-              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">Professional certification in synthetic dataset generation and Isaac Sim robotics.</div>
-              <div style="margin-top: 8px; font-size: 11px; color: var(--cyber-cyan);">📄 NVIDIA_DLI_Cert_Aarav.pdf</div>
+              <div style="font-size: 14px; font-weight: 800; margin-top: 8px;">Phase 2 Mentorship Review Slots Open</div>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Teams working on autonomous mobile robotics can now reserve review slots with Dr. Kulkarni.</div>
             </div>
           </div>
         </div>
-
-        <button class="fab" onclick="openSubmitAchievementModal()">
-          <span>➕</span> <span>Add Cert</span>
-        </button>
       </div>
 
-      <!-- 4. ADMIN ACHIEVEMENTS APPROVAL SCREEN (DAY 10) -->
-      <div class="screen" id="screen-admin-achievements" style="padding: 0;">
+      <!-- 4. STUDENT EVENTS SCREEN (DAY 11) -->
+      <div class="screen" id="screen-events" style="padding: 0;">
         <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
           <div style="display: flex; align-items: center; gap: 8px;">
             <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
             <div>
-              <div style="font-size: 15px; font-weight: 800;">Achievement Approvals</div>
-              <div style="font-size: 10px; color: var(--warning);">VERIFY & PUBLISH TO PROFILE</div>
+              <div style="font-size: 15px; font-weight: 800;">Events & Workshops</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan);">FIRESTORE /events</div>
             </div>
           </div>
         </div>
 
         <div style="flex: 1; overflow-y: auto; padding: 14px;">
-          <!-- Admin Review Card -->
-          <div class="m3-card" style="margin-top: 0;" id="adm-ach-card">
+          <!-- Event 1 -->
+          <div class="m3-card" style="margin-top: 0;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="chip medium">Certification • International</span>
-              <span class="chip pending" id="adm-ach2-status">Pending Review</span>
+              <span class="chip medium">Hackathon</span>
+              <span class="chip approved">UPCOMING</span>
             </div>
-            <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">NVIDIA Deep Learning Institute - ROS2 & Isaac</div>
-            <div style="font-size: 11px; color: var(--cyber-cyan); margin-top: 2px;">Student: Aarav Sharma (RW-STU-042)</div>
-            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Issuing Org: NVIDIA Corporation • 📅 2026-08-12</div>
-
-            <div style="background: rgba(0, 212, 255, 0.1); border-radius: 6px; padding: 8px; margin-top: 8px; font-size: 11px;">
-              <b>📄 Attached Proof:</b> NVIDIA_DLI_Cert_Aarav.pdf<br/>
-              <b>🔗 Verification Link:</b> <a href="#" style="color: var(--cyber-cyan);">https://nvidia.com/verify/DL-99214</a>
+            <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">National Autonomous Drone Hackathon 2026</div>
+            <div style="font-size: 11px; color: var(--cyber-cyan); margin-top: 2px;">📅 2026-08-22 • 10:00 AM - 05:00 PM</div>
+            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">📍 Robotics Testing Arena - Bay 4</div>
+            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">👤 Organizer: IEEE Student Branch</div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+              <span style="font-size: 11px; color: var(--text-secondary);" id="ev1-seats">Seats: 18 / 30</span>
+              <button class="btn-primary" style="width: auto; height: 28px; padding: 0 14px; font-size: 11px;" id="ev1-btn" onclick="toggleEventRegistration('ev1')">Register</button>
             </div>
+          </div>
 
-            <div style="display: flex; gap: 8px; margin-top: 10px;" id="adm-ach-actions">
-              <button class="btn-primary" style="flex: 1; height: 34px; font-size: 11px; background: #00E676; color: #000;" onclick="adminApproveAch()">
-                ✓ Approve & Verify
-              </button>
-              <button class="btn-outlined" style="flex: 1; height: 34px; font-size: 11px;" onclick="adminReturnAchCorrection()">
-                ↩ Return for Fix
-              </button>
-              <button class="btn-outlined" style="flex: 0.8; height: 34px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4);" onclick="adminRejectAch()">
-                ✕ Reject
-              </button>
+          <!-- Event 2 -->
+          <div class="m3-card" style="margin-top: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="chip medium">Workshop</span>
+              <span class="chip approved">UPCOMING</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">ROS2 & Micro-ROS on ESP32 Hands-on</div>
+            <div style="font-size: 11px; color: var(--cyber-cyan); margin-top: 2px;">📅 2026-08-28 • 02:00 PM - 05:00 PM</div>
+            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">📍 Embedded Systems Lab 201</div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+              <span style="font-size: 11px; color: var(--text-secondary);">Seats: 25 / 25 (FULL)</span>
+              <button class="btn-outlined" style="width: auto; height: 28px; padding: 0 14px; font-size: 11px;" disabled>Full</button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 5. STUDENT PROFILE SCREEN (WITH APPROVED ACHIEVEMENTS) -->
-      <div class="screen" id="screen-profile" style="padding: 0;">
+      <!-- 5. ADMIN NOTICES SCREEN (DAY 11) -->
+      <div class="screen" id="screen-admin-notices" style="padding: 0;">
         <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
           <div style="display: flex; align-items: center; gap: 8px;">
             <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
-            <div style="font-size: 15px; font-weight: 800;">Student Profile</div>
+            <div style="font-size: 15px; font-weight: 800;">Admin Notice Manager</div>
           </div>
-          <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('achievements')">🏆 Add Cert</button>
+          <button class="btn-toggle" style="padding: 4px 10px; font-size: 11px; background: var(--primary); border: none;" onclick="openCreateNoticeModal()">➕ New</button>
         </div>
 
         <div style="flex: 1; overflow-y: auto; padding: 14px;">
-          <!-- Avatar Card -->
-          <div class="m3-card" style="margin-top: 0; text-align: center;">
-            <div style="width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #00D4FF 0%, #0066FF 100%); margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800;">
-              AS
-            </div>
-            <div style="font-size: 18px; font-weight: 800; margin-top: 8px;">Aarav Sharma</div>
-            <div style="font-size: 11px; color: var(--cyber-cyan); font-family: 'JetBrains Mono';">ID: RW-STU-042 • Robotics & Automation</div>
-            <div style="margin-top: 6px;"><span class="chip approved">Approved Lab Researcher</span></div>
-          </div>
-
-          <!-- Verified Achievements Showcase (Day 10) -->
-          <div class="m3-card" style="border-color: var(--primary);">
+          <div class="m3-card" style="margin-top: 0;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <b style="font-size: 14px; color: var(--cyber-cyan);">🏆 Verified Achievements (<span id="profile-ach-count">1</span>)</b>
-              <span style="font-size: 11px; color: var(--cyber-cyan); font-weight: bold; cursor: pointer;" onclick="goToScreen('achievements')">Manage ➔</span>
+              <span class="chip approved">PUBLISHED</span>
+              <span style="font-size: 11px; color: var(--error); font-weight: bold;">URGENT</span>
             </div>
-
-            <div id="profile-ach-list" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-              <div style="background: var(--surface-elevated); border-radius: 10px; padding: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <b style="font-size: 13px;">1st Place - National Robotics Olympiad</b>
-                  <span class="chip verified">VERIFIED</span>
-                </div>
-                <div style="font-size: 10px; color: var(--text-tertiary); margin-top: 2px;">Competition • National • 📅 2026-08-10</div>
-              </div>
+            <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">Lab Power Grid Maintenance & LiPo Safety</div>
+            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Target: All Students • Published: 2026-08-15</div>
+            <div style="display: flex; gap: 6px; margin-top: 8px;">
+              <button class="btn-outlined" style="height: 28px; font-size: 11px; flex: 1;" onclick="showToast('Edit notice modal opened', '✏️')">Edit</button>
+              <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4); flex: 1;" onclick="showToast('Notice deleted', '🗑️')">Delete</button>
             </div>
           </div>
         </div>
+
+        <button class="fab" onclick="openCreateNoticeModal()">
+          <span>➕</span> <span>New Notice</span>
+        </button>
+      </div>
+
+      <!-- 6. ADMIN EVENTS SCREEN (DAY 11) -->
+      <div class="screen" id="screen-admin-events" style="padding: 0;">
+        <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
+            <div style="font-size: 15px; font-weight: 800;">Admin Event Scheduler</div>
+          </div>
+          <button class="btn-toggle" style="padding: 4px 10px; font-size: 11px; background: var(--primary); border: none;" onclick="openCreateEventModal()">➕ New</button>
+        </div>
+
+        <div style="flex: 1; overflow-y: auto; padding: 14px;">
+          <div class="m3-card" style="margin-top: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="chip approved">UPCOMING</span>
+              <span class="chip medium">Hackathon</span>
+            </div>
+            <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">National Autonomous Drone Hackathon 2026</div>
+            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">📅 2026-08-22 • 📍 Bay 4 Arena • 👥 18/30 Registered</div>
+            <div style="display: flex; gap: 6px; margin-top: 8px;">
+              <button class="btn-outlined" style="height: 28px; font-size: 11px; flex: 1;" onclick="showToast('Edit event opened', '✏️')">Edit</button>
+              <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--warning); border-color: rgba(255,179,0,0.4); flex: 1;" onclick="showToast('Event cancelled', '🚫')">Cancel</button>
+              <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4); flex: 1;" onclick="showToast('Event deleted', '🗑️')">Delete</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="fab" onclick="openCreateEventModal()">
+          <span>➕</span> <span>Schedule Event</span>
+        </button>
       </div>
 
     </div>
 
-    <!-- SUBMIT ACHIEVEMENT MODAL (DAY 10) -->
-    <div id="submit-ach-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px;">
+    <!-- CREATE NOTICE MODAL -->
+    <div id="create-notice-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px;">
       <div class="m3-card" style="width: 100%; max-height: 90vh; overflow-y: auto; border-color: var(--cyber-cyan); margin: 0;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <b style="font-size: 16px;">Submit Achievement & Certificate</b>
-          <button class="btn-toggle" style="padding: 2px 8px;" onclick="closeSubmitAchievementModal()">✕</button>
+          <b style="font-size: 16px;">Broadcast Lab Notice</b>
+          <button class="btn-toggle" style="padding: 2px 8px;" onclick="closeCreateNoticeModal()">✕</button>
         </div>
 
-        <form onsubmit="handleSaveAchievement(event)" style="margin-top: 12px;">
+        <form onsubmit="handleSaveNotice(event)" style="margin-top: 12px;">
           <div class="field-group">
-            <label class="field-label">Achievement Title *</label>
-            <input type="text" id="sa-title" class="m3-input" placeholder="e.g. Best Innovation Award - Smart India Hackathon" style="padding-left: 12px;" required>
+            <label class="field-label">Notice Title *</label>
+            <input type="text" id="cn-title" class="m3-input" placeholder="e.g. 3D Printer Queue Guidelines" style="padding-left: 12px;" required>
           </div>
-
           <div class="field-group">
-            <label class="field-label">Category *</label>
-            <select id="sa-cat" class="m3-input" style="padding-left: 12px;">
-              <option>Competition</option>
-              <option>Hackathon</option>
-              <option>Workshop</option>
-              <option>Internship</option>
-              <option>Certification</option>
-              <option>Research Paper</option>
-              <option>Publication</option>
-              <option>Patent</option>
-              <option>Award</option>
-              <option>Other</option>
-            </select>
+            <label class="field-label">Description *</label>
+            <input type="text" id="cn-desc" class="m3-input" placeholder="Enter notice announcement details..." style="padding-left: 12px;" required>
           </div>
-
           <div style="display: flex; gap: 8px;">
             <div class="field-group" style="flex: 1;">
-              <label class="field-label">Issuing Org *</label>
-              <input type="text" id="sa-org" class="m3-input" placeholder="e.g. Ministry of Education" style="padding-left: 12px;" required>
+              <label class="field-label">Category</label>
+              <select id="cn-cat" class="m3-input" style="padding-left: 12px;">
+                <option>General</option>
+                <option>Important</option>
+                <option>Lab</option>
+                <option>Project</option>
+                <option>Event</option>
+              </select>
             </div>
             <div class="field-group" style="flex: 1;">
-              <label class="field-label">Level</label>
-              <select id="sa-level" class="m3-input" style="padding-left: 12px;">
-                <option>National</option>
-                <option>International</option>
-                <option>State</option>
-                <option>College</option>
+              <label class="field-label">Priority</label>
+              <select id="cn-prio" class="m3-input" style="padding-left: 12px;">
+                <option>Normal</option>
+                <option>High</option>
+                <option>Urgent</option>
+                <option>Low</option>
               </select>
             </div>
           </div>
-
-          <div class="field-group">
-            <label class="field-label">Achievement Date</label>
-            <input type="date" id="sa-date" class="m3-input" value="2026-08-15" style="padding-left: 12px;">
-          </div>
-
-          <div class="field-group">
-            <label class="field-label">Certificate File</label>
-            <input type="text" id="sa-file" class="m3-input" value="Certificate_SIH2026_Gold.pdf" style="padding-left: 12px;">
-          </div>
-
-          <div class="field-group">
-            <label class="field-label">Verification Link (Optional)</label>
-            <input type="url" id="sa-link" class="m3-input" placeholder="https://sih.gov.in/verify/..." style="padding-left: 12px;">
-          </div>
-
           <button type="submit" class="btn-primary" style="margin-top: 6px;">
-            🚀 Submit for Admin Approval
+            📢 Broadcast Notice
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- CREATE EVENT MODAL -->
+    <div id="create-event-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px;">
+      <div class="m3-card" style="width: 100%; max-height: 90vh; overflow-y: auto; border-color: var(--cyber-cyan); margin: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <b style="font-size: 16px;">Schedule Event / Workshop</b>
+          <button class="btn-toggle" style="padding: 2px 8px;" onclick="closeCreateEventModal()">✕</button>
+        </div>
+
+        <form onsubmit="handleSaveEvent(event)" style="margin-top: 12px;">
+          <div class="field-group">
+            <label class="field-label">Event Title *</label>
+            <input type="text" id="ce-title" class="m3-input" placeholder="e.g. Swarm Robotics Symposium" style="padding-left: 12px;" required>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Date (yyyy-MM-dd)</label>
+              <input type="date" id="ce-date" class="m3-input" value="2026-08-30" style="padding-left: 12px;">
+            </div>
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Category</label>
+              <select id="ce-cat" class="m3-input" style="padding-left: 12px;">
+                <option>Robotics</option>
+                <option>Workshop</option>
+                <option>Hackathon</option>
+                <option>Competition</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Venue / Location *</label>
+            <input type="text" id="ce-loc" class="m3-input" value="Robotics Main Lab - Bay 2" style="padding-left: 12px;" required>
+          </div>
+          <button type="submit" class="btn-primary" style="margin-top: 6px;">
+            🎪 Publish Event
           </button>
         </form>
       </div>
@@ -769,94 +799,73 @@
     }
     setTimeout(() => goToScreen('student'), 900);
 
-    function filterAchStatus(stat, el) {
+    function filterNoticePrio(prio, el) {
       el.parentElement.querySelectorAll('.chip.tag').forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
-      showToast(`Filtered by Status: ${stat}`, '🔍');
+      showToast(`Filtered by: ${prio}`, '🔍');
+    }
+
+    let ev1Registered = false;
+    function toggleEventRegistration(id) {
+      const btn = document.getElementById(`${id}-btn`);
+      const seats = document.getElementById(`${id}-seats`);
+      if (!ev1Registered) {
+        ev1Registered = true;
+        btn.textContent = "✓ Registered";
+        btn.style.background = "#00E676";
+        btn.style.color = "#000";
+        seats.textContent = "Seats: 19 / 30";
+        showToast("Registration confirmed for Drone Hackathon!", "🎉");
+      } else {
+        ev1Registered = false;
+        btn.textContent = "Register";
+        btn.style.background = "";
+        btn.style.color = "";
+        seats.textContent = "Seats: 18 / 30";
+        showToast("Registration cancelled.", "↩️");
+      }
     }
 
     // Modal controls
-    function openSubmitAchievementModal() {
-      document.getElementById('submit-ach-modal').style.display = 'flex';
-    }
-    function closeSubmitAchievementModal() {
-      document.getElementById('submit-ach-modal').style.display = 'none';
-    }
+    function openCreateNoticeModal() { document.getElementById('create-notice-modal').style.display = 'flex'; }
+    function closeCreateNoticeModal() { document.getElementById('create-notice-modal').style.display = 'none'; }
+    function openCreateEventModal() { document.getElementById('create-event-modal').style.display = 'flex'; }
+    function closeCreateEventModal() { document.getElementById('create-event-modal').style.display = 'none'; }
 
-    function handleSaveAchievement(e) {
+    function handleSaveNotice(e) {
       e.preventDefault();
-      const title = document.getElementById('sa-title').value;
-      const cat = document.getElementById('sa-cat').value;
-      const org = document.getElementById('sa-org').value;
-      const level = document.getElementById('sa-level').value;
-      const date = document.getElementById('sa-date').value;
-      const file = document.getElementById('sa-file').value;
+      const title = document.getElementById('cn-title').value;
+      const desc = document.getElementById('cn-desc').value;
+      const cat = document.getElementById('cn-cat').value;
+      const prio = document.getElementById('cn-prio').value;
 
-      closeSubmitAchievementModal();
+      closeCreateNoticeModal();
 
-      const container = document.getElementById('achievements-container');
+      const container = document.getElementById('notices-container');
       const card = document.createElement('div');
       card.className = 'm3-card';
       card.style.marginTop = '0';
       card.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <div style="display: flex; gap: 6px;">
-            <span class="chip medium">${cat}</span>
-            <span class="chip tag">${level}</span>
+            <span class="chip ${prio.toLowerCase()}">${prio.toUpperCase()}</span>
+            <span class="chip tag">${cat}</span>
           </div>
-          <span class="chip pending">Pending</span>
+          <span style="font-size: 10px; color: var(--text-secondary);">Today</span>
         </div>
-        <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">${title}</div>
-        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">🏛️ ${org} • 📅 ${date}</div>
-        <div style="margin-top: 8px; font-size: 11px; color: var(--cyber-cyan);">📄 ${file}</div>
+        <div style="font-size: 14px; font-weight: 800; margin-top: 8px;">${title}</div>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">${desc}</div>
       `;
       container.prepend(card);
-      document.getElementById('ach-count').textContent = '3';
 
-      showToast(`Achievement "${title}" submitted for Admin verification!`, '🚀');
+      showToast(`Notice "${title}" broadcasted to lab!`, '📢');
     }
 
-    function adminApproveAch() {
-      document.getElementById('adm-ach2-status').textContent = 'Approved';
-      document.getElementById('adm-ach2-status').className = 'chip approved';
-      document.getElementById('ach2-status').textContent = 'Approved';
-      document.getElementById('ach2-status').className = 'chip approved';
-
-      document.getElementById('adm-ach-actions').innerHTML = `
-        <div style="width: 100%; background: rgba(0, 230, 118, 0.15); border-radius: 8px; padding: 8px; text-align: center; color: #00E676; font-weight: bold; font-size: 12px;">
-          ✓ Approved & Published to Profile
-        </div>
-      `;
-
-      // Add to profile showcase
-      const profileList = document.getElementById('profile-ach-list');
-      const item = document.createElement('div');
-      item.style.background = 'var(--surface-elevated)';
-      item.style.borderRadius = '10px';
-      item.style.padding = '10px';
-      item.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <b style="font-size: 13px;">NVIDIA Deep Learning Institute - ROS2 & Isaac</b>
-          <span class="chip verified">VERIFIED</span>
-        </div>
-        <div style="font-size: 10px; color: var(--text-tertiary); margin-top: 2px;">Certification • International • 📅 2026-08-12</div>
-      `;
-      profileList.appendChild(item);
-      document.getElementById('profile-ach-count').textContent = '2';
-
-      showToast("Achievement approved! Published to student's profile.", "🏆");
-    }
-
-    function adminReturnAchCorrection() {
-      document.getElementById('adm-ach2-status').textContent = 'Needs Correction';
-      document.getElementById('adm-ach2-status').className = 'chip correction';
-      showToast("Returned to student for certificate correction.", "↩️");
-    }
-
-    function adminRejectAch() {
-      document.getElementById('adm-ach2-status').textContent = 'Rejected';
-      document.getElementById('adm-ach2-status').className = 'chip rejected';
-      showToast("Achievement marked as Rejected.", "❌");
+    function handleSaveEvent(e) {
+      e.preventDefault();
+      const title = document.getElementById('ce-title').value;
+      closeCreateEventModal();
+      showToast(`Event "${title}" scheduled and published!`, '🎪');
     }
 
     // Toast

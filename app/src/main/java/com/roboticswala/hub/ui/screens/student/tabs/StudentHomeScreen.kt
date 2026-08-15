@@ -109,6 +109,8 @@ fun StudentHomeScreen(
     onNavigateToProjectDetails: (String) -> Unit = {},
     onNavigateToTasks: () -> Unit = {},
     onNavigateToAchievements: () -> Unit = {},
+    onNavigateToNotices: () -> Unit = {},
+    onNavigateToEvents: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
@@ -393,17 +395,49 @@ fun StudentHomeScreen(
 
                 Spacer(modifier = Modifier.height(22.dp))
 
-                // ── 7. Latest Notice ─────────────────────────────────────
-                SectionTitle(text = "Latest Notice", isDark = isDark)
+                // ── 7. Latest Notice (Day 11) ───────────────────────────
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SectionTitle(text = "Latest Notice", isDark = isDark)
+                    Text(
+                        text = "Notice Board ➔",
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = if (isDark) CyberCyan else ElectricBlue,
+                        modifier = Modifier
+                            .clickable(onClick = onNavigateToNotices)
+                            .padding(4.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.height(10.dp))
-                LatestNoticeCard(notice = uiState.latestNotice, isDark = isDark)
+                Box(modifier = Modifier.clickable(onClick = onNavigateToNotices)) {
+                    LatestNoticeCard(notice = uiState.latestNotice, isDark = isDark)
+                }
 
                 Spacer(modifier = Modifier.height(22.dp))
 
-                // ── 7. Upcoming Event ─────────────────────────────────────
-                SectionTitle(text = "Upcoming Event", isDark = isDark)
+                // ── 8. Upcoming Event (Day 11) ───────────────────────────
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SectionTitle(text = "Upcoming Event", isDark = isDark)
+                    Text(
+                        text = "All Events ➔",
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = if (isDark) CyberCyan else ElectricBlue,
+                        modifier = Modifier
+                            .clickable(onClick = onNavigateToEvents)
+                            .padding(4.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.height(10.dp))
-                UpcomingEventCard(event = uiState.upcomingEvent, isDark = isDark)
+                Box(modifier = Modifier.clickable(onClick = onNavigateToEvents)) {
+                    UpcomingEventCard(event = uiState.upcomingEvent, isDark = isDark)
+                }
 
                 Spacer(modifier = Modifier.height(28.dp))
             }

@@ -74,7 +74,9 @@ fun StudentMainScreen(
     onNavigateToProjectDetails: (String) -> Unit = {},
     onNavigateToTasks: () -> Unit = {},
     onNavigateToAchievements: () -> Unit = {},
-    onNavigateToCreateAchievement: () -> Unit = {}
+    onNavigateToCreateAchievement: () -> Unit = {},
+    onNavigateToNotices: () -> Unit = {},
+    onNavigateToEvents: () -> Unit = {}
 ) {
     val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
     val viewModel: StudentViewModel = viewModel(
@@ -207,7 +209,9 @@ fun StudentMainScreen(
                             onNavigateToProjects = { viewModel.onTabSelected(StudentNavRoute.Projects.route) },
                             onNavigateToProjectDetails = onNavigateToProjectDetails,
                             onNavigateToTasks = onNavigateToTasks,
-                            onNavigateToAchievements = onNavigateToAchievements
+                            onNavigateToAchievements = onNavigateToAchievements,
+                            onNavigateToNotices = onNavigateToNotices,
+                            onNavigateToEvents = onNavigateToEvents
                         )
                         StudentNavRoute.Projects.route -> StudentProjectsScreen(
                             currentUid = currentUid,
@@ -232,7 +236,9 @@ fun StudentMainScreen(
                             onNavigateToProjects = { viewModel.onTabSelected(StudentNavRoute.Projects.route) },
                             onNavigateToProjectDetails = onNavigateToProjectDetails,
                             onNavigateToTasks = onNavigateToTasks,
-                            onNavigateToAchievements = onNavigateToAchievements
+                            onNavigateToAchievements = onNavigateToAchievements,
+                            onNavigateToNotices = onNavigateToNotices,
+                            onNavigateToEvents = onNavigateToEvents
                         )
                     }
                 }
