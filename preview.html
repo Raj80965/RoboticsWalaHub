@@ -672,6 +672,255 @@
         </button>
       </div>
 
+      <!-- 7. STUDENT EQUIPMENT SCREEN (DAY 12) -->
+      <div class="screen" id="screen-equipment" style="padding: 0;">
+        <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
+            <div>
+              <div style="font-size: 15px; font-weight: 800;">Hardware Inventory</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan);">FIRESTORE /equipment</div>
+            </div>
+          </div>
+          <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="toggleEquipmentTab()" id="eq-tab-btn">📋 My Requests (1)</button>
+        </div>
+
+        <div style="flex: 1; overflow-y: auto; padding: 14px;" id="eq-catalog-view">
+          <!-- Search -->
+          <div class="field-group" style="margin-bottom: 8px;">
+            <div class="input-wrapper">
+              <span class="input-icon">🔍</span>
+              <input type="text" class="m3-input" placeholder="Search sensors, LiDAR, motors, ESP32..." id="eq-search">
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;" id="equipment-container">
+            <!-- Equipment 1 -->
+            <div class="m3-card" style="margin-top: 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="chip tag">Sensors</span>
+                <span class="chip approved">12 AVAILABLE</span>
+              </div>
+              <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">RPLiDAR A1M8 360° Laser Scanner</div>
+              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">📍 Rack B - Bin 4 • Condition: New</div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                <span style="font-size: 11px; color: var(--text-secondary);">Stock: 12 / 15 Total (3 Issued)</span>
+                <button class="btn-primary" style="width: auto; height: 28px; padding: 0 14px; font-size: 11px;" onclick="openRequestEquipmentModal('RPLiDAR A1M8 360° Laser Scanner', 12)">Request</button>
+              </div>
+            </div>
+
+            <!-- Equipment 2 -->
+            <div class="m3-card" style="margin-top: 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="chip tag">Microcontrollers</span>
+                <span class="chip low">LOW STOCK (2)</span>
+              </div>
+              <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">NVIDIA Jetson Nano 4GB Dev Kit</div>
+              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">📍 Cabinet AI-1 • Condition: Good</div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                <span style="font-size: 11px; color: var(--text-secondary);">Stock: 2 / 8 Total (6 Issued)</span>
+                <button class="btn-primary" style="width: auto; height: 28px; padding: 0 14px; font-size: 11px;" onclick="openRequestEquipmentModal('NVIDIA Jetson Nano 4GB Dev Kit', 2)">Request</button>
+              </div>
+            </div>
+
+            <!-- Equipment 3 -->
+            <div class="m3-card" style="margin-top: 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="chip tag">Batteries</span>
+                <span class="chip urgent">OUT OF STOCK (0)</span>
+              </div>
+              <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">Tattu 4S 14.8V 5200mAh LiPo Pack</div>
+              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">📍 Safe Fire Bin 2 • Condition: Good</div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                <span style="font-size: 11px; color: var(--text-secondary);">Stock: 0 / 10 Total (10 Issued)</span>
+                <button class="btn-outlined" style="height: 28px; font-size: 11px;" disabled>Out of Stock</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex: 1; overflow-y: auto; padding: 14px; display: none;" id="eq-requests-view">
+          <div style="display: flex; flex-direction: column; gap: 10px;" id="my-requests-container">
+            <div class="m3-card" style="margin-top: 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-size: 14px; font-weight: 800;">RPLiDAR A1M8 360° Laser Scanner</div>
+                <span class="chip approved">ISSUED</span>
+              </div>
+              <div style="font-size: 11px; color: var(--cyber-cyan); margin-top: 4px;">Requested: 1 unit • Return Date: 📅 2026-08-20</div>
+              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Purpose: Autonomous SLAM Navigation Rover</div>
+            </div>
+
+            <div class="m3-card" style="margin-top: 0; border-color: rgba(255, 59, 48, 0.4);">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-size: 14px; font-weight: 800;">ESP32-CAM AI-Thinker Module</div>
+                <span class="chip urgent">OVERDUE</span>
+              </div>
+              <div style="font-size: 11px; color: var(--error); margin-top: 4px;">⚠️ Return Deadline: 2026-08-10 (5 Days Overdue)</div>
+              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Please hand over component to Lab Admin immediately.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. ADMIN EQUIPMENT & INVENTORY SCREEN (DAY 12) -->
+      <div class="screen" id="screen-admin-equipment" style="padding: 0;">
+        <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
+            <div>
+              <div style="font-size: 15px; font-weight: 800;">Inventory Control</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan);">ADMIN /equipment & requests</div>
+            </div>
+          </div>
+          <button class="btn-toggle" style="padding: 4px 10px; font-size: 11px; background: var(--primary); border: none;" onclick="openAddEquipmentModal()">➕ Add Item</button>
+        </div>
+
+        <div style="flex: 1; overflow-y: auto; padding: 14px;">
+          <!-- Low stock alert -->
+          <div class="m3-card" style="margin-top: 0; border-color: rgba(255, 179, 0, 0.5); background: rgba(255, 179, 0, 0.08); padding: 10px 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 12px; font-weight: 800; color: var(--warning);">⚠️ 1 Out of Stock • 1 Low Stock Item</span>
+              <span style="font-size: 10px; font-weight: 800; color: var(--cyber-cyan); cursor: pointer;" onclick="showToast('Filtered low stock items', '🔍')">Filter Stock</span>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; margin-bottom: 6px;">
+            <span style="font-size: 13px; font-weight: 800;">Student Requests Queue</span>
+            <span class="chip high">2 PENDING</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;" id="admin-requests-container">
+            <!-- Request 1 -->
+            <div class="m3-card" style="margin-top: 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="chip approved">PENDING APPROVAL</span>
+                <span style="font-size: 11px; color: var(--text-secondary);">Qty: 1</span>
+              </div>
+              <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">NVIDIA Jetson Nano 4GB Dev Kit</div>
+              <div style="font-size: 11px; color: var(--cyber-cyan); margin-top: 2px;">👤 Raj Kumar (STU-1082) • Return: 2026-08-25</div>
+              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Purpose: Computer Vision Edge Inference Benchmark</div>
+              <div style="display: flex; gap: 6px; margin-top: 10px;">
+                <button class="btn-primary" style="height: 28px; font-size: 11px; flex: 1;" onclick="handleApproveAndIssue(this, 'NVIDIA Jetson Nano 4GB Dev Kit')">Approve & Issue</button>
+                <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4); flex: 1;" onclick="this.closest('.m3-card').remove(); showToast('Request rejected', '🚫')">Reject</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; margin-bottom: 6px;">
+            <span style="font-size: 13px; font-weight: 800;">Hardware Stock Catalog</span>
+            <span style="font-size: 11px; color: var(--text-secondary);">3 Items</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;" id="admin-equipment-container">
+            <div class="m3-card" style="margin-top: 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="chip tag">Sensors</span>
+                <span style="font-size: 11px; font-weight: bold; color: var(--success);">12 / 15 AVAILABLE</span>
+              </div>
+              <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">RPLiDAR A1M8 360° Laser Scanner</div>
+              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">📍 Rack B - Bin 4 • Min Stock: 2</div>
+              <div style="display: flex; gap: 6px; margin-top: 8px;">
+                <button class="btn-outlined" style="height: 28px; font-size: 11px; flex: 1;" onclick="showToast('Edit equipment opened', '✏️')">Edit</button>
+                <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4); flex: 1;" onclick="this.closest('.m3-card').remove(); showToast('Equipment removed from inventory', '🗑️')">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="fab" onclick="openAddEquipmentModal()">
+          <span>➕</span> <span>Add Hardware</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- REQUEST EQUIPMENT MODAL -->
+    <div id="request-equipment-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px;">
+      <div class="m3-card" style="width: 100%; max-height: 90vh; overflow-y: auto; border-color: var(--cyber-cyan); margin: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <b style="font-size: 16px;" id="req-modal-title">Request Equipment</b>
+          <button class="btn-toggle" style="padding: 2px 8px;" onclick="closeRequestEquipmentModal()">✕</button>
+        </div>
+
+        <form onsubmit="handleSaveEquipmentRequest(event)" style="margin-top: 12px;">
+          <div class="field-group">
+            <label class="field-label">Quantity Needed *</label>
+            <input type="number" id="req-qty" class="m3-input" value="1" min="1" max="10" style="padding-left: 12px;" required>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Purpose / Use Case *</label>
+            <input type="text" id="req-purpose" class="m3-input" placeholder="e.g. Quadcopter PID flight controller testing" style="padding-left: 12px;" required>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Related Project (Optional)</label>
+            <input type="text" id="req-project" class="m3-input" placeholder="e.g. Autonomous Drone" style="padding-left: 12px;">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Expected Return Date *</label>
+            <input type="date" id="req-return-date" class="m3-input" value="2026-08-25" style="padding-left: 12px;" required>
+          </div>
+          <button type="submit" class="btn-primary" style="margin-top: 6px;">
+            📨 Submit Equipment Request
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ADD EQUIPMENT MODAL -->
+    <div id="add-equipment-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px;">
+      <div class="m3-card" style="width: 100%; max-height: 90vh; overflow-y: auto; border-color: var(--cyber-cyan); margin: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <b style="font-size: 16px;">Add Lab Hardware Equipment</b>
+          <button class="btn-toggle" style="padding: 2px 8px;" onclick="closeAddEquipmentModal()">✕</button>
+        </div>
+
+        <form onsubmit="handleSaveNewEquipment(event)" style="margin-top: 12px;">
+          <div class="field-group">
+            <label class="field-label">Equipment Name *</label>
+            <input type="text" id="aeq-name" class="m3-input" placeholder="e.g. STM32 Nucleo-F446RE Board" style="padding-left: 12px;" required>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Category</label>
+              <select id="aeq-cat" class="m3-input" style="padding-left: 12px;">
+                <option>Microcontrollers</option>
+                <option>Sensors</option>
+                <option>Motors</option>
+                <option>Motor Drivers</option>
+                <option>Batteries</option>
+                <option>Tools</option>
+                <option>3D Printing</option>
+              </select>
+            </div>
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Condition</label>
+              <select id="aeq-cond" class="m3-input" style="padding-left: 12px;">
+                <option>New</option>
+                <option>Good</option>
+                <option>Fair</option>
+                <option>Needs Repair</option>
+              </select>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Total Qty *</label>
+              <input type="number" id="aeq-tot" class="m3-input" value="10" min="1" style="padding-left: 12px;" required>
+            </div>
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Avail Qty *</label>
+              <input type="number" id="aeq-avail" class="m3-input" value="10" min="0" style="padding-left: 12px;" required>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Storage Location / Rack *</label>
+            <input type="text" id="aeq-loc" class="m3-input" placeholder="e.g. Cabinet MCU-3 / Bin 1" style="padding-left: 12px;" required>
+          </div>
+          <button type="submit" class="btn-primary" style="margin-top: 6px;">
+            📦 Add Equipment to Inventory
+          </button>
+        </form>
+      </div>
     </div>
 
     <!-- CREATE NOTICE MODAL -->
@@ -940,6 +1189,158 @@
       }
 
       showToast(`Event "${title}" scheduled and published!`, '🎪');
+    }
+
+    // ── DAY 12 EQUIPMENT JAVASCRIPT HANDLERS ─────────────────────────────────
+    let currentSelectedEquipment = '';
+    function toggleEquipmentTab() {
+      const catView = document.getElementById('eq-catalog-view');
+      const reqView = document.getElementById('eq-requests-view');
+      const btn = document.getElementById('eq-tab-btn');
+      if (catView.style.display !== 'none') {
+        catView.style.display = 'none';
+        reqView.style.display = 'block';
+        btn.textContent = '📦 Catalog';
+      } else {
+        catView.style.display = 'block';
+        reqView.style.display = 'none';
+        btn.textContent = '📋 My Requests (1)';
+      }
+    }
+
+    function openRequestEquipmentModal(name, maxQty) {
+      currentSelectedEquipment = name;
+      document.getElementById('req-modal-title').textContent = `Request ${name}`;
+      document.getElementById('req-qty').max = maxQty;
+      document.getElementById('request-equipment-modal').style.display = 'flex';
+    }
+    function closeRequestEquipmentModal() {
+      document.getElementById('request-equipment-modal').style.display = 'none';
+    }
+
+    function handleSaveEquipmentRequest(e) {
+      e.preventDefault();
+      const qty = document.getElementById('req-qty').value;
+      const purpose = document.getElementById('req-purpose').value;
+      const retDate = document.getElementById('req-return-date').value;
+
+      closeRequestEquipmentModal();
+
+      // 1. Add to My Requests list
+      const myReqs = document.getElementById('my-requests-container');
+      if (myReqs) {
+        const card = document.createElement('div');
+        card.className = 'm3-card';
+        card.style.marginTop = '0';
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 14px; font-weight: 800;">${currentSelectedEquipment}</div>
+            <span class="chip high">PENDING</span>
+          </div>
+          <div style="font-size: 11px; color: var(--cyber-cyan); margin-top: 4px;">Requested: ${qty} unit(s) • Return: 📅 ${retDate}</div>
+          <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Purpose: ${purpose}</div>
+        `;
+        myReqs.prepend(card);
+      }
+
+      // 2. Add to Admin Requests Queue
+      const adminReqs = document.getElementById('admin-requests-container');
+      if (adminReqs) {
+        const card = document.createElement('div');
+        card.className = 'm3-card';
+        card.style.marginTop = '0';
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="chip approved">PENDING APPROVAL</span>
+            <span style="font-size: 11px; color: var(--text-secondary);">Qty: ${qty}</span>
+          </div>
+          <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">${currentSelectedEquipment}</div>
+          <div style="font-size: 11px; color: var(--cyber-cyan); margin-top: 2px;">👤 Student (STU-1082) • Return: ${retDate}</div>
+          <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Purpose: ${purpose}</div>
+          <div style="display: flex; gap: 6px; margin-top: 10px;">
+            <button class="btn-primary" style="height: 28px; font-size: 11px; flex: 1;" onclick="handleApproveAndIssue(this, '${currentSelectedEquipment}')">Approve & Issue</button>
+            <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4); flex: 1;" onclick="this.closest('.m3-card').remove(); showToast('Request rejected', '🚫')">Reject</button>
+          </div>
+        `;
+        adminReqs.prepend(card);
+      }
+
+      showToast(`Request for ${qty}x ${currentSelectedEquipment} submitted!`, '📨');
+    }
+
+    function openAddEquipmentModal() { document.getElementById('add-equipment-modal').style.display = 'flex'; }
+    function closeAddEquipmentModal() { document.getElementById('add-equipment-modal').style.display = 'none'; }
+
+    function handleSaveNewEquipment(e) {
+      e.preventDefault();
+      const name = document.getElementById('aeq-name').value;
+      const cat = document.getElementById('aeq-cat').value;
+      const tot = document.getElementById('aeq-tot').value;
+      const avail = document.getElementById('aeq-avail').value;
+      const loc = document.getElementById('aeq-loc').value;
+      const cond = document.getElementById('aeq-cond').value;
+
+      closeAddEquipmentModal();
+
+      // 1. Add to Admin Catalog
+      const admList = document.getElementById('admin-equipment-container');
+      if (admList) {
+        const card = document.createElement('div');
+        card.className = 'm3-card';
+        card.style.marginTop = '0';
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="chip tag">${cat}</span>
+            <span style="font-size: 11px; font-weight: bold; color: var(--success);">${avail} / ${tot} AVAILABLE</span>
+          </div>
+          <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">${name}</div>
+          <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">📍 ${loc} • Condition: ${cond}</div>
+          <div style="display: flex; gap: 6px; margin-top: 8px;">
+            <button class="btn-outlined" style="height: 28px; font-size: 11px; flex: 1;" onclick="showToast('Edit equipment opened', '✏️')">Edit</button>
+            <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4); flex: 1;" onclick="this.closest('.m3-card').remove(); showToast('Equipment deleted', '🗑️')">Delete</button>
+          </div>
+        `;
+        admList.prepend(card);
+      }
+
+      // 2. Add to Student Catalog
+      const stuList = document.getElementById('equipment-container');
+      if (stuList) {
+        const card = document.createElement('div');
+        card.className = 'm3-card';
+        card.style.marginTop = '0';
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="chip tag">${cat}</span>
+            <span class="chip approved">${avail} AVAILABLE</span>
+          </div>
+          <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">${name}</div>
+          <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">📍 ${loc} • Condition: ${cond}</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+            <span style="font-size: 11px; color: var(--text-secondary);">Stock: ${avail} / ${tot} Total</span>
+            <button class="btn-primary" style="width: auto; height: 28px; padding: 0 14px; font-size: 11px;" onclick="openRequestEquipmentModal('${name}', ${avail})">Request</button>
+          </div>
+        `;
+        stuList.prepend(card);
+      }
+
+      showToast(`Hardware "${name}" added to inventory!`, '📦');
+    }
+
+    function handleApproveAndIssue(btn, name) {
+      const card = btn.closest('.m3-card');
+      card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span class="chip approved">ISSUED (STOCK DEDUCTED)</span>
+          <span style="font-size: 11px; color: var(--text-secondary);">Active</span>
+        </div>
+        <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">${name}</div>
+        <div style="font-size: 11px; color: var(--success); margin-top: 2px;">✅ Handed over to student • Inventory updated</div>
+        <div style="margin-top: 8px;">
+          <button class="btn-outlined" style="height: 28px; font-size: 11px; width: 100%; border-color: var(--cyber-cyan); color: var(--cyber-cyan);" onclick="this.closest('.m3-card').remove(); showToast('Return processed & stock restored', '🔄')">Process Return</button>
+        </div>
+      `;
+      showToast(`1 unit of "${name}" issued to student. Inventory stock reduced!`, '⚡');
     }
 
     // Toast

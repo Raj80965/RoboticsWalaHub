@@ -68,6 +68,44 @@ fun AdminMoreScreen(
     var showingAchievements by remember { mutableStateOf(false) }
     var showingNotices by remember { mutableStateOf(false) }
     var showingEvents by remember { mutableStateOf(false) }
+    var showingEquipment by remember { mutableStateOf(false) }
+    var showingEquipmentRequests by remember { mutableStateOf(false) }
+
+    if (showingEquipmentRequests) {
+        AdminEquipmentRequestsScreen(
+            onNavigateBack = { showingEquipmentRequests = false },
+            modifier = modifier
+        )
+        return
+    }
+
+    if (showingEquipment) {
+        Column(modifier = modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { showingEquipment = false }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back to Settings",
+                        tint = if (isDark) CyberCyan else ElectricBlue
+                    )
+                }
+                Text(
+                    text = "Back to Admin Options",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    color = if (isDark) CyberCyan else ElectricBlue
+                )
+            }
+            AdminEquipmentScreen(
+                onNavigateToRequests = { showingEquipmentRequests = true }
+            )
+        }
+        return
+    }
 
     if (showingNotices) {
         Column(modifier = modifier.fillMaxSize()) {
@@ -251,12 +289,16 @@ fun AdminMoreScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        // Day 12 Highlight Card: Inventory & Equipment Stock
         AdminOptionCard(
-            title = "Inventory & Equipment Stock",
-            subtitle = "Manage sensors, LiPo batteries, actuators, and controllers",
+            title = "📦 Inventory & Equipment Stock",
+            subtitle = "Manage microcontrollers, sensors, stock alerts & issue requests",
             icon = Icons.Filled.Inventory2,
-            isDark = isDark
+            isDark = isDark,
+            onClick = { showingEquipment = true }
         )
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         // Day 11 Highlight Card: Notice Board Management
         AdminOptionCard(

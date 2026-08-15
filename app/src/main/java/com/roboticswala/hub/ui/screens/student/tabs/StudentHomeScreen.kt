@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PrecisionManufacturing
@@ -111,6 +112,7 @@ fun StudentHomeScreen(
     onNavigateToAchievements: () -> Unit = {},
     onNavigateToNotices: () -> Unit = {},
     onNavigateToEvents: () -> Unit = {},
+    onNavigateToEquipment: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
@@ -437,6 +439,70 @@ fun StudentHomeScreen(
                 Spacer(modifier = Modifier.height(10.dp))
                 Box(modifier = Modifier.clickable(onClick = onNavigateToEvents)) {
                     UpcomingEventCard(event = uiState.upcomingEvent, isDark = isDark)
+                }
+
+                Spacer(modifier = Modifier.height(22.dp))
+
+                // ── 9. Lab Equipment & Components (Day 12) ───────────────
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SectionTitle(text = "Lab Equipment & Components", isDark = isDark)
+                    Text(
+                        text = "Browse & Request ➔",
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = if (isDark) CyberCyan else ElectricBlue,
+                        modifier = Modifier
+                            .clickable(onClick = onNavigateToEquipment)
+                            .padding(4.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = onNavigateToEquipment)
+                        .border(
+                            width = 1.dp,
+                            color = if (isDark) DarkSurfaceBorder else LightSurfaceBorder,
+                            shape = RoundedCornerShape(18.dp)
+                        ),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isDark) DarkSurface.copy(alpha = 0.95f) else LightSurface
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(42.dp)
+                                .clip(CircleShape)
+                                .background(if (isDark) CyberCyan.copy(alpha = 0.15f) else ElectricBlue.copy(alpha = 0.12f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(imageVector = Icons.Filled.Inventory2, contentDescription = null, tint = if (isDark) CyberCyan else ElectricBlue, modifier = Modifier.size(22.dp))
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Hardware & Sensors Inventory",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                            )
+                            Text(
+                                text = "Request microcontrollers, motors, LiPo batteries & tools for your projects",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                            )
+                        }
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(28.dp))
