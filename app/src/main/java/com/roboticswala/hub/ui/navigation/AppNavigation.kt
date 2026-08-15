@@ -25,6 +25,8 @@ import com.roboticswala.hub.ui.screens.student.attendance.StudentAttendanceViewM
 import com.roboticswala.hub.ui.screens.student.booking.StudentBookingsScreen
 import com.roboticswala.hub.ui.screens.student.booking.StudentBookingViewModel
 import com.roboticswala.hub.ui.screens.student.booking.StudentBookingViewModelFactory
+import com.roboticswala.hub.ui.screens.student.achievements.CreateAchievementScreen
+import com.roboticswala.hub.ui.screens.student.achievements.StudentAchievementsScreen
 import com.roboticswala.hub.ui.screens.student.projects.CreateProjectScreen
 import com.roboticswala.hub.ui.screens.student.projects.ProjectDetailsScreen
 import com.roboticswala.hub.ui.screens.student.qr.StudentQRScannerScreen
@@ -261,6 +263,16 @@ fun AppNavigation(
                     navController.navigate(Screen.StudentTasks.route) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateToAchievements = {
+                    navController.navigate(Screen.StudentAchievements.route) {
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToCreateAchievement = {
+                    navController.navigate(Screen.CreateAchievement.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -477,7 +489,78 @@ fun AppNavigation(
             )
         }
 
-        // 12. Admin Main Dashboard
+        // 12. Student Achievements Screen (Day 10)
+        composable(
+            route = Screen.StudentAchievements.route,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(350)
+                ) + fadeIn(animationSpec = tween(350))
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(350)
+                ) + fadeOut(animationSpec = tween(350))
+            }
+        ) {
+            val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            val studentProfile = UserProfile(
+                uid = currentUid,
+                fullName = currentUser?.displayName ?: "Student",
+                email = currentUser?.email ?: "",
+                status = "Approved"
+            )
+
+            StudentAchievementsScreen(
+                userProfile = studentProfile,
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToCreate = {
+                    navController.navigate(Screen.CreateAchievement.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        // 13. Create / Edit Achievement Screen (Day 10)
+        composable(
+            route = Screen.CreateAchievement.route,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Up,
+                    animationSpec = tween(350)
+                ) + fadeIn(animationSpec = tween(350))
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Down,
+                    animationSpec = tween(350)
+                ) + fadeOut(animationSpec = tween(350))
+            }
+        ) {
+            val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            val studentProfile = UserProfile(
+                uid = currentUid,
+                fullName = currentUser?.displayName ?: "Student",
+                email = currentUser?.email ?: "",
+                status = "Approved"
+            )
+
+            CreateAchievementScreen(
+                userProfile = studentProfile,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // 14. Admin Main Dashboard
         composable(
             route = Screen.AdminMain.route,
             enterTransition = {

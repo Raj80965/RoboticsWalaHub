@@ -15,4 +15,6 @@ sealed class Screen(val route: String) {
         fun createRoute(projectId: String) = "project_details/$projectId"
     }
     object StudentTasks : Screen("student_tasks")
+    object StudentAchievements : Screen("student_achievements")
+    object CreateAchievement : Screen("create_achievement")
 }

@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.FolderOpen
@@ -107,6 +108,7 @@ fun StudentHomeScreen(
     onNavigateToProjects: () -> Unit = {},
     onNavigateToProjectDetails: (String) -> Unit = {},
     onNavigateToTasks: () -> Unit = {},
+    onNavigateToAchievements: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
@@ -327,9 +329,71 @@ fun StudentHomeScreen(
                 Spacer(modifier = Modifier.height(10.dp))
                 AssignedTasksCard(tasks = uiState.tasks, isDark = isDark)
 
+                // ── 6. Approved Achievements (Day 10) ───────────────────
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SectionTitle(text = "Achievements & Certs", isDark = isDark)
+                    Text(
+                        text = "View All ➔",
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = if (isDark) CyberCyan else ElectricBlue,
+                        modifier = Modifier
+                            .clickable(onClick = onNavigateToAchievements)
+                            .padding(4.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = onNavigateToAchievements)
+                        .border(
+                            width = 1.dp,
+                            color = if (isDark) DarkSurfaceBorder else LightSurfaceBorder,
+                            shape = RoundedCornerShape(18.dp)
+                        ),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isDark) DarkSurface.copy(alpha = 0.95f) else LightSurface
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(42.dp)
+                                .clip(CircleShape)
+                                .background(if (isDark) CyberCyan.copy(alpha = 0.15f) else ElectricBlue.copy(alpha = 0.12f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(imageVector = Icons.Filled.EmojiEvents, contentDescription = null, tint = if (isDark) CyberCyan else ElectricBlue, modifier = Modifier.size(22.dp))
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Verified Awards & Certifications",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                            )
+                            Text(
+                                text = "Submit competition results & certificates for profile verification",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                            )
+                        }
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(22.dp))
 
-                // ── 6. Latest Notice ─────────────────────────────────────
+                // ── 7. Latest Notice ─────────────────────────────────────
                 SectionTitle(text = "Latest Notice", isDark = isDark)
                 Spacer(modifier = Modifier.height(10.dp))
                 LatestNoticeCard(notice = uiState.latestNotice, isDark = isDark)

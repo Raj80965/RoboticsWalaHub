@@ -72,7 +72,9 @@ fun StudentMainScreen(
     onNavigateToBookings: () -> Unit = {},
     onNavigateToCreateProject: () -> Unit = {},
     onNavigateToProjectDetails: (String) -> Unit = {},
-    onNavigateToTasks: () -> Unit = {}
+    onNavigateToTasks: () -> Unit = {},
+    onNavigateToAchievements: () -> Unit = {},
+    onNavigateToCreateAchievement: () -> Unit = {}
 ) {
     val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
     val viewModel: StudentViewModel = viewModel(
@@ -204,7 +206,8 @@ fun StudentMainScreen(
                             onNavigateToBookings = onNavigateToBookings,
                             onNavigateToProjects = { viewModel.onTabSelected(StudentNavRoute.Projects.route) },
                             onNavigateToProjectDetails = onNavigateToProjectDetails,
-                            onNavigateToTasks = onNavigateToTasks
+                            onNavigateToTasks = onNavigateToTasks,
+                            onNavigateToAchievements = onNavigateToAchievements
                         )
                         StudentNavRoute.Projects.route -> StudentProjectsScreen(
                             currentUid = currentUid,
@@ -217,7 +220,8 @@ fun StudentMainScreen(
                         )
                         StudentNavRoute.Profile.route -> StudentProfileScreen(
                             userProfile = uiState.userProfile,
-                            onLogout = onLogout
+                            onLogout = onLogout,
+                            onNavigateToAchievements = onNavigateToAchievements
                         )
                         else -> StudentHomeScreen(
                             uiState = uiState,
@@ -227,7 +231,8 @@ fun StudentMainScreen(
                             onNavigateToBookings = onNavigateToBookings,
                             onNavigateToProjects = { viewModel.onTabSelected(StudentNavRoute.Projects.route) },
                             onNavigateToProjectDetails = onNavigateToProjectDetails,
-                            onNavigateToTasks = onNavigateToTasks
+                            onNavigateToTasks = onNavigateToTasks,
+                            onNavigateToAchievements = onNavigateToAchievements
                         )
                     }
                 }

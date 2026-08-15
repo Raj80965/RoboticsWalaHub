@@ -2,6 +2,7 @@ package com.roboticswala.hub.ui.screens.student.tabs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,7 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Domain
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
@@ -36,6 +38,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,7 +52,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.roboticswala.hub.data.models.Achievement
 import com.roboticswala.hub.data.models.UserProfile
+import com.roboticswala.hub.data.repository.FirestoreAchievementRepository
 import com.roboticswala.hub.ui.components.RoboticsOutlinedButton
 import com.roboticswala.hub.ui.components.StatusChip
 import com.roboticswala.hub.ui.theme.CircuitSuccess
@@ -72,11 +79,14 @@ import com.roboticswala.hub.ui.theme.TextSecondaryLight
 fun StudentProfileScreen(
     userProfile: UserProfile?,
     onLogout: () -> Unit,
+    onNavigateToAchievements: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
     val scrollState = rememberScrollState()
     val profile = userProfile ?: UserProfile()
+    val achievementRepo = remember { FirestoreAchievementRepository() }
+    val approvedAchievements by achievementRepo.observeApprovedAchievements(profile.uid).collectAsState(initial = emptyList())
 
     Column(
         modifier = modifier
@@ -291,6 +301,107 @@ fun StudentProfileScreen(
                         isDark = isDark,
                         isLocked = true
                     )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // ── Day 10: Verified Achievements & Certifications Showcase ──────────
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = if (isDark) DarkSurfaceBorder else LightSurfaceBorder,
+                    shape = RoundedCornerShape(18.dp)
+                ),
+            shape = RoundedCornerShape(18.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = if (isDark) DarkSurface.copy(alpha = 0.95f) else LightSurface
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(18.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Filled.EmojiEvents,
+                            contentDescription = null,
+                            tint = if (isDark) CyberCyan else ElectricBlue,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Verified Achievements (${approvedAchievements.size})",
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                            color = if (isDark) CyberCyan else ElectricBlue
+                        )
+                    }
+
+                    Text(
+                        text = "Manage ➔",
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = if (isDark) CyberCyan else ElectricBlue,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .clickable(onClick = onNavigateToAchievements)
+                            .padding(4.dp)
+                    )
+                }
+
+                if (approvedAchievements.isEmpty()) {
+                    Text(
+                        text = "No approved achievements yet. Submit certificates from the Achievements hub.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                    )
+                } else {
+                    approvedAchievements.forEach { item ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(if (isDark) DarkSurfaceElevated else LightSurfaceElevated)
+                                .padding(12.dp)
+                        ) {
+                            Column {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = item.title,
+                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                        color = if (isDark) TextPrimaryDark else TextPrimaryLight,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(CircuitSuccess.copy(alpha = 0.15f))
+                                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                                    ) {
+                                        Text(text = "VERIFIED", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = CircuitSuccess)
+                                    }
+                                }
+                                Text(
+                                    text = "${item.category} • ${item.achievementLevel} • 📅 ${item.achievementDate}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = if (isDark) TextSecondaryDark else TextSecondaryLight,
+                                    modifier = Modifier.padding(top = 2.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
