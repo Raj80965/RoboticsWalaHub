@@ -104,6 +104,8 @@ fun StudentHomeScreen(
     onNavigateToScanner: () -> Unit = {},
     onNavigateToAttendanceHistory: () -> Unit = {},
     onNavigateToBookings: () -> Unit = {},
+    onNavigateToProjects: () -> Unit = {},
+    onNavigateToProjectDetails: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
@@ -281,9 +283,27 @@ fun StudentHomeScreen(
                 Spacer(modifier = Modifier.height(22.dp))
 
                 // ── 4. Current Projects ──────────────────────────────────
-                SectionTitle(text = "Current Projects", isDark = isDark)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SectionTitle(text = "Current Projects", isDark = isDark)
+                    Text(
+                        text = "View All (${uiState.projects.size}) ➔",
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = if (isDark) CyberCyan else ElectricBlue,
+                        modifier = Modifier
+                            .clickable(onClick = onNavigateToProjects)
+                            .padding(4.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.height(10.dp))
-                CurrentProjectsCard(projects = uiState.projects, isDark = isDark)
+                CurrentProjectsCard(
+                    projects = uiState.projects,
+                    isDark = isDark,
+                    onNavigateToDetails = onNavigateToProjectDetails
+                )
 
                 Spacer(modifier = Modifier.height(22.dp))
 
@@ -742,7 +762,8 @@ private fun TodayLabSlotCard(
 @Composable
 private fun CurrentProjectsCard(
     projects: List<StudentProject>,
-    isDark: Boolean
+    isDark: Boolean,
+    onNavigateToDetails: (String) -> Unit = {}
 ) {
     Card(
         modifier = Modifier
@@ -763,7 +784,11 @@ private fun CurrentProjectsCard(
         } else {
             Column(modifier = Modifier.fillMaxWidth().padding(18.dp)) {
                 projects.forEach { project ->
-                    ProjectRow(project = project, isDark = isDark)
+                    ProjectRow(
+                        project = project,
+                        isDark = isDark,
+                        onClick = { onNavigateToDetails(project.id) }
+                    )
                     if (project != projects.last()) {
                         Spacer(modifier = Modifier.height(14.dp))
                         Box(
@@ -781,8 +806,16 @@ private fun CurrentProjectsCard(
 }
 
 @Composable
-private fun ProjectRow(project: StudentProject, isDark: Boolean) {
-    Column {
+private fun ProjectRow(
+    project: StudentProject,
+    isDark: Boolean,
+    onClick: () -> Unit = {}
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,

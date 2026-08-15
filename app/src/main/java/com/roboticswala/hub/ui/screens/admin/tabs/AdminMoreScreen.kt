@@ -1,8 +1,10 @@
-﻿package com.roboticswala.hub.ui.screens.admin.tabs
+package com.roboticswala.hub.ui.screens.admin.tabs
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,17 +18,24 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.PrecisionManufacturing
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -51,6 +60,33 @@ fun AdminMoreScreen(
 ) {
     val isDark = isSystemInDarkTheme()
     val scrollState = rememberScrollState()
+    var showingProjects by remember { mutableStateOf(false) }
+
+    if (showingProjects) {
+        Column(modifier = modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { showingProjects = false }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back to Settings",
+                        tint = if (isDark) CyberCyan else ElectricBlue
+                    )
+                }
+                Text(
+                    text = "Back to Admin Options",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    color = if (isDark) CyberCyan else ElectricBlue
+                )
+            }
+            AdminProjectsScreen()
+        }
+        return
+    }
 
     Column(
         modifier = modifier
@@ -64,12 +100,23 @@ fun AdminMoreScreen(
             color = if (isDark) TextPrimaryDark else TextPrimaryLight
         )
         Text(
-            text = "Facility controls, inventory management, and broadcast alerts",
+            text = "Facility controls, project monitoring, and inventory management",
             style = MaterialTheme.typography.bodySmall,
             color = if (isDark) TextSecondaryDark else TextSecondaryLight
         )
 
         Spacer(modifier = Modifier.height(18.dp))
+
+        // Day 8 Highlight Card
+        AdminOptionCard(
+            title = "⚡ Projects Registry & Mentorship",
+            subtitle = "Review all lab robotics projects, assign mentors, and audit budgets",
+            icon = Icons.Filled.PrecisionManufacturing,
+            isDark = isDark,
+            onClick = { showingProjects = true }
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         AdminOptionCard(
             title = "Inventory & Equipment Stock",
@@ -122,11 +169,13 @@ private fun AdminOptionCard(
     title: String,
     subtitle: String,
     icon: ImageVector,
-    isDark: Boolean
+    isDark: Boolean,
+    onClick: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .border(
                 width = 1.dp,
                 color = if (isDark) DarkSurfaceBorder else LightSurfaceBorder,
@@ -134,7 +183,7 @@ private fun AdminOptionCard(
             ),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isDark) DarkSurface.copy(alpha = 0.95f) else LightSurface
+            containerColor = if (isDark) DarkSurface else LightSurface
         )
     ) {
         Row(
@@ -143,19 +192,30 @@ private fun AdminOptionCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = if (isDark) CyberCyan else ElectricBlue,
-                modifier = Modifier.size(24.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .border(
+                        width = 1.dp,
+                        color = if (isDark) CyberCyan.copy(alpha = 0.4f) else ElectricBlue.copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(12.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = if (isDark) CyberCyan else ElectricBlue,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.width(14.dp))
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                     color = if (isDark) TextPrimaryDark else TextPrimaryLight
                 )
                 Spacer(modifier = Modifier.height(2.dp))

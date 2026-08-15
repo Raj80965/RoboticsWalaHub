@@ -10,4 +10,8 @@ sealed class Screen(val route: String) {
     object StudentQRScanner : Screen("student_qr_scanner")
     object StudentAttendanceHistory : Screen("student_attendance_history")
     object StudentBookings : Screen("student_bookings")
+    object CreateProject : Screen("create_project")
+    object ProjectDetails : Screen("project_details/{projectId}") {
+        fun createRoute(projectId: String) = "project_details/$projectId"
+    }
 }

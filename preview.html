@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Robotics Wala Hub - Day 7 Real Lab Slot Booking System Live Preview</title>
+  <title>Robotics Wala Hub - Day 8 Project Management System Live Simulator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -310,37 +310,48 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    .chip.approved { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); }
-    .chip.pending { background: rgba(255, 179, 0, 0.15); color: var(--warning); border: 1px solid rgba(255, 179, 0, 0.3); }
-    .chip.rejected { background: rgba(255, 59, 48, 0.15); color: var(--error); border: 1px solid rgba(255, 59, 48, 0.3); }
-    .chip.cyan { background: rgba(0, 212, 255, 0.15); color: var(--cyber-cyan); border: 1px solid rgba(0, 212, 255, 0.3); }
-    .chip.tag { background: var(--surface-elevated); color: var(--text-secondary); border: 1px solid var(--surface-border); font-size: 9px; cursor: pointer; }
+    .chip.approved, .chip.completed { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); }
+    .chip.pending, .chip.planning { background: rgba(255, 179, 0, 0.15); color: var(--warning); border: 1px solid rgba(255, 179, 0, 0.3); }
+    .chip.inprogress { background: rgba(0, 212, 255, 0.15); color: var(--cyber-cyan); border: 1px solid rgba(0, 212, 255, 0.3); }
+    .chip.rejected, .chip.onhold { background: rgba(255, 59, 48, 0.15); color: var(--error); border: 1px solid rgba(255, 59, 48, 0.3); }
+    .chip.tag { background: var(--surface-elevated); color: var(--text-secondary); border: 1px solid var(--surface-border); font-size: 10px; cursor: pointer; }
     .chip.tag.selected { background: var(--cyber-cyan); color: #000; border-color: var(--cyber-cyan); font-weight: 800; }
 
-    .student-hero-card {
-      background: linear-gradient(135deg, rgba(0, 102, 255, 0.18) 0%, rgba(0, 212, 255, 0.08) 100%);
-      border: 1px solid rgba(0, 212, 255, 0.3);
-      border-radius: 20px;
-      padding: 16px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      position: relative;
+    .progress-bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: var(--surface-border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 6px;
     }
-    .avatar-circle {
-      width: 56px;
-      height: 56px;
-      border-radius: 18px;
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0066FF 0%, #00D4FF 100%);
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .fab {
+      position: absolute;
+      bottom: 74px;
+      right: 18px;
       background: linear-gradient(135deg, #00D4FF 0%, #0066FF 100%);
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 20px;
+      font-weight: 800;
+      font-size: 13px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      font-weight: 800;
-      color: #fff;
-      box-shadow: 0 4px 14px rgba(0, 212, 255, 0.4);
-      flex-shrink: 0;
+      gap: 6px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 212, 255, 0.4);
+      z-index: 50;
+      transition: transform 0.2s;
     }
+    .fab:hover { transform: scale(1.05); }
 
     .bottom-nav {
       height: 60px;
@@ -405,7 +416,7 @@
 
   <div class="header-bar">
     <div class="badge">
-      <span>⚡</span> <b>Day 7: Lab Slot Booking & Conflict System</b>
+      <span>🚀</span> <b>Day 8: Project Management System</b>
     </div>
     <div style="display: flex; gap: 6px;">
       <button class="btn-toggle" onclick="toggleTheme()" id="btn-theme">
@@ -417,12 +428,11 @@
 
   <!-- Quick Screen Switcher -->
   <div class="quick-nav-bar">
-    <button class="quick-nav-btn" onclick="goToScreen('bookings')">📅 Student Bookings</button>
-    <button class="quick-nav-btn" onclick="openCreateBookingModal()">➕ Reserve Lab Slot</button>
-    <button class="quick-nav-btn" onclick="openAdminBookings()">🛡️ Admin Bookings</button>
+    <button class="quick-nav-btn" onclick="goToScreen('projects-list')">🚀 Projects List</button>
+    <button class="quick-nav-btn" onclick="goToScreen('create-project')">➕ Create Project</button>
+    <button class="quick-nav-btn" onclick="goToScreen('project-details')">🔬 Project Details & Updates</button>
+    <button class="quick-nav-btn" onclick="goToScreen('admin-projects')">🛡️ Admin Projects</button>
     <button class="quick-nav-btn" onclick="goToScreen('student')">🎓 Student Dashboard</button>
-    <button class="quick-nav-btn" onclick="goToScreen('scanner')">📷 QR Scanner</button>
-    <button class="quick-nav-btn" onclick="goToScreen('login')">🔑 Login</button>
   </div>
 
   <div class="device-frame">
@@ -446,329 +456,426 @@
           🤖
         </div>
         <h1 class="app-title" style="font-size: 26px;">Robotics Wala Hub</h1>
-        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 6px; letter-spacing: 1px;">LAB RESERVATION & SCHEDULING</p>
+        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 6px; letter-spacing: 1px;">PROJECT REGISTRY & WORKBENCH</p>
       </div>
 
-      <!-- 2. LOGIN SCREEN -->
-      <div class="screen" id="screen-login">
-        <div style="text-align: center; margin-top: 15px; margin-bottom: 12px;">
-          <div style="font-size: 34px; margin-bottom: 4px;">🤖</div>
-          <h2 class="app-title">Robotics Wala Hub</h2>
-          <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Sign in with your approved credentials</p>
-        </div>
-
-        <div class="m3-card">
-          <form onsubmit="handleFirebaseLogin(event)">
-            <div class="field-group">
-              <label class="field-label">Email Address</label>
-              <div class="input-wrapper">
-                <span class="input-icon">✉️</span>
-                <input type="email" id="login-email" class="m3-input" value="aarav.sharma@robotics.hub" required>
-              </div>
-            </div>
-
-            <div class="field-group">
-              <label class="field-label">Password</label>
-              <div class="input-wrapper">
-                <span class="input-icon">🔒</span>
-                <input type="password" id="login-password" class="m3-input" value="pass123456" required>
-              </div>
-            </div>
-
-            <button type="submit" class="btn-primary" id="btn-login">
-              <span>Sign In via Firebase</span> ➔
-            </button>
-          </form>
-        </div>
-
-        <div style="display: flex; gap: 8px; margin-top: 12px;">
-          <button class="btn-outlined" style="flex: 1; font-size: 11px;" onclick="quickLogin('student')">⚡ Student</button>
-          <button class="btn-outlined" style="flex: 1; font-size: 11px;" onclick="quickLogin('admin')">⚡ Admin</button>
-        </div>
-      </div>
-
-      <!-- 3. STUDENT DASHBOARD SCREEN (DAY 7 INTEGRATED) -->
+      <!-- 2. STUDENT DASHBOARD (INTEGRATED WITH REAL PROJECTS) -->
       <div class="screen" id="screen-student" style="padding: 0;">
         <div style="padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--surface-border); background: var(--surface);">
           <div style="display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 22px;">🤖</span>
             <div>
               <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">Robotics Wala Hub</div>
-              <div style="font-size: 10px; color: var(--cyber-cyan); font-weight: 700;">DAY 7: LAB SLOTS ACTIVE</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan); font-weight: 700;">DAY 8: PROJECTS ACTIVE</div>
             </div>
           </div>
           <div style="display: flex; gap: 6px;">
-            <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="openCreateBookingModal()" title="Reserve Slot">➕</button>
-            <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="goToScreen('login')">🚪</button>
+            <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="goToScreen('create-project')">➕</button>
+            <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="restartSplash()">🚪</button>
           </div>
         </div>
 
         <div style="flex: 1; overflow-y: auto; padding: 14px;">
-          <!-- Student Header Card -->
-          <div class="student-hero-card">
-            <div class="avatar-circle">AS</div>
-            <div style="flex: 1; min-width: 0;">
-              <div style="display: flex; align-items: center; justify-content: space-between;">
-                <span style="font-size: 10px; font-weight: 700; color: var(--cyber-cyan);">APPROVED STUDENT</span>
-                <span class="chip approved">Active</span>
-              </div>
-              <div style="font-size: 17px; font-weight: 800; color: var(--text-primary); margin-top: 1px;">Aarav Sharma</div>
-              <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--cyber-cyan); font-weight: 700;">ID: RW-2026-8891</div>
-              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">IIT Delhi • Mechatronics & AI (3rd Year)</div>
-            </div>
-          </div>
-
-          <!-- DAY 7 HIGHLIGHT: TODAY'S LAB SLOT CARD -->
-          <div class="m3-card" style="border-color: var(--cyber-cyan); cursor: pointer;" onclick="goToScreen('bookings')">
+          <!-- Student Hero -->
+          <div class="m3-card" style="margin-top: 0; background: linear-gradient(135deg, rgba(0, 102, 255, 0.2) 0%, rgba(0, 212, 255, 0.1) 100%);">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="font-size: 16px;">🔬</span>
-                <span style="font-size: 13px; font-weight: 800;">Today's Lab Slot</span>
+              <div>
+                <span class="chip inprogress">Approved Student</span>
+                <div style="font-size: 18px; font-weight: 800; margin-top: 4px;">Aarav Sharma</div>
+                <div style="font-size: 11px; color: var(--cyber-cyan); font-family: 'JetBrains Mono';">ID: RW-STU-042</div>
               </div>
-              <span class="chip approved" id="dash-slot-status">Approved</span>
-            </div>
-
-            <div id="dash-slot-details" style="margin-top: 10px;">
-              <div style="font-size: 15px; font-weight: 800; color: var(--text-primary);" id="dash-slot-project">Autonomous Maze Solving Rover</div>
-              <div style="font-size: 12px; color: var(--cyber-cyan); font-weight: 700; margin-top: 2px;" id="dash-slot-time">🕒 10:00 AM - 12:00 PM (2 hrs)</div>
-              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;" id="dash-slot-equipment">Equipment: TurtleBot4 Mobile Robot, SLAM Testbed</div>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--surface-border);">
-              <span style="font-size: 11px; color: var(--text-secondary);">Manage in Booking History</span>
-              <span style="font-size: 11px; font-weight: 700; color: var(--cyber-cyan);">View Details ➔</span>
+              <div style="width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, #00D4FF 0%, #0066FF 100%); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800;">
+                AS
+              </div>
             </div>
           </div>
 
-          <!-- Quick Reserve Slot Action Card -->
-          <div class="m3-card" style="background: linear-gradient(135deg, rgba(0, 102, 255, 0.22) 0%, rgba(0, 212, 255, 0.12) 100%); border-color: var(--primary); cursor: pointer;" onclick="openCreateBookingModal()">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(0, 102, 255, 0.3); display: flex; align-items: center; justify-content: center; font-size: 20px;">
-                  ➕
-                </div>
-                <div>
-                  <div style="font-size: 14px; font-weight: 800; color: #fff;">Reserve New Lab Slot</div>
-                  <div style="font-size: 11px; color: var(--cyber-cyan); font-weight: 600;">Book 3D printers, testing bays & LiDAR kits</div>
-                </div>
-              </div>
-              <span style="font-size: 18px; color: var(--cyber-cyan);">➔</span>
-            </div>
+          <!-- Current Active Projects Section -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; margin-bottom: 4px;">
+            <span style="font-size: 14px; font-weight: 800;">Current Projects (2)</span>
+            <span style="font-size: 11px; color: var(--cyber-cyan); font-weight: 700; cursor: pointer;" onclick="goToScreen('projects-list')">View All ➔</span>
           </div>
 
-          <!-- Attendance Overview Card -->
-          <div class="m3-card">
+          <!-- Active Project Card 1 -->
+          <div class="m3-card" style="cursor: pointer;" onclick="goToScreen('project-details')">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-size: 13px; font-weight: 700;">📊 Lab Attendance</span>
-              <span class="chip approved">88% Good</span>
+              <b style="font-size: 14px;">Autonomous SLAM Maze Rover</b>
+              <span class="chip inprogress" id="dash-proj-status">In Progress</span>
             </div>
-            <div style="font-size: 32px; font-weight: 800; color: var(--success); margin-top: 8px;">88.0%</div>
-            <div style="font-size: 11px; color: var(--text-secondary);">22 present / 25 total days • 110 hrs worked</div>
+            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Category: Robotics • Hardware</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+              <span style="font-size: 11px; color: var(--text-secondary);">Progress</span>
+              <span style="font-size: 12px; font-weight: 800; color: var(--cyber-cyan);" id="dash-proj-prog">68%</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" id="dash-proj-bar" style="width: 68%;"></div>
+            </div>
+          </div>
+
+          <!-- Quick Reserve Lab Slot -->
+          <div class="m3-card" style="border-color: var(--primary);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 800;">🔬 Today's Lab Slot</span>
+              <span class="chip approved">Approved</span>
+            </div>
+            <div style="font-size: 12px; color: var(--cyber-cyan); margin-top: 6px;">🕒 10:00 AM - 12:00 PM (LiDAR Test Bay 2)</div>
           </div>
         </div>
 
         <div class="bottom-nav">
           <button class="nav-item active"><span style="font-size:16px;">🏠</span><span>Home</span></button>
-          <button class="nav-item" onclick="goToScreen('bookings')"><span style="font-size:16px;">📅</span><span>Bookings</span></button>
-          <button class="nav-item" onclick="goToScreen('scanner')"><span style="font-size:16px;">📷</span><span>Scan QR</span></button>
+          <button class="nav-item" onclick="goToScreen('projects-list')"><span style="font-size:16px;">🚀</span><span>Projects</span></button>
+          <button class="nav-item" onclick="goToScreen('admin-projects')"><span style="font-size:16px;">🛡️</span><span>Admin</span></button>
         </div>
       </div>
 
-      <!-- 4. STUDENT BOOKINGS HISTORY & CALENDAR SCREEN (DAY 7) -->
-      <div class="screen" id="screen-bookings" style="padding: 0;">
+      <!-- 3. STUDENT PROJECTS LIST SCREEN (DAY 8) -->
+      <div class="screen" id="screen-projects-list" style="padding: 0;">
         <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
-          <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
             <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
             <div>
-              <div style="font-size: 15px; font-weight: 800; color: #fff;">My Lab Bookings</div>
-              <div style="font-size: 10px; color: var(--cyber-cyan);">REAL FIRESTORE COLLECTION /labBookings</div>
+              <div style="font-size: 15px; font-weight: 800;">Robotics Projects</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan);">FIRESTORE /projects COLLECTION</div>
             </div>
           </div>
-          <button class="btn-toggle" style="padding: 4px 10px; font-size: 11px; background: var(--primary); border: none;" onclick="openCreateBookingModal()">➕ Book Slot</button>
+          <button class="btn-toggle" style="padding: 4px 10px; font-size: 11px; background: var(--primary); border: none;" onclick="goToScreen('create-project')">➕ New</button>
         </div>
 
         <div style="flex: 1; overflow-y: auto; padding: 14px;">
-          <!-- Calendar Date Filter Pills -->
-          <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px;" id="student-calendar-pills">
-            <span class="chip tag selected" onclick="filterStudentDate('All', this)">All Dates</span>
-            <span class="chip tag" onclick="filterStudentDate('2026-08-15', this)">Today (08-15)</span>
-            <span class="chip tag" onclick="filterStudentDate('2026-08-16', this)">Tomorrow (08-16)</span>
-            <span class="chip tag" onclick="filterStudentDate('2026-08-17', this)">Mon (08-17)</span>
-          </div>
-
-          <!-- Bookings List -->
-          <div id="student-bookings-list" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-            <!-- Booking Item 1 -->
-            <div class="m3-card" style="margin-top: 0; cursor: pointer;" onclick="openDetailModal(0)">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <b style="font-size: 14px;">Autonomous Maze Solving Rover</b>
-                <span class="chip approved">Approved</span>
-              </div>
-              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">📅 2026-08-15 | 🕒 10:00 AM - 12:00 PM (2 hrs)</div>
-              <div style="font-size: 11px; color: var(--cyber-cyan); margin-top: 4px;">🔬 TurtleBot4 Mobile Robot, SLAM Testbed</div>
-            </div>
-
-            <!-- Booking Item 2 -->
-            <div class="m3-card" style="margin-top: 0; cursor: pointer;" onclick="openDetailModal(1)">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <b style="font-size: 14px;">Drone Propeller 3D Printing</b>
-                <span class="chip pending">Pending</span>
-              </div>
-              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">📅 2026-08-16 | 🕒 02:00 PM - 04:30 PM (2h 30m)</div>
-              <div style="font-size: 11px; color: var(--cyber-cyan); margin-top: 4px;">🔬 3D Printer (Prusa MK4)</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 5. ADMIN BOOKINGS MANAGEMENT SCREEN (DAY 7) -->
-      <div class="screen" id="screen-admin" style="padding: 0;">
-        <div style="padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--surface-border); background: var(--surface);">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 20px;">🛡️</span>
-            <div>
-              <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">Robotics Wala Hub</div>
-              <div style="font-size: 10px; color: var(--warning); font-weight: 700;">ADMIN BOOKING APPROVALS</div>
-            </div>
-          </div>
-          <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="goToScreen('login')">🚪 Logout</button>
-        </div>
-
-        <div style="padding: 14px; overflow-y: auto; height: calc(100% - 60px);">
           <!-- Search Bar -->
           <div class="field-group" style="margin-bottom: 8px;">
             <div class="input-wrapper">
               <span class="input-icon">🔍</span>
-              <input type="text" class="m3-input" placeholder="Search student, ID, or project..." id="admin-search-input" oninput="filterAdminList()">
+              <input type="text" class="m3-input" placeholder="Search by Project Title, Components..." id="proj-search-input" oninput="filterProjectsList()">
             </div>
           </div>
 
-          <!-- Status Filter Tabs -->
-          <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px;">
-            <span class="chip tag selected" id="astat-all" onclick="setAdminStatusFilter('All')">All</span>
-            <span class="chip tag" id="astat-pending" onclick="setAdminStatusFilter('Pending')">Pending</span>
-            <span class="chip tag" id="astat-approved" onclick="setAdminStatusFilter('Approved')">Approved</span>
-            <span class="chip tag" id="astat-rejected" onclick="setAdminStatusFilter('Rejected')">Rejected</span>
+          <!-- Category Filter Pills -->
+          <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px;" id="proj-cat-pills">
+            <span class="chip tag selected" onclick="filterCategory('All', this)">All</span>
+            <span class="chip tag" onclick="filterCategory('Robotics', this)">Robotics</span>
+            <span class="chip tag" onclick="filterCategory('AI', this)">AI</span>
+            <span class="chip tag" onclick="filterCategory('IoT', this)">IoT</span>
+            <span class="chip tag" onclick="filterCategory('Automation', this)">Automation</span>
           </div>
 
-          <div style="font-size: 13px; font-weight: 800; margin-top: 10px; margin-bottom: 6px;">
-            Booking Requests (<span id="admin-req-count">2</span>)
+          <!-- Status Filter Pills -->
+          <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px;">
+            <span class="chip tag selected" onclick="filterStatus('All', this)">All Status</span>
+            <span class="chip tag" onclick="filterStatus('In Progress', this)">In Progress</span>
+            <span class="chip tag" onclick="filterStatus('Completed', this)">Completed</span>
+            <span class="chip tag" onclick="filterStatus('Planning', this)">Planning</span>
           </div>
 
-          <!-- Admin Requests List -->
-          <div id="admin-requests-list" style="display: flex; flex-direction: column; gap: 10px;">
-            <!-- Item 1 (Approved) -->
+          <div style="font-size: 13px; font-weight: 800; margin-top: 6px; margin-bottom: 6px;">
+            Projects (<span id="proj-count">2</span>)
+          </div>
+
+          <!-- Projects List -->
+          <div id="projects-container" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Project 1 -->
+            <div class="m3-card" style="margin-top: 0; cursor: pointer;" onclick="goToScreen('project-details')">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="chip inprogress">Robotics</span>
+                <span class="chip inprogress" id="card1-status">In Progress</span>
+              </div>
+              <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">Autonomous SLAM Maze Rover</div>
+              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">ROS2 navigation stack with RPLiDAR A1 & Jetson Nano</div>
+              
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                <span style="font-size: 11px; color: var(--text-secondary);">Progress</span>
+                <span style="font-size: 12px; font-weight: 800; color: var(--cyber-cyan);" id="card1-prog-text">68%</span>
+              </div>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" id="card1-prog-bar" style="width: 68%;"></div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 11px; color: var(--text-tertiary);">
+                <span>👥 3 team members</span>
+                <span>Updated: Today</span>
+              </div>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="m3-card" style="margin-top: 0; cursor: pointer;" onclick="showToast('Opened Project: IoT Smart Greenhouse', '🌱')">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="chip cyan">IoT</span>
+                <span class="chip planning">Planning</span>
+              </div>
+              <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">IoT Smart Greenhouse Automation</div>
+              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Soil telemetry with ESP32, MQTT & automated peristaltic pumps</div>
+              
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                <span style="font-size: 11px; color: var(--text-secondary);">Progress</span>
+                <span style="font-size: 12px; font-weight: 800; color: var(--warning);">25%</span>
+              </div>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" style="width: 25%; background: var(--warning);"></div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 11px; color: var(--text-tertiary);">
+                <span>👥 2 team members</span>
+                <span>Updated: Yesterday</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="fab" onclick="goToScreen('create-project')">
+          <span>➕</span> <span>New Project</span>
+        </button>
+      </div>
+
+      <!-- 4. CREATE PROJECT SCREEN (DAY 8) -->
+      <div class="screen" id="screen-create-project" style="padding: 0;">
+        <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('projects-list')">⬅️</button>
+            <div>
+              <div style="font-size: 15px; font-weight: 800;">Create New Project</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan);">REGISTER TO LAB REGISTRY</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex: 1; overflow-y: auto; padding: 14px;">
+          <form onsubmit="handleCreateProject(event)">
+            <div class="field-group">
+              <label class="field-label">Project Title *</label>
+              <input type="text" id="cp-title" class="m3-input" placeholder="e.g. Quadruped Bionic Dog Robot" style="padding-left: 12px;" required>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Description *</label>
+              <textarea id="cp-desc" class="m3-input" placeholder="Describe mechanical architecture and AI algorithms..." style="padding-left: 12px; height: 70px; resize: none;" required></textarea>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Category</label>
+              <select id="cp-cat" class="m3-input" style="padding-left: 12px;">
+                <option>Robotics</option>
+                <option>AI</option>
+                <option>IoT</option>
+                <option>Automation</option>
+                <option>Embedded Systems</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+              <div class="field-group" style="flex: 1;">
+                <label class="field-label">Start Date</label>
+                <input type="date" id="cp-start" class="m3-input" value="2026-08-15" style="padding-left: 12px;">
+              </div>
+              <div class="field-group" style="flex: 1;">
+                <label class="field-label">Target Completion</label>
+                <input type="date" id="cp-end" class="m3-input" value="2026-11-30" style="padding-left: 12px;">
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+              <div class="field-group" style="flex: 1;">
+                <label class="field-label">Estimated Budget (₹)</label>
+                <input type="number" id="cp-budget" class="m3-input" value="18000" style="padding-left: 12px;">
+              </div>
+              <div class="field-group" style="flex: 1;">
+                <label class="field-label">Mentor</label>
+                <input type="text" id="cp-mentor" class="m3-input" placeholder="Dr. Rajesh Kumar" style="padding-left: 12px;">
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">GitHub Repository URL</label>
+              <input type="url" id="cp-github" class="m3-input" placeholder="https://github.com/Raj80965/Quadruped" style="padding-left: 12px;">
+            </div>
+
+            <button type="submit" class="btn-primary" style="margin-top: 10px;">
+              🚀 Save Project to Registry
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 5. PROJECT DETAILS & UPDATES SCREEN (DAY 8) -->
+      <div class="screen" id="screen-project-details" style="padding: 0;">
+        <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('projects-list')">⬅️</button>
+            <div style="font-size: 15px; font-weight: 800;">Project Details</div>
+          </div>
+          <button class="btn-toggle" style="padding: 4px 8px; color: var(--error); border-color: rgba(255,59,48,0.4);" onclick="deleteProjectDemo()">🗑️ Delete</button>
+        </div>
+
+        <div style="flex: 1; overflow-y: auto; padding: 14px;">
+          <!-- Hero Card -->
+          <div class="m3-card" style="margin-top: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="chip inprogress">Robotics • Hardware</span>
+              <span class="chip inprogress" id="det-status-badge">In Progress</span>
+            </div>
+            <div style="font-size: 18px; font-weight: 800; margin-top: 8px;">Autonomous SLAM Maze Rover</div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.4;">
+              Autonomous navigation & 2D mapping testbed using ROS2 Humble, LiDAR sensor fusion, and Odometry telemetry.
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--surface-border);">
+              <div>
+                <div style="font-size: 10px; color: var(--text-secondary);">OWNER</div>
+                <div style="font-size: 12px; font-weight: 700;">Aarav Sharma (RW-STU-042)</div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 10px; color: var(--text-secondary);">FACULTY MENTOR</div>
+                <div style="font-size: 12px; font-weight: 700;" id="det-mentor-name">Prof. Vikram Sethi</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress Gauge Card with "+ Log Update" -->
+          <div class="m3-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 800;">⚡ Project Progress</span>
+              <span style="font-size: 18px; font-weight: 800; color: var(--cyber-cyan);" id="det-prog-num">68%</span>
+            </div>
+            <div class="progress-bar-wrap" style="height: 10px; margin-top: 8px;">
+              <div class="progress-bar-fill" id="det-prog-bar" style="width: 68%;"></div>
+            </div>
+
+            <button class="btn-primary" style="margin-top: 12px; height: 38px; font-size: 12px;" onclick="openAddUpdateModal()">
+              ➕ Log Progress Update
+            </button>
+          </div>
+
+          <!-- Updates Timeline -->
+          <div style="font-size: 14px; font-weight: 800; margin-top: 14px; margin-bottom: 6px;">
+            Progress Updates Timeline (<span id="det-updates-count">2</span>)
+          </div>
+
+          <div id="updates-container" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Update 1 -->
             <div class="m3-card" style="margin-top: 0;">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                  <b style="font-size: 14px;">Aarav Sharma (RW-2026-8891)</b>
-                  <div style="font-size: 11px; color: var(--cyber-cyan);">Project: Autonomous Maze Solving Rover</div>
-                </div>
-                <span class="chip approved">Approved</span>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <b style="font-size: 13px;">Tuned Nav2 Costmaps & Local Planner</b>
+                <span class="chip inprogress">68%</span>
               </div>
-              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">📅 2026-08-15 | 🕒 10:00 AM - 12:00 PM (2 hrs)</div>
-              <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 2px;">Equipment: TurtleBot4 Mobile Robot</div>
+              <div style="font-size: 10px; color: var(--text-tertiary); margin-top: 2px;">By Aarav Sharma • Today, 11:30 AM</div>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">Resolved inflation radius bug in ROS2 costmap. Rover now traverses obstacles smoothly.</div>
+              <div style="background: rgba(0, 212, 255, 0.1); border-radius: 6px; padding: 6px; margin-top: 6px; font-size: 11px; color: var(--cyber-cyan);">
+                ➔ Next Steps: Perform outdoor LiDAR SLAM benchmarks.
+              </div>
             </div>
 
-            <!-- Item 2 (Pending) with Approve & Conflict Demo -->
-            <div class="m3-card" style="margin-top: 0; border-color: var(--warning);" id="admin-card-pending">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                  <b style="font-size: 14px;">Priya Nair (RW-2026-1044)</b>
-                  <div style="font-size: 11px; color: var(--cyber-cyan);">Project: Drone Propeller 3D Printing</div>
-                </div>
-                <span class="chip pending">Pending</span>
+            <!-- Update 2 -->
+            <div class="m3-card" style="margin-top: 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <b style="font-size: 13px;">Completed Chassis 3D Printing & Motor Mounts</b>
+                <span class="chip inprogress">45%</span>
               </div>
-              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">📅 2026-08-15 | 🕒 11:00 AM - 01:00 PM (2 hrs)</div>
-              <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 2px;">Equipment: 3D Printer (Prusa MK4)</div>
-
-              <div style="display: flex; gap: 8px; margin-top: 12px;">
-                <button class="btn-outlined" style="flex: 1; height: 34px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4);" onclick="adminRejectBooking()">
-                  Reject
-                </button>
-                <button class="btn-primary" style="flex: 1; height: 34px; font-size: 11px;" onclick="adminApproveBooking()">
-                  ✓ Approve Slot
-                </button>
-              </div>
+              <div style="font-size: 10px; color: var(--text-tertiary); margin-top: 2px;">By Kabir Mehta • Aug 12, 2026</div>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">Assembled 4x BLDC geared motors on aluminum extrusion chassis.</div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 6. SCANNER SCREEN (DAY 6) -->
-      <div class="screen" id="screen-scanner" style="padding: 0; background: #000;">
-        <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface);">
-          <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
-          <div style="font-size: 15px; font-weight: 800; color: #fff;">QR Lab Scanner</div>
-          <span class="chip cyan">Active</span>
+      <!-- 6. ADMIN PROJECT OVERSIGHT (DAY 8) -->
+      <div class="screen" id="screen-admin-projects" style="padding: 0;">
+        <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
+            <div>
+              <div style="font-size: 15px; font-weight: 800;">Admin Project Registry</div>
+              <div style="font-size: 10px; color: var(--warning);">MONITORING & MENTOR ASSIGNMENT</div>
+            </div>
+          </div>
         </div>
-        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-          <div style="width: 220px; height: 220px; border: 2px solid var(--cyber-cyan); border-radius: 16px; box-shadow: 0 0 30px rgba(0,212,255,0.3); display: flex; align-items: center; justify-content: center;">
-            📷 Viewfinder
+
+        <div style="flex: 1; overflow-y: auto; padding: 14px;">
+          <!-- Project 1 Admin Card -->
+          <div class="m3-card" style="margin-top: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div>
+                <b style="font-size: 14px;">Autonomous SLAM Maze Rover</b>
+                <div style="font-size: 11px; color: var(--cyber-cyan);">Owner: Aarav Sharma (RW-STU-042)</div>
+              </div>
+              <span class="chip inprogress">In Progress</span>
+            </div>
+
+            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 6px;">
+              Mentor: <b id="admin-mentor-label" style="color: #fff;">Prof. Vikram Sethi</b> • Budget: ₹18,000 (Exp: ₹12,400)
+            </div>
+
+            <div class="progress-bar-wrap" style="margin-top: 8px;">
+              <div class="progress-bar-fill" style="width: 68%;"></div>
+            </div>
+
+            <button class="btn-outlined" style="margin-top: 12px; height: 34px; font-size: 11px;" onclick="openAdminMentorModal()">
+              ⚙️ Assign Mentor / Update Status
+            </button>
           </div>
         </div>
       </div>
 
     </div>
 
-    <!-- CREATE BOOKING MODAL DIALOG (DAY 7) -->
-    <div id="create-booking-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px;">
+    <!-- LOG PROGRESS UPDATE MODAL (DAY 8) -->
+    <div id="add-update-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px;">
       <div class="m3-card" style="width: 100%; max-height: 90vh; overflow-y: auto; border-color: var(--cyber-cyan); margin: 0;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <b style="font-size: 16px;">Reserve Lab Station Slot</b>
-          <button class="btn-toggle" style="padding: 2px 8px;" onclick="closeCreateBookingModal()">✕</button>
+          <b style="font-size: 16px;">Log Progress Update</b>
+          <button class="btn-toggle" style="padding: 2px 8px;" onclick="closeAddUpdateModal()">✕</button>
         </div>
 
-        <form onsubmit="handleCreateBooking(event)" style="margin-top: 12px;">
+        <form onsubmit="handlePostUpdate(event)" style="margin-top: 12px;">
           <div class="field-group">
-            <label class="field-label">Booking Date</label>
-            <input type="date" id="book-date" class="m3-input" value="2026-08-15" style="padding-left: 12px;" required>
-          </div>
-
-          <div style="display: flex; gap: 8px;">
-            <div class="field-group" style="flex: 1;">
-              <label class="field-label">Start Time</label>
-              <input type="time" id="book-start" class="m3-input" value="14:00" style="padding-left: 12px;" required>
-            </div>
-            <div class="field-group" style="flex: 1;">
-              <label class="field-label">End Time</label>
-              <input type="time" id="book-end" class="m3-input" value="16:30" style="padding-left: 12px;" required>
-            </div>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label">Project Name *</label>
-            <input type="text" id="book-project" class="m3-input" placeholder="e.g. SLAM Drone Navigation" style="padding-left: 12px;" required>
+            <label class="field-label">Update Title *</label>
+            <input type="text" id="up-title" class="m3-input" placeholder="e.g. SLAM Mapping Benchmark Verified" style="padding-left: 12px;" required>
           </div>
 
           <div class="field-group">
             <label class="field-label">Work Description *</label>
-            <input type="text" id="book-desc" class="m3-input" placeholder="e.g. Testing autonomous obstacle avoidance" style="padding-left: 12px;" required>
+            <textarea id="up-desc" class="m3-input" placeholder="What technical milestone was completed?" style="padding-left: 12px; height: 60px; resize: none;" required></textarea>
           </div>
 
           <div class="field-group">
-            <label class="field-label">Required Equipment</label>
-            <input type="text" id="book-equipment" class="m3-input" value="TurtleBot4 Mobile Robot, LiDAR" style="padding-left: 12px;">
+            <label class="field-label">Updated Progress: <b id="up-prog-val">85%</b></label>
+            <input type="range" id="up-prog-slider" min="0" max="100" value="85" style="width: 100%;" oninput="document.getElementById('up-prog-val').textContent = this.value + '%'">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Blockers / Problems Faced (Optional)</label>
+            <input type="text" id="up-blockers" class="m3-input" placeholder="e.g. LiDAR baud rate sync" style="padding-left: 12px;">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Next Steps (Optional)</label>
+            <input type="text" id="up-next" class="m3-input" placeholder="e.g. Finalize report" style="padding-left: 12px;">
           </div>
 
           <button type="submit" class="btn-primary" style="margin-top: 8px;">
-            🚀 Submit Request in Firestore
+            🚀 Publish Update to Firestore
           </button>
         </form>
       </div>
     </div>
 
-    <!-- CONFLICT / CONFIRMATION MODAL -->
-    <div id="alert-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px;">
-      <div class="m3-card" style="width: 100%; max-width: 320px; text-align: center; margin: 0; border-color: var(--error);">
-        <div id="alert-icon" style="font-size: 38px;">⚠️</div>
-        <h3 id="alert-title" style="font-size: 16px; font-weight: 800; margin-top: 6px;">Slot Conflict!</h3>
-        <p id="alert-desc" style="font-size: 12px; color: var(--text-secondary); margin-top: 6px; line-height: 1.4;">
-          This time slot overlaps with an existing approved booking!
-        </p>
-        <button class="btn-primary" style="margin-top: 14px; height: 38px;" onclick="closeAlertModal()">
-          Understood
-        </button>
+    <!-- ADMIN ASSIGN MENTOR MODAL -->
+    <div id="admin-mentor-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px;">
+      <div class="m3-card" style="width: 100%; max-width: 320px; border-color: var(--warning); margin: 0;">
+        <b style="font-size: 15px;">Assign Mentor & Status</b>
+        <div class="field-group" style="margin-top: 10px;">
+          <label class="field-label">Faculty Mentor Name</label>
+          <input type="text" id="adm-mentor-inp" class="m3-input" value="Dr. Rajesh Kumar" style="padding-left: 12px;">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Status</label>
+          <select id="adm-status-sel" class="m3-input" style="padding-left: 12px;">
+            <option>In Progress</option>
+            <option>Completed</option>
+            <option>On Hold</option>
+          </select>
+        </div>
+        <button class="btn-primary" style="margin-top: 8px;" onclick="saveAdminMentor()">Save Admin Changes</button>
       </div>
     </div>
 
@@ -807,112 +914,107 @@
       if (target) target.classList.add('active');
     }
 
-    function openAdminBookings() {
-      goToScreen('admin');
-      showToast('Admin Lab Slot Approvals Panel', '🛡️');
-    }
-
     function restartSplash() {
       goToScreen('splash');
       setTimeout(() => goToScreen('student'), 1200);
     }
-    setTimeout(() => goToScreen('student'), 1000);
+    setTimeout(() => goToScreen('student'), 900);
 
-    function quickLogin(type) {
-      if (type === 'student') {
-        goToScreen('student');
-        showToast('Logged in as Approved Student', '🎓');
-      } else {
-        goToScreen('admin');
-        showToast('Logged in as Lab Administrator', '🛡️');
-      }
+    // Filter handlers
+    function filterCategory(cat, el) {
+      document.querySelectorAll('#proj-cat-pills .chip.tag').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      showToast(`Filtered by Category: ${cat}`, '🔍');
+    }
+
+    function filterStatus(stat, el) {
+      el.parentElement.querySelectorAll('.chip.tag').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      showToast(`Filtered by Status: ${stat}`, '🔍');
+    }
+
+    function filterProjectsList() {
+      const query = document.getElementById('proj-search-input').value.toLowerCase();
+      // real-time simulated filtering
     }
 
     // Modal Controls
-    function openCreateBookingModal() {
-      document.getElementById('create-booking-modal').style.display = 'flex';
+    function openAddUpdateModal() {
+      document.getElementById('add-update-modal').style.display = 'flex';
     }
-    function closeCreateBookingModal() {
-      document.getElementById('create-booking-modal').style.display = 'none';
-    }
-
-    function showAlertModal(icon, title, desc, borderColor = 'var(--error)') {
-      document.getElementById('alert-icon').textContent = icon;
-      document.getElementById('alert-title').textContent = title;
-      document.getElementById('alert-desc').innerHTML = desc;
-      document.getElementById('alert-modal').querySelector('.m3-card').style.borderColor = borderColor;
-      document.getElementById('alert-modal').style.display = 'flex';
-    }
-    function closeAlertModal() {
-      document.getElementById('alert-modal').style.display = 'none';
+    function closeAddUpdateModal() {
+      document.getElementById('add-update-modal').style.display = 'none';
     }
 
-    // Handle Create Booking
-    function handleCreateBooking(e) {
+    function handleCreateProject(e) {
       e.preventDefault();
-      const date = document.getElementById('book-date').value;
-      const start = document.getElementById('book-start').value;
-      const end = document.getElementById('book-end').value;
-      const project = document.getElementById('book-project').value;
+      const title = document.getElementById('cp-title').value;
+      const cat = document.getElementById('cp-cat').value;
+      showToast(`Project "${title}" created and synced in Firestore!`, '🚀');
+      goToScreen('projects-list');
+    }
 
-      if (start >= end) {
-        showAlertModal('⚠️', 'Invalid Time Range', 'Start time must be strictly before end time.');
-        return;
+    function handlePostUpdate(e) {
+      e.preventDefault();
+      const title = document.getElementById('up-title').value;
+      const desc = document.getElementById('up-desc').value;
+      const prog = document.getElementById('up-prog-slider').value;
+      const blockers = document.getElementById('up-blockers').value;
+
+      closeAddUpdateModal();
+
+      // Synchronize progress UI
+      document.getElementById('det-prog-num').textContent = `${prog}%`;
+      document.getElementById('det-prog-bar').style.width = `${prog}%`;
+      document.getElementById('card1-prog-text').textContent = `${prog}%`;
+      document.getElementById('card1-prog-bar').style.width = `${prog}%`;
+      document.getElementById('dash-proj-prog').textContent = `${prog}%`;
+      document.getElementById('dash-proj-bar').style.width = `${prog}%`;
+
+      if (prog >= 100) {
+        document.getElementById('det-status-badge').textContent = 'Completed';
+        document.getElementById('det-status-badge').className = 'chip completed';
+        document.getElementById('card1-status').textContent = 'Completed';
+        document.getElementById('card1-status').className = 'chip completed';
+        document.getElementById('dash-proj-status').textContent = 'Completed';
+        document.getElementById('dash-proj-status').className = 'chip completed';
       }
 
-      closeCreateBookingModal();
-      showToast('Booking saved in Firestore! Status: Pending', '🚀');
-
-      // Prepend to student list
-      const list = document.getElementById('student-bookings-list');
+      // Prepend update card
+      const container = document.getElementById('updates-container');
       const newCard = document.createElement('div');
       newCard.className = 'm3-card';
       newCard.style.marginTop = '0';
       newCard.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <b style="font-size: 14px;">${project}</b>
-          <span class="chip pending">Pending</span>
+          <b style="font-size: 13px;">${title}</b>
+          <span class="chip inprogress">${prog}%</span>
         </div>
-        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">📅 ${date} | 🕒 ${start} - ${end}</div>
-        <div style="font-size: 11px; color: var(--cyber-cyan); margin-top: 4px;">🔬 Saved in Firestore collection /labBookings</div>
+        <div style="font-size: 10px; color: var(--text-tertiary); margin-top: 2px;">By Aarav Sharma • Just now</div>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">${desc}</div>
+        ${blockers ? `<div style="background: rgba(255, 59, 48, 0.1); border-radius: 6px; padding: 6px; margin-top: 6px; font-size: 11px; color: var(--error);">⚠️ Blockers: ${blockers}</div>` : ''}
       `;
-      list.prepend(newCard);
-      goToScreen('bookings');
+      container.prepend(newCard);
+      document.getElementById('det-updates-count').textContent = '3';
+
+      showToast(`Progress update posted! Project progress updated to ${prog}%`, '⚡');
     }
 
-    // Day 7 Highlight: Admin Overlap Conflict Prevention Simulation
-    let isApprovedSlotConflictDemo = true;
-    function adminApproveBooking() {
-      if (isApprovedSlotConflictDemo) {
-        // Demonstrate Overlapping Detection
-        showAlertModal(
-          '⚠️',
-          'Booking Conflict Detected!',
-          'Cannot Approve: Requested slot (11:00 AM - 01:00 PM) overlaps with existing Approved slot <b>"Autonomous Maze Solving Rover" (10:00 AM - 12:00 PM)</b> on 2026-08-15.'
-        );
-        isApprovedSlotConflictDemo = false;
-      } else {
-        document.getElementById('admin-card-pending').style.borderColor = 'var(--success)';
-        document.getElementById('admin-card-pending').querySelector('.chip.pending').className = 'chip approved';
-        document.getElementById('admin-card-pending').querySelector('.chip.approved').textContent = 'Approved';
-        document.getElementById('admin-card-pending').querySelector('div[style*="display: flex; gap: 8px"]').innerHTML = '<span style="font-size: 12px; color: var(--success); font-weight: bold;">✓ Approved & Time Slot Reserved!</span>';
-        showToast('Slot Approved and Synchronized in Firestore!', '✅');
-      }
+    function openAdminMentorModal() {
+      document.getElementById('admin-mentor-modal').style.display = 'flex';
+    }
+    function saveAdminMentor() {
+      const mentor = document.getElementById('adm-mentor-inp').value;
+      document.getElementById('admin-mentor-label').textContent = mentor;
+      document.getElementById('det-mentor-name').textContent = mentor;
+      document.getElementById('admin-mentor-modal').style.display = 'none';
+      showToast(`Mentor assigned: ${mentor}`, '✅');
     }
 
-    function adminRejectBooking() {
-      document.getElementById('admin-card-pending').style.borderColor = 'var(--error)';
-      document.getElementById('admin-card-pending').querySelector('.chip.pending').className = 'chip rejected';
-      document.getElementById('admin-card-pending').querySelector('.chip.rejected').textContent = 'Rejected';
-      document.getElementById('admin-card-pending').querySelector('div[style*="display: flex; gap: 8px"]').innerHTML = '<span style="font-size: 11px; color: var(--error); font-weight: bold;">Reason: Time conflict / Maintenance</span>';
-      showToast('Booking Rejected and reason logged.', '❌');
-    }
-
-    function openDetailModal(idx) {
-      if (idx === 0) {
-        showAlertModal('🔬', 'Autonomous Maze Rover', '<b>Date:</b> 2026-08-15<br><b>Time:</b> 10:00 AM - 12:00 PM<br><b>Status:</b> Approved<br><b>Equipment:</b> TurtleBot4, SLAM Testbed', 'var(--success)');
-      } else {
-        showAlertModal('🖨️', 'Drone Propeller 3D Printing', '<b>Date:</b> 2026-08-16<br><b>Time:</b> 02:00 PM - 04:30 PM<br><b>Status:</b> Pending Admin Review', 'var(--warning)');
+    function deleteProjectDemo() {
+      if (confirm("Delete this project from registry?")) {
+        showToast("Project deleted from Firestore.", "🗑️");
+        goToScreen('projects-list');
       }
     }
 

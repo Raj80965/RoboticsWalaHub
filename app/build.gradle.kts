@@ -67,10 +67,11 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.play.services)
 
-    // Firebase (Auth & Cloud Firestore)
+    // Firebase (Auth, Cloud Firestore & Cloud Storage)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.firestore.ktx)
+    implementation("com.google.firebase:firebase-storage-ktx")
 
     // Coil (Profile Photo)
     implementation(libs.coil.compose)

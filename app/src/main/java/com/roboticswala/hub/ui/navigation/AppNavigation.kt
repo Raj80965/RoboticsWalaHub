@@ -25,6 +25,8 @@ import com.roboticswala.hub.ui.screens.student.attendance.StudentAttendanceViewM
 import com.roboticswala.hub.ui.screens.student.booking.StudentBookingsScreen
 import com.roboticswala.hub.ui.screens.student.booking.StudentBookingViewModel
 import com.roboticswala.hub.ui.screens.student.booking.StudentBookingViewModelFactory
+import com.roboticswala.hub.ui.screens.student.projects.CreateProjectScreen
+import com.roboticswala.hub.ui.screens.student.projects.ProjectDetailsScreen
 import com.roboticswala.hub.ui.screens.student.qr.StudentQRScannerScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -243,6 +245,16 @@ fun AppNavigation(
                     navController.navigate(Screen.StudentBookings.route) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateToCreateProject = {
+                    navController.navigate(Screen.CreateProject.route) {
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToProjectDetails = { projectId ->
+                    navController.navigate(Screen.ProjectDetails.createRoute(projectId)) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -355,7 +367,78 @@ fun AppNavigation(
             )
         }
 
-        // 9. Admin Main Dashboard
+        // 9. Student Create Project Screen (Day 8)
+        composable(
+            route = Screen.CreateProject.route,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(350)
+                ) + fadeIn(animationSpec = tween(350))
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(350)
+                ) + fadeOut(animationSpec = tween(350))
+            }
+        ) {
+            val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            val studentProfile = UserProfile(
+                uid = currentUid,
+                fullName = currentUser?.displayName ?: "Student",
+                email = currentUser?.email ?: "",
+                status = "Approved"
+            )
+
+            CreateProjectScreen(
+                studentProfile = studentProfile,
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onProjectCreated = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // 10. Student Project Details & Updates Screen (Day 8)
+        composable(
+            route = Screen.ProjectDetails.route,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(350)
+                ) + fadeIn(animationSpec = tween(350))
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(350)
+                ) + fadeOut(animationSpec = tween(350))
+            }
+        ) { backStackEntry ->
+            val projectId = backStackEntry.arguments?.getString("projectId") ?: ""
+            val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            val studentProfile = UserProfile(
+                uid = currentUid,
+                fullName = currentUser?.displayName ?: "Student",
+                email = currentUser?.email ?: "",
+                status = "Approved"
+            )
+
+            ProjectDetailsScreen(
+                projectId = projectId,
+                currentUser = studentProfile,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // 11. Admin Main Dashboard
         composable(
             route = Screen.AdminMain.route,
             enterTransition = {

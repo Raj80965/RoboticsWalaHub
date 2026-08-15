@@ -1,5 +1,6 @@
 package com.roboticswala.hub.ui.screens.student
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -7,13 +8,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -69,9 +69,10 @@ fun StudentMainScreen(
     onLogout: () -> Unit,
     onNavigateToScanner: () -> Unit = {},
     onNavigateToAttendanceHistory: () -> Unit = {},
-    onNavigateToBookings: () -> Unit = {}
+    onNavigateToBookings: () -> Unit = {},
+    onNavigateToCreateProject: () -> Unit = {},
+    onNavigateToProjectDetails: (String) -> Unit = {}
 ) {
-    // Get current user uid from FirebaseAuth — ViewModel is created with this uid
     val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
     val viewModel: StudentViewModel = viewModel(
         factory = StudentViewModel.factory(uid = currentUid)
@@ -81,7 +82,6 @@ fun StudentMainScreen(
     val isDark = isSystemInDarkTheme()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Show error messages as snackbar
     LaunchedEffect(uiState.error) {
         uiState.error?.let { msg ->
             snackbarHostState.showSnackbar("Error: $msg")
@@ -103,10 +103,7 @@ fun StudentMainScreen(
                 TopAppBar(
                     title = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            RoboticsLogo(
-                                size = 32.dp,
-                                animate = false
-                            )
+                            RoboticsLogo(size = 32.dp, animate = false)
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
                                 text = "Robotics Wala Hub",
@@ -137,7 +134,7 @@ fun StudentMainScreen(
                     actions = {
                         IconButton(onClick = onLogout) {
                             Icon(
-                                imageVector = Icons.Filled.Logout,
+                                imageVector = Icons.AutoMirrored.Filled.Logout,
                                 contentDescription = "Log Out",
                                 tint = if (isDark) TextSecondaryDark else TextSecondaryLight
                             )
@@ -193,31 +190,42 @@ fun StudentMainScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                when (uiState.selectedTab) {
-                    StudentNavRoute.Home.route -> StudentHomeScreen(
-                        uiState = uiState,
-                        onRefresh = { viewModel.refresh() },
-                        onNavigateToScanner = onNavigateToScanner,
-                        onNavigateToAttendanceHistory = onNavigateToAttendanceHistory,
-                        onNavigateToBookings = onNavigateToBookings
-                    )
-                    StudentNavRoute.Projects.route -> StudentProjectsScreen(
-                        projects = uiState.projectsList
-                    )
-                    StudentNavRoute.Activity.route -> StudentActivityScreen(
-                        activities = uiState.activityLogs
-                    )
-                    StudentNavRoute.Profile.route -> StudentProfileScreen(
-                        userProfile = uiState.userProfile,
-                        onLogout = onLogout
-                    )
-                    else -> StudentHomeScreen(
-                        uiState = uiState,
-                        onRefresh = { viewModel.refresh() },
-                        onNavigateToScanner = onNavigateToScanner,
-                        onNavigateToAttendanceHistory = onNavigateToAttendanceHistory,
-                        onNavigateToBookings = onNavigateToBookings
-                    )
+                Crossfade(
+                    targetState = uiState.selectedTab,
+                    label = "tab_crossfade"
+                ) { targetTab ->
+                    when (targetTab) {
+                        StudentNavRoute.Home.route -> StudentHomeScreen(
+                            uiState = uiState,
+                            onRefresh = { viewModel.refresh() },
+                            onNavigateToScanner = onNavigateToScanner,
+                            onNavigateToAttendanceHistory = onNavigateToAttendanceHistory,
+                            onNavigateToBookings = onNavigateToBookings,
+                            onNavigateToProjects = { viewModel.onTabSelected(StudentNavRoute.Projects.route) },
+                            onNavigateToProjectDetails = onNavigateToProjectDetails
+                        )
+                        StudentNavRoute.Projects.route -> StudentProjectsScreen(
+                            currentUid = currentUid,
+                            onNavigateToCreate = onNavigateToCreateProject,
+                            onNavigateToDetails = onNavigateToProjectDetails
+                        )
+                        StudentNavRoute.Activity.route -> StudentActivityScreen(
+                            activities = uiState.activityLogs
+                        )
+                        StudentNavRoute.Profile.route -> StudentProfileScreen(
+                            userProfile = uiState.userProfile,
+                            onLogout = onLogout
+                        )
+                        else -> StudentHomeScreen(
+                            uiState = uiState,
+                            onRefresh = { viewModel.refresh() },
+                            onNavigateToScanner = onNavigateToScanner,
+                            onNavigateToAttendanceHistory = onNavigateToAttendanceHistory,
+                            onNavigateToBookings = onNavigateToBookings,
+                            onNavigateToProjects = { viewModel.onTabSelected(StudentNavRoute.Projects.route) },
+                            onNavigateToProjectDetails = onNavigateToProjectDetails
+                        )
+                    }
                 }
             }
         }
