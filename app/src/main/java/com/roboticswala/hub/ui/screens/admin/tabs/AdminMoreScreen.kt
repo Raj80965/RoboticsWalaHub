@@ -71,6 +71,33 @@ fun AdminMoreScreen(
     var showingEquipment by remember { mutableStateOf(false) }
     var showingEquipmentRequests by remember { mutableStateOf(false) }
     var showingBudget by remember { mutableStateOf(false) }
+    var showingAnalytics by remember { mutableStateOf(false) }
+
+    if (showingAnalytics) {
+        Column(modifier = modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { showingAnalytics = false }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back to Settings",
+                        tint = if (isDark) CyberCyan else ElectricBlue
+                    )
+                }
+                Text(
+                    text = "Back to Admin Options",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    color = if (isDark) CyberCyan else ElectricBlue
+                )
+            }
+            AdminAnalyticsScreen()
+        }
+        return
+    }
 
     if (showingBudget) {
         Column(modifier = modifier.fillMaxSize()) {
@@ -354,6 +381,15 @@ fun AdminMoreScreen(
             icon = Icons.Filled.Inventory2,
             isDark = isDark,
             onClick = { showingBudget = true }
+        )
+
+        // Day 14 Highlight Card: Reports & Hub Analytics
+        AdminOptionCard(
+            title = "📊 Reports & Hub Analytics",
+            subtitle = "Performance dashboards, attendance trends & export PDF audit reports",
+            icon = Icons.Filled.PrecisionManufacturing,
+            isDark = isDark,
+            onClick = { showingAnalytics = true }
         )
 
         Spacer(modifier = Modifier.height(12.dp))

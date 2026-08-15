@@ -114,6 +114,7 @@ fun StudentHomeScreen(
     onNavigateToEvents: () -> Unit = {},
     onNavigateToEquipment: () -> Unit = {},
     onNavigateToExpenses: () -> Unit = {},
+    onNavigateToLeaderboard: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
@@ -563,6 +564,70 @@ fun StudentHomeScreen(
                             )
                             Text(
                                 text = "Submit component bills, upload receipts & track remaining project funds",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(22.dp))
+
+                // ── 11. Student Leaderboard & Ranks (Day 14) ────────────────
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SectionTitle(text = "Student Leaderboard & Ranks", isDark = isDark)
+                    Text(
+                        text = "View Top Rankers ➔",
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = if (isDark) CyberCyan else ElectricBlue,
+                        modifier = Modifier
+                            .clickable(onClick = onNavigateToLeaderboard)
+                            .padding(4.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = onNavigateToLeaderboard)
+                        .border(
+                            width = 1.dp,
+                            color = if (isDark) CyberCyan.copy(alpha = 0.5f) else ElectricBlue.copy(alpha = 0.35f),
+                            shape = RoundedCornerShape(18.dp)
+                        ),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isDark) DarkSurface.copy(alpha = 0.95f) else LightSurface
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(42.dp)
+                                .clip(CircleShape)
+                                .background(if (isDark) CyberCyan.copy(alpha = 0.15f) else ElectricBlue.copy(alpha = 0.12f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(imageVector = Icons.Filled.EmojiEvents, contentDescription = null, tint = if (isDark) CyberCyan else ElectricBlue, modifier = Modifier.size(22.dp))
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Real-Time 100-Point Performance Rankings",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                            )
+                            Text(
+                                text = "Transparent ranking based on attendance, projects, tasks & achievements",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = if (isDark) TextSecondaryDark else TextSecondaryLight
                             )

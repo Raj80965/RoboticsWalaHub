@@ -78,7 +78,8 @@ fun StudentMainScreen(
     onNavigateToNotices: () -> Unit = {},
     onNavigateToEvents: () -> Unit = {},
     onNavigateToEquipment: () -> Unit = {},
-    onNavigateToExpenses: () -> Unit = {}
+    onNavigateToExpenses: () -> Unit = {},
+    onNavigateToLeaderboard: () -> Unit = {}
 ) {
     val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
     val viewModel: StudentViewModel = viewModel(
@@ -215,7 +216,8 @@ fun StudentMainScreen(
                             onNavigateToNotices = onNavigateToNotices,
                             onNavigateToEvents = onNavigateToEvents,
                             onNavigateToEquipment = onNavigateToEquipment,
-                            onNavigateToExpenses = onNavigateToExpenses
+                            onNavigateToExpenses = onNavigateToExpenses,
+                            onNavigateToLeaderboard = onNavigateToLeaderboard
                         )
                         StudentNavRoute.Projects.route -> StudentProjectsScreen(
                             currentUid = currentUid,

@@ -72,6 +72,7 @@ data class LabTask(
     val isInProgress: Boolean get() = status.equals(STATUS_IN_PROGRESS, ignoreCase = true)
     val isSubmitted: Boolean get() = status.equals(STATUS_SUBMITTED, ignoreCase = true)
     val isCompleted: Boolean get() = status.equals(STATUS_COMPLETED, ignoreCase = true)
+    val isOverdue: Boolean get() = !isCompleted && deadline.isNotBlank() && deadline < com.roboticswala.hub.utils.BookingTimeUtils.getTodayDateString()
 
     fun toStudentTask(): StudentTask {
         return StudentTask(
