@@ -1,4 +1,4 @@
-package com.roboticswala.hub.ui.components
+﻿package com.roboticswala.hub.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -76,7 +76,7 @@ fun MetricCard(
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertY,
+                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(

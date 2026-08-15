@@ -1,4 +1,4 @@
-package com.roboticswala.hub.ui.screens.student.tabs
+﻿package com.roboticswala.hub.ui.screens.student.tabs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -102,7 +102,7 @@ fun StudentActivityScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertY
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
                         modifier = Modifier
@@ -139,7 +139,7 @@ fun StudentActivityScreen(
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Row(
-                            verticalAlignment = Alignment.CenterVertY,
+                            verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(

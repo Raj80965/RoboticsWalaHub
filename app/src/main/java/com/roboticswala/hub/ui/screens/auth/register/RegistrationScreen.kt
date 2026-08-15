@@ -1,4 +1,4 @@
-package com.roboticswala.hub.ui.screens.auth.register
+﻿package com.roboticswala.hub.ui.screens.auth.register
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -114,7 +114,7 @@ fun RegistrationScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),
-                    verticalAlignment = Alignment.CenterVertY
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = onNavigateToLogin) {
                         Icon(
@@ -270,7 +270,7 @@ fun RegistrationScreen(
                                     indication = null,
                                     onClick = { viewModel.onAgreeToTermsChanged(!uiState.agreeToTerms) }
                                 ),
-                            verticalAlignment = Alignment.CenterVertY
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Checkbox(
                                 checked = uiState.agreeToTerms,
@@ -299,7 +299,7 @@ fun RegistrationScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(start = 12.dp, top = 2.dp),
-                                verticalAlignment = Alignment.CenterVertY
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
                                     imageVector = Icons.Filled.ErrorOutline,
@@ -338,7 +338,7 @@ fun RegistrationScreen(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertY
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = "Already have an account? ",

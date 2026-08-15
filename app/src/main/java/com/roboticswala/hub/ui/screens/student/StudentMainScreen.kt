@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.roboticswala.hub.ui.components.RoboticsBackground
 import com.roboticswala.hub.ui.components.RoboticsLogo
 import com.roboticswala.hub.ui.navigation.StudentNavRoute
@@ -65,12 +66,25 @@ import com.roboticswala.hub.ui.theme.TextSecondaryLight
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentMainScreen(
-    onLogout: () -> Unit,
-    viewModel: StudentViewModel = viewModel()
+    onLogout: () -> Unit
 ) {
+    // Get current user uid from FirebaseAuth — ViewModel is created with this uid
+    val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    val viewModel: StudentViewModel = viewModel(
+        factory = StudentViewModel.factory(uid = currentUid)
+    )
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isDark = isSystemInDarkTheme()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // Show error messages as snackbar
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let { msg ->
+            snackbarHostState.showSnackbar("Error: $msg")
+            viewModel.clearError()
+        }
+    }
 
     LaunchedEffect(uiState.snackbarMessage) {
         uiState.snackbarMessage?.let { msg ->
@@ -85,7 +99,7 @@ fun StudentMainScreen(
             topBar = {
                 TopAppBar(
                     title = {
-                        Row(verticalAlignment = Alignment.CenterVertY) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             RoboticsLogo(
                                 size = 32.dp,
                                 animate = false
@@ -177,14 +191,24 @@ fun StudentMainScreen(
                     .padding(innerPadding)
             ) {
                 when (uiState.selectedTab) {
-                    StudentNavRoute.Home.route -> StudentHomeScreen(data = uiState.dashboardData)
-                    StudentNavRoute.Projects.route -> StudentProjectsScreen(projects = uiState.projectsList)
-                    StudentNavRoute.Activity.route -> StudentActivityScreen(activities = uiState.activityLogs)
+                    StudentNavRoute.Home.route -> StudentHomeScreen(
+                        uiState = uiState,
+                        onRefresh = { viewModel.refresh() }
+                    )
+                    StudentNavRoute.Projects.route -> StudentProjectsScreen(
+                        projects = uiState.projectsList
+                    )
+                    StudentNavRoute.Activity.route -> StudentActivityScreen(
+                        activities = uiState.activityLogs
+                    )
                     StudentNavRoute.Profile.route -> StudentProfileScreen(
-                        data = uiState.dashboardData,
+                        userProfile = uiState.userProfile,
                         onLogout = onLogout
                     )
-                    else -> StudentHomeScreen(data = uiState.dashboardData)
+                    else -> StudentHomeScreen(
+                        uiState = uiState,
+                        onRefresh = { viewModel.refresh() }
+                    )
                 }
             }
         }

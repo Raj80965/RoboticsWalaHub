@@ -1,4 +1,4 @@
-package com.roboticswala.hub.ui.screens.student.tabs
+﻿package com.roboticswala.hub.ui.screens.student.tabs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -103,7 +103,7 @@ fun StudentProjectsScreen(
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertY,
+                            verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
@@ -164,9 +164,9 @@ fun StudentProjectsScreen(
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertY
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertY) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     imageVector = Icons.Filled.Group,
                                     contentDescription = null,

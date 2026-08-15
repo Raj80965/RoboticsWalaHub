@@ -1,4 +1,4 @@
-package com.roboticswala.hub.ui.components
+﻿package com.roboticswala.hub.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -108,7 +108,7 @@ fun RoboticsPrimaryButton(
             )
         } else {
             Row(
-                verticalAlignment = Alignment.CenterVertY,
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
                 if (leadingIcon != null) {
@@ -166,7 +166,7 @@ fun RoboticsOutlinedButton(
         border = BorderStroke(1.5.dp, borderColor)
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertY,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 8.dp)
         ) {
             if (leadingIcon != null) {

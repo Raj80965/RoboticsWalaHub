@@ -1,4 +1,4 @@
-package com.roboticswala.hub.ui.screens.auth.login
+﻿package com.roboticswala.hub.ui.screens.auth.login
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -250,7 +250,7 @@ fun LoginScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertY
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     HorizontalDivider(
                         modifier = Modifier.weight(1f),

@@ -1,4 +1,4 @@
-package com.roboticswala.hub.ui.screens.auth.pending
+﻿package com.roboticswala.hub.ui.screens.auth.pending
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -197,7 +197,7 @@ fun PendingApprovalScreen(
                             .fillMaxWidth()
                             .padding(20.dp)
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertY) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 imageVector = Icons.Filled.Info,
                                 contentDescription = null,

@@ -1,4 +1,4 @@
-package com.roboticswala.hub.ui.screens.admin
+﻿package com.roboticswala.hub.ui.screens.admin
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -86,7 +86,7 @@ fun AdminMainScreen(
             topBar = {
                 TopAppBar(
                     title = {
-                        Row(verticalAlignment = Alignment.CenterVertY) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             RoboticsLogo(
                                 size = 32.dp,
                                 animate = false

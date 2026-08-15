@@ -1,4 +1,4 @@
-package com.roboticswala.hub.ui.components
+﻿package com.roboticswala.hub.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -168,7 +168,7 @@ fun RoboticsTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 12.dp, top = 4.dp, end = 12.dp),
-                verticalAlignment = Alignment.CenterVertY
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = Icons.Filled.ErrorOutline,

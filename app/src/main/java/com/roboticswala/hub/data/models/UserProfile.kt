@@ -2,14 +2,21 @@ package com.roboticswala.hub.data.models
 
 /**
  * User profile document stored in Cloud Firestore under /users/{uid}
+ * Day 5: Extended with studentId, college, branch, year, photoUrl, approvedAt
  */
 data class UserProfile(
     val uid: String = "",
     val fullName: String = "",
     val email: String = "",
-    val role: String = "Student",    // "Student" or "Admin"
-    val status: String = "Pending",  // "Pending" or "Approved"
-    val createdAt: Long = System.currentTimeMillis()
+    val role: String = "Student",       // "Student" or "Admin"
+    val status: String = "Pending",     // "Pending", "Approved", "Rejected", "Suspended"
+    val studentId: String = "",         // e.g. "RWH-STU-2026-042"
+    val college: String = "",           // e.g. "IIT Robotics College"
+    val branch: String = "",            // e.g. "Robotics & Mechatronics"
+    val year: String = "",              // e.g. "Year 3"
+    val photoUrl: String = "",          // Firebase Storage URL or empty
+    val createdAt: Long = System.currentTimeMillis(),
+    val approvedAt: Long = 0L           // Set when admin approves
 ) {
     fun toMap(): Map<String, Any> {
         return mapOf(
@@ -18,7 +25,13 @@ data class UserProfile(
             "email" to email,
             "role" to role,
             "status" to status,
-            "createdAt" to createdAt
+            "studentId" to studentId,
+            "college" to college,
+            "branch" to branch,
+            "year" to year,
+            "photoUrl" to photoUrl,
+            "createdAt" to createdAt,
+            "approvedAt" to approvedAt
         )
     }
 
@@ -26,6 +39,19 @@ data class UserProfile(
     val isAdmin: Boolean get() = role.equals("Admin", ignoreCase = true)
     val isPending: Boolean get() = status.equals("Pending", ignoreCase = true)
     val isApproved: Boolean get() = status.equals("Approved", ignoreCase = true)
+    val isRejected: Boolean get() = status.equals("Rejected", ignoreCase = true)
+    val isSuspended: Boolean get() = status.equals("Suspended", ignoreCase = true)
+
+    /** Initials for avatar fallback (e.g. "Raj Kumar" → "RK") */
+    val initials: String
+        get() {
+            val parts = fullName.trim().split(" ").filter { it.isNotBlank() }
+            return when {
+                parts.size >= 2 -> "${parts.first().first()}${parts.last().first()}".uppercase()
+                parts.size == 1 -> parts.first().take(2).uppercase()
+                else -> "ST"
+            }
+        }
 
     companion object {
         fun fromMap(map: Map<String, Any?>): UserProfile {
@@ -35,7 +61,13 @@ data class UserProfile(
                 email = map["email"] as? String ?: "",
                 role = map["role"] as? String ?: "Student",
                 status = map["status"] as? String ?: "Pending",
-                createdAt = (map["createdAt"] as? Number)?.toLong() ?: System.currentTimeMillis()
+                studentId = map["studentId"] as? String ?: "",
+                college = map["college"] as? String ?: "",
+                branch = map["branch"] as? String ?: "",
+                year = map["year"] as? String ?: "",
+                photoUrl = map["photoUrl"] as? String ?: "",
+                createdAt = (map["createdAt"] as? Number)?.toLong() ?: System.currentTimeMillis(),
+                approvedAt = (map["approvedAt"] as? Number)?.toLong() ?: 0L
             )
         }
     }
