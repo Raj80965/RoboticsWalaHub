@@ -11,6 +11,9 @@ import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.People
 import androidx.compose.ui.graphics.vector.ImageVector
 
+import androidx.compose.material.icons.filled.QrCode
+import androidx.compose.material.icons.outlined.QrCode
+
 sealed class AdminNavRoute(
     val route: String,
     val title: String,
@@ -22,6 +25,13 @@ sealed class AdminNavRoute(
         title = "Dashboard",
         selectedIcon = Icons.Filled.Dashboard,
         unselectedIcon = Icons.Outlined.Dashboard
+    )
+
+    object Attendance : AdminNavRoute(
+        route = "admin_attendance",
+        title = "Attendance",
+        selectedIcon = Icons.Filled.QrCode,
+        unselectedIcon = Icons.Outlined.QrCode
     )
 
     object Students : AdminNavRoute(
@@ -46,6 +56,6 @@ sealed class AdminNavRoute(
     )
 
     companion object {
-        val items = listOf(Dashboard, Students, Bookings, More)
+        val items = listOf(Dashboard, Attendance, Students, Bookings, More)
     }
 }

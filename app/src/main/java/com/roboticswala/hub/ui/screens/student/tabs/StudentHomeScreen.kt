@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Assessment
 import androidx.compose.material.icons.filled.Assignment
@@ -34,6 +35,7 @@ import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PrecisionManufacturing
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.School
@@ -98,6 +100,8 @@ import com.roboticswala.hub.ui.theme.CircuitWarning
 fun StudentHomeScreen(
     uiState: StudentUiState,
     onRefresh: () -> Unit,
+    onNavigateToScanner: () -> Unit = {},
+    onNavigateToAttendanceHistory: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
@@ -161,12 +165,91 @@ fun StudentHomeScreen(
                     isDark = isDark
                 )
 
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // ── 1.1 Quick Action: Scan Attendance QR Button ───────────
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp)),
+                    onClick = onNavigateToScanner,
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isDark) ElectricBlue.copy(alpha = 0.15f) else ElectricBlue.copy(alpha = 0.08f)
+                    ),
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.5.dp,
+                        if (isDark) CyberCyan.copy(alpha = 0.6f) else ElectricBlue.copy(alpha = 0.4f)
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(42.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(if (isDark) CyberCyan.copy(alpha = 0.2f) else ElectricBlue.copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.QrCodeScanner,
+                                    contentDescription = "Scan QR",
+                                    tint = if (isDark) CyberCyan else ElectricBlue,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    text = "Scan Attendance QR",
+                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                    color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                                )
+                                Text(
+                                    text = "Tap to Check-In or Check-Out for Lab",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = if (isDark) CyberCyan else ElectricBlue
+                                )
+                            }
+                        }
+
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = "Open Scanner",
+                            tint = if (isDark) CyberCyan else ElectricBlue,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(20.dp))
 
                 // ── 2. Attendance Card ───────────────────────────────────
-                SectionTitle(text = "Attendance", isDark = isDark)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SectionTitle(text = "Attendance", isDark = isDark)
+                    Text(
+                        text = "View History ➔",
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = if (isDark) CyberCyan else ElectricBlue,
+                        modifier = Modifier.padding(4.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.height(10.dp))
-                AttendanceCard(data = uiState.attendanceData, isDark = isDark)
+                AttendanceCard(
+                    data = uiState.attendanceData,
+                    isDark = isDark,
+                    onClick = onNavigateToAttendanceHistory
+                )
 
                 Spacer(modifier = Modifier.height(22.dp))
 
@@ -437,9 +520,11 @@ private fun ProfileAvatar(
 @Composable
 private fun AttendanceCard(
     data: AttendanceData?,
-    isDark: Boolean
+    isDark: Boolean,
+    onClick: () -> Unit = {}
 ) {
     Card(
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .border(1.dp, if (isDark) DarkSurfaceBorder else LightSurfaceBorder, RoundedCornerShape(18.dp)),

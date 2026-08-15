@@ -66,7 +66,9 @@ import com.roboticswala.hub.ui.theme.TextSecondaryLight
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentMainScreen(
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onNavigateToScanner: () -> Unit = {},
+    onNavigateToAttendanceHistory: () -> Unit = {}
 ) {
     // Get current user uid from FirebaseAuth — ViewModel is created with this uid
     val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
@@ -193,7 +195,9 @@ fun StudentMainScreen(
                 when (uiState.selectedTab) {
                     StudentNavRoute.Home.route -> StudentHomeScreen(
                         uiState = uiState,
-                        onRefresh = { viewModel.refresh() }
+                        onRefresh = { viewModel.refresh() },
+                        onNavigateToScanner = onNavigateToScanner,
+                        onNavigateToAttendanceHistory = onNavigateToAttendanceHistory
                     )
                     StudentNavRoute.Projects.route -> StudentProjectsScreen(
                         projects = uiState.projectsList
@@ -207,7 +211,9 @@ fun StudentMainScreen(
                     )
                     else -> StudentHomeScreen(
                         uiState = uiState,
-                        onRefresh = { viewModel.refresh() }
+                        onRefresh = { viewModel.refresh() },
+                        onNavigateToScanner = onNavigateToScanner,
+                        onNavigateToAttendanceHistory = onNavigateToAttendanceHistory
                     )
                 }
             }

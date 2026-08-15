@@ -7,4 +7,6 @@ sealed class Screen(val route: String) {
     object PendingApproval : Screen("pending_approval_screen")
     object StudentMain : Screen("student_main_screen")
     object AdminMain : Screen("admin_main_screen")
+    object StudentQRScanner : Screen("student_qr_scanner")
+    object StudentAttendanceHistory : Screen("student_attendance_history")
 }

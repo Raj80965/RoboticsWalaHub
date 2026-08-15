@@ -1,4 +1,4 @@
-﻿package com.roboticswala.hub.ui.screens.admin
+package com.roboticswala.hub.ui.screens.admin
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -43,6 +43,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.roboticswala.hub.ui.components.RoboticsBackground
 import com.roboticswala.hub.ui.components.RoboticsLogo
 import com.roboticswala.hub.ui.navigation.AdminNavRoute
+import com.roboticswala.hub.ui.screens.admin.tabs.AdminAttendanceScreen
 import com.roboticswala.hub.ui.screens.admin.tabs.AdminBookingsScreen
 import com.roboticswala.hub.ui.screens.admin.tabs.AdminDashboardScreen
 import com.roboticswala.hub.ui.screens.admin.tabs.AdminMoreScreen
@@ -179,6 +180,7 @@ fun AdminMainScreen(
             ) {
                 when (uiState.selectedTab) {
                     AdminNavRoute.Dashboard.route -> AdminDashboardScreen(data = uiState.dashboardData)
+                    AdminNavRoute.Attendance.route -> AdminAttendanceScreen()
                     AdminNavRoute.Students.route -> AdminStudentsScreen(
                         students = uiState.studentsList,
                         onApproveStudent = viewModel::approveStudent

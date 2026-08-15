@@ -75,5 +75,19 @@ dependencies {
     // Coil (Profile Photo)
     implementation(libs.coil.compose)
 
+    // CameraX for QR Scanning
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation("androidx.concurrent:concurrent-futures-ktx:1.2.0")
+    implementation("com.google.guava:guava:33.3.1-android")
+
+    // Google ML Kit Barcode Scanning
+    implementation(libs.google.mlkit.barcode.scanning)
+
+    // ZXing for QR Code generation
+    implementation(libs.zxing.core)
+
     debugImplementation(libs.androidx.ui.tooling)
 }
