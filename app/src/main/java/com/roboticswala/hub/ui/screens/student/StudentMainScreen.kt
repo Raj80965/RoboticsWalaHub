@@ -71,7 +71,8 @@ fun StudentMainScreen(
     onNavigateToAttendanceHistory: () -> Unit = {},
     onNavigateToBookings: () -> Unit = {},
     onNavigateToCreateProject: () -> Unit = {},
-    onNavigateToProjectDetails: (String) -> Unit = {}
+    onNavigateToProjectDetails: (String) -> Unit = {},
+    onNavigateToTasks: () -> Unit = {}
 ) {
     val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
     val viewModel: StudentViewModel = viewModel(
@@ -202,7 +203,8 @@ fun StudentMainScreen(
                             onNavigateToAttendanceHistory = onNavigateToAttendanceHistory,
                             onNavigateToBookings = onNavigateToBookings,
                             onNavigateToProjects = { viewModel.onTabSelected(StudentNavRoute.Projects.route) },
-                            onNavigateToProjectDetails = onNavigateToProjectDetails
+                            onNavigateToProjectDetails = onNavigateToProjectDetails,
+                            onNavigateToTasks = onNavigateToTasks
                         )
                         StudentNavRoute.Projects.route -> StudentProjectsScreen(
                             currentUid = currentUid,
@@ -210,7 +212,8 @@ fun StudentMainScreen(
                             onNavigateToDetails = onNavigateToProjectDetails
                         )
                         StudentNavRoute.Activity.route -> StudentActivityScreen(
-                            activities = uiState.activityLogs
+                            activities = uiState.activityLogs,
+                            currentUid = currentUid
                         )
                         StudentNavRoute.Profile.route -> StudentProfileScreen(
                             userProfile = uiState.userProfile,
@@ -223,7 +226,8 @@ fun StudentMainScreen(
                             onNavigateToAttendanceHistory = onNavigateToAttendanceHistory,
                             onNavigateToBookings = onNavigateToBookings,
                             onNavigateToProjects = { viewModel.onTabSelected(StudentNavRoute.Projects.route) },
-                            onNavigateToProjectDetails = onNavigateToProjectDetails
+                            onNavigateToProjectDetails = onNavigateToProjectDetails,
+                            onNavigateToTasks = onNavigateToTasks
                         )
                     }
                 }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Robotics Wala Hub - Day 8 Project Management System Live Simulator</title>
+  <title>Robotics Wala Hub - Day 9 Daily Work & Task Management Simulator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -70,7 +70,7 @@
       justify-content: space-between;
       width: 100%;
       max-width: 480px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .badge {
@@ -200,15 +200,6 @@
       transform: scale(1);
     }
 
-    .app-title {
-      font-size: 22px;
-      font-weight: 800;
-      background: linear-gradient(135deg, #00D4FF 0%, #0066FF 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-align: center;
-    }
-
     .m3-card {
       background: var(--card-bg);
       border: 1px solid var(--surface-border);
@@ -259,34 +250,32 @@
 
     .btn-primary {
       width: 100%;
-      height: 44px;
+      height: 42px;
       background: linear-gradient(135deg, #0066FF 0%, #0044CC 100%);
       border: none;
       border-radius: 14px;
       color: #fff;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       box-shadow: 0 6px 18px rgba(0, 102, 255, 0.4);
-      transition: transform 0.15s, box-shadow 0.15s;
+      transition: transform 0.15s;
     }
-    .btn-primary:active {
-      transform: scale(0.98);
-    }
+    .btn-primary:active { transform: scale(0.98); }
 
     .btn-outlined {
       width: 100%;
-      height: 40px;
+      height: 38px;
       background: transparent;
       border: 1.5px solid var(--surface-border);
       border-radius: 12px;
       color: var(--text-primary);
       font-weight: 600;
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -311,26 +300,11 @@
       letter-spacing: 0.5px;
     }
     .chip.approved, .chip.completed { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); }
-    .chip.pending, .chip.planning { background: rgba(255, 179, 0, 0.15); color: var(--warning); border: 1px solid rgba(255, 179, 0, 0.3); }
-    .chip.inprogress { background: rgba(0, 212, 255, 0.15); color: var(--cyber-cyan); border: 1px solid rgba(0, 212, 255, 0.3); }
-    .chip.rejected, .chip.onhold { background: rgba(255, 59, 48, 0.15); color: var(--error); border: 1px solid rgba(255, 59, 48, 0.3); }
+    .chip.pending, .chip.planning, .chip.urgent { background: rgba(255, 59, 48, 0.15); color: var(--error); border: 1px solid rgba(255, 59, 48, 0.3); }
+    .chip.inprogress, .chip.high { background: rgba(255, 179, 0, 0.15); color: var(--warning); border: 1px solid rgba(255, 179, 0, 0.3); }
+    .chip.submitted, .chip.medium { background: rgba(0, 212, 255, 0.15); color: var(--cyber-cyan); border: 1px solid rgba(0, 212, 255, 0.3); }
     .chip.tag { background: var(--surface-elevated); color: var(--text-secondary); border: 1px solid var(--surface-border); font-size: 10px; cursor: pointer; }
     .chip.tag.selected { background: var(--cyber-cyan); color: #000; border-color: var(--cyber-cyan); font-weight: 800; }
-
-    .progress-bar-wrap {
-      width: 100%;
-      height: 8px;
-      background: var(--surface-border);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 6px;
-    }
-    .progress-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #0066FF 0%, #00D4FF 100%);
-      border-radius: 4px;
-      transition: width 0.4s ease;
-    }
 
     .fab {
       position: absolute;
@@ -416,7 +390,7 @@
 
   <div class="header-bar">
     <div class="badge">
-      <span>🚀</span> <b>Day 8: Project Management System</b>
+      <span>🚀</span> <b>Day 9: Daily Work & Task Management</b>
     </div>
     <div style="display: flex; gap: 6px;">
       <button class="btn-toggle" onclick="toggleTheme()" id="btn-theme">
@@ -428,10 +402,11 @@
 
   <!-- Quick Screen Switcher -->
   <div class="quick-nav-bar">
-    <button class="quick-nav-btn" onclick="goToScreen('projects-list')">🚀 Projects List</button>
-    <button class="quick-nav-btn" onclick="goToScreen('create-project')">➕ Create Project</button>
-    <button class="quick-nav-btn" onclick="goToScreen('project-details')">🔬 Project Details & Updates</button>
-    <button class="quick-nav-btn" onclick="goToScreen('admin-projects')">🛡️ Admin Projects</button>
+    <button class="quick-nav-btn" onclick="goToScreen('daily-work')">📝 Daily Work Feed</button>
+    <button class="quick-nav-btn" onclick="openLogWorkModal()">➕ Log Work</button>
+    <button class="quick-nav-btn" onclick="goToScreen('student-tasks')">📋 My Tasks (Student)</button>
+    <button class="quick-nav-btn" onclick="goToScreen('admin-tasks')">🛡️ Admin Tasks</button>
+    <button class="quick-nav-btn" onclick="openAdminCreateTaskModal()">➕ Assign Task (Admin)</button>
     <button class="quick-nav-btn" onclick="goToScreen('student')">🎓 Student Dashboard</button>
   </div>
 
@@ -440,7 +415,7 @@
 
     <!-- Status Bar -->
     <div class="status-bar">
-      <span id="live-clock">10:45</span>
+      <span id="live-clock">10:55</span>
       <div style="display: flex; gap: 4px; align-items: center;">
         <span style="font-size: 10px;">5G</span>
         <span style="font-size: 11px;">📶</span>
@@ -455,22 +430,22 @@
         <div style="width: 88px; height: 88px; border-radius: 26px; background: linear-gradient(135deg, #00D4FF 0%, #0066FF 100%); display: flex; align-items: center; justify-content: center; font-size: 42px; box-shadow: 0 10px 30px rgba(0, 212, 255, 0.45); margin-bottom: 20px;">
           🤖
         </div>
-        <h1 class="app-title" style="font-size: 26px;">Robotics Wala Hub</h1>
-        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 6px; letter-spacing: 1px;">PROJECT REGISTRY & WORKBENCH</p>
+        <h1 style="font-size: 26px; font-weight: 800; background: linear-gradient(135deg, #00D4FF 0%, #0066FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Robotics Wala Hub</h1>
+        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 6px; letter-spacing: 1px;">DAILY WORK & TASK MANAGEMENT</p>
       </div>
 
-      <!-- 2. STUDENT DASHBOARD (INTEGRATED WITH REAL PROJECTS) -->
+      <!-- 2. STUDENT DASHBOARD (INTEGRATED WITH TASKS & WORK PROGRESS) -->
       <div class="screen" id="screen-student" style="padding: 0;">
         <div style="padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--surface-border); background: var(--surface);">
           <div style="display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 22px;">🤖</span>
             <div>
               <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">Robotics Wala Hub</div>
-              <div style="font-size: 10px; color: var(--cyber-cyan); font-weight: 700;">DAY 8: PROJECTS ACTIVE</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan); font-weight: 700;">DAY 9: TASKS & LOGS LIVE</div>
             </div>
           </div>
           <div style="display: flex; gap: 6px;">
-            <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="goToScreen('create-project')">➕</button>
+            <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="openLogWorkModal()">➕ Log</button>
             <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="restartSplash()">🚪</button>
           </div>
         </div>
@@ -480,7 +455,7 @@
           <div class="m3-card" style="margin-top: 0; background: linear-gradient(135deg, rgba(0, 102, 255, 0.2) 0%, rgba(0, 212, 255, 0.1) 100%);">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <div>
-                <span class="chip inprogress">Approved Student</span>
+                <span class="chip approved">Approved Student</span>
                 <div style="font-size: 18px; font-weight: 800; margin-top: 4px;">Aarav Sharma</div>
                 <div style="font-size: 11px; color: var(--cyber-cyan); font-family: 'JetBrains Mono';">ID: RW-STU-042</div>
               </div>
@@ -490,392 +465,316 @@
             </div>
           </div>
 
-          <!-- Current Active Projects Section -->
+          <!-- Assigned Tasks Section (Day 9) -->
           <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; margin-bottom: 4px;">
-            <span style="font-size: 14px; font-weight: 800;">Current Projects (2)</span>
-            <span style="font-size: 11px; color: var(--cyber-cyan); font-weight: 700; cursor: pointer;" onclick="goToScreen('projects-list')">View All ➔</span>
+            <span style="font-size: 14px; font-weight: 800;">Assigned Tasks (2)</span>
+            <span style="font-size: 11px; color: var(--cyber-cyan); font-weight: 700; cursor: pointer;" onclick="goToScreen('student-tasks')">View All (2) ➔</span>
           </div>
 
-          <!-- Active Project Card 1 -->
-          <div class="m3-card" style="cursor: pointer;" onclick="goToScreen('project-details')">
+          <div class="m3-card" style="cursor: pointer;" onclick="goToScreen('student-tasks')">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <b style="font-size: 14px;">Autonomous SLAM Maze Rover</b>
-              <span class="chip inprogress" id="dash-proj-status">In Progress</span>
+              <b style="font-size: 14px;" id="dash-task-title">Calibrate RPLiDAR A1 Sensor</b>
+              <span class="chip urgent" id="dash-task-prio">Urgent</span>
             </div>
-            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Category: Robotics • Hardware</div>
+            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Deadline: Aug 18, 2026 • Project: SLAM Rover</div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-              <span style="font-size: 11px; color: var(--text-secondary);">Progress</span>
-              <span style="font-size: 12px; font-weight: 800; color: var(--cyber-cyan);" id="dash-proj-prog">68%</span>
-            </div>
-            <div class="progress-bar-wrap">
-              <div class="progress-bar-fill" id="dash-proj-bar" style="width: 68%;"></div>
+              <span style="font-size: 11px; color: var(--text-secondary);">Status:</span>
+              <span class="chip inprogress" id="dash-task-status">In Progress</span>
             </div>
           </div>
 
-          <!-- Quick Reserve Lab Slot -->
-          <div class="m3-card" style="border-color: var(--primary);">
+          <!-- Quick Action Card: Daily Work Progress -->
+          <div class="m3-card" style="border-color: var(--cyber-cyan); background: rgba(0, 212, 255, 0.06); cursor: pointer;" onclick="goToScreen('daily-work')">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-size: 13px; font-weight: 800;">🔬 Today's Lab Slot</span>
-              <span class="chip approved">Approved</span>
+              <div>
+                <b style="font-size: 13px;">📝 Today's Lab Work Log</b>
+                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">3.5 hours recorded today</div>
+              </div>
+              <span style="font-size: 20px;">➔</span>
             </div>
-            <div style="font-size: 12px; color: var(--cyber-cyan); margin-top: 6px;">🕒 10:00 AM - 12:00 PM (LiDAR Test Bay 2)</div>
           </div>
         </div>
 
         <div class="bottom-nav">
           <button class="nav-item active"><span style="font-size:16px;">🏠</span><span>Home</span></button>
-          <button class="nav-item" onclick="goToScreen('projects-list')"><span style="font-size:16px;">🚀</span><span>Projects</span></button>
-          <button class="nav-item" onclick="goToScreen('admin-projects')"><span style="font-size:16px;">🛡️</span><span>Admin</span></button>
+          <button class="nav-item" onclick="goToScreen('student-tasks')"><span style="font-size:16px;">📋</span><span>Tasks</span></button>
+          <button class="nav-item" onclick="goToScreen('daily-work')"><span style="font-size:16px;">📝</span><span>Work Feed</span></button>
+          <button class="nav-item" onclick="goToScreen('admin-tasks')"><span style="font-size:16px;">🛡️</span><span>Admin</span></button>
         </div>
       </div>
 
-      <!-- 3. STUDENT PROJECTS LIST SCREEN (DAY 8) -->
-      <div class="screen" id="screen-projects-list" style="padding: 0;">
+      <!-- 3. DAILY WORK PROGRESS FEED & HISTORY (DAY 9) -->
+      <div class="screen" id="screen-daily-work" style="padding: 0;">
         <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
           <div style="display: flex; align-items: center; gap: 8px;">
             <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
             <div>
-              <div style="font-size: 15px; font-weight: 800;">Robotics Projects</div>
-              <div style="font-size: 10px; color: var(--cyber-cyan);">FIRESTORE /projects COLLECTION</div>
+              <div style="font-size: 15px; font-weight: 800;">Daily Work Progress</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan);">FIRESTORE /dailyWorkUpdates</div>
             </div>
           </div>
-          <button class="btn-toggle" style="padding: 4px 10px; font-size: 11px; background: var(--primary); border: none;" onclick="goToScreen('create-project')">➕ New</button>
+          <button class="btn-toggle" style="padding: 4px 10px; font-size: 11px; background: var(--primary); border: none;" onclick="openLogWorkModal()">➕ Log</button>
         </div>
 
-        <div style="flex: 1; overflow-y: auto; padding: 14px;">
-          <!-- Search Bar -->
-          <div class="field-group" style="margin-bottom: 8px;">
-            <div class="input-wrapper">
-              <span class="input-icon">🔍</span>
-              <input type="text" class="m3-input" placeholder="Search by Project Title, Components..." id="proj-search-input" oninput="filterProjectsList()">
-            </div>
+        <!-- Dual Tab Switcher -->
+        <div style="display: flex; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
+          <div style="flex: 1; text-align: center; padding: 10px; font-size: 12px; font-weight: 800; cursor: pointer; border-bottom: 2px solid var(--cyber-cyan); color: var(--cyber-cyan);" id="tab-feed" onclick="switchWorkTab('feed')">
+            📡 Lab Work Feed
           </div>
-
-          <!-- Category Filter Pills -->
-          <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px;" id="proj-cat-pills">
-            <span class="chip tag selected" onclick="filterCategory('All', this)">All</span>
-            <span class="chip tag" onclick="filterCategory('Robotics', this)">Robotics</span>
-            <span class="chip tag" onclick="filterCategory('AI', this)">AI</span>
-            <span class="chip tag" onclick="filterCategory('IoT', this)">IoT</span>
-            <span class="chip tag" onclick="filterCategory('Automation', this)">Automation</span>
-          </div>
-
-          <!-- Status Filter Pills -->
-          <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px;">
-            <span class="chip tag selected" onclick="filterStatus('All', this)">All Status</span>
-            <span class="chip tag" onclick="filterStatus('In Progress', this)">In Progress</span>
-            <span class="chip tag" onclick="filterStatus('Completed', this)">Completed</span>
-            <span class="chip tag" onclick="filterStatus('Planning', this)">Planning</span>
-          </div>
-
-          <div style="font-size: 13px; font-weight: 800; margin-top: 6px; margin-bottom: 6px;">
-            Projects (<span id="proj-count">2</span>)
-          </div>
-
-          <!-- Projects List -->
-          <div id="projects-container" style="display: flex; flex-direction: column; gap: 10px;">
-            <!-- Project 1 -->
-            <div class="m3-card" style="margin-top: 0; cursor: pointer;" onclick="goToScreen('project-details')">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span class="chip inprogress">Robotics</span>
-                <span class="chip inprogress" id="card1-status">In Progress</span>
-              </div>
-              <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">Autonomous SLAM Maze Rover</div>
-              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">ROS2 navigation stack with RPLiDAR A1 & Jetson Nano</div>
-              
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                <span style="font-size: 11px; color: var(--text-secondary);">Progress</span>
-                <span style="font-size: 12px; font-weight: 800; color: var(--cyber-cyan);" id="card1-prog-text">68%</span>
-              </div>
-              <div class="progress-bar-wrap">
-                <div class="progress-bar-fill" id="card1-prog-bar" style="width: 68%;"></div>
-              </div>
-
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 11px; color: var(--text-tertiary);">
-                <span>👥 3 team members</span>
-                <span>Updated: Today</span>
-              </div>
-            </div>
-
-            <!-- Project 2 -->
-            <div class="m3-card" style="margin-top: 0; cursor: pointer;" onclick="showToast('Opened Project: IoT Smart Greenhouse', '🌱')">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span class="chip cyan">IoT</span>
-                <span class="chip planning">Planning</span>
-              </div>
-              <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">IoT Smart Greenhouse Automation</div>
-              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Soil telemetry with ESP32, MQTT & automated peristaltic pumps</div>
-              
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                <span style="font-size: 11px; color: var(--text-secondary);">Progress</span>
-                <span style="font-size: 12px; font-weight: 800; color: var(--warning);">25%</span>
-              </div>
-              <div class="progress-bar-wrap">
-                <div class="progress-bar-fill" style="width: 25%; background: var(--warning);"></div>
-              </div>
-
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 11px; color: var(--text-tertiary);">
-                <span>👥 2 team members</span>
-                <span>Updated: Yesterday</span>
-              </div>
-            </div>
+          <div style="flex: 1; text-align: center; padding: 10px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--text-secondary);" id="tab-history" onclick="switchWorkTab('history')">
+            📜 My Logs (<span id="my-logs-count">2</span>)
           </div>
         </div>
 
-        <button class="fab" onclick="goToScreen('create-project')">
-          <span>➕</span> <span>New Project</span>
+        <div style="flex: 1; overflow-y: auto; padding: 14px;" id="work-feed-container">
+          <!-- Feed Item 1 -->
+          <div class="m3-card" style="margin-top: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800;">AS</div>
+                <div>
+                  <b style="font-size: 13px;">Aarav Sharma (You)</b>
+                  <div style="font-size: 10px; color: var(--text-tertiary);">📅 2026-08-15 • RW-STU-042</div>
+                </div>
+              </div>
+              <span class="chip inprogress">3.5 hrs</span>
+            </div>
+            <div style="font-size: 14px; font-weight: 800; margin-top: 10px;">SLAM LiDAR Scan Matching & Odometry Fusion</div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Integrated RPLiDAR A1 with wheel encoder odometry in ROS2 Nav2 stack.</div>
+            <div style="background: rgba(0, 212, 255, 0.08); border-radius: 6px; padding: 6px; margin-top: 8px; font-size: 11px; color: var(--cyber-cyan);">
+              ➔ Next Steps: Calibrate laser scan angle filter for reflective obstacles.
+            </div>
+          </div>
+
+          <!-- Feed Item 2 -->
+          <div class="m3-card" style="margin-top: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: #9C27B0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800;">KM</div>
+                <div>
+                  <b style="font-size: 13px;">Kabir Mehta</b>
+                  <div style="font-size: 10px; color: var(--text-tertiary);">📅 2026-08-15 • RW-STU-019</div>
+                </div>
+              </div>
+              <span class="chip inprogress">2.0 hrs</span>
+            </div>
+            <div style="font-size: 14px; font-weight: 800; margin-top: 10px;">Soldered ESP32 Soil Sensor Telemetry Board</div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Verified I2C capacitive soil moisture sensor readings with OLED screen.</div>
+          </div>
+        </div>
+
+        <button class="fab" onclick="openLogWorkModal()">
+          <span>➕</span> <span>Log Work</span>
         </button>
       </div>
 
-      <!-- 4. CREATE PROJECT SCREEN (DAY 8) -->
-      <div class="screen" id="screen-create-project" style="padding: 0;">
-        <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('projects-list')">⬅️</button>
-            <div>
-              <div style="font-size: 15px; font-weight: 800;">Create New Project</div>
-              <div style="font-size: 10px; color: var(--cyber-cyan);">REGISTER TO LAB REGISTRY</div>
-            </div>
-          </div>
-        </div>
-
-        <div style="flex: 1; overflow-y: auto; padding: 14px;">
-          <form onsubmit="handleCreateProject(event)">
-            <div class="field-group">
-              <label class="field-label">Project Title *</label>
-              <input type="text" id="cp-title" class="m3-input" placeholder="e.g. Quadruped Bionic Dog Robot" style="padding-left: 12px;" required>
-            </div>
-
-            <div class="field-group">
-              <label class="field-label">Description *</label>
-              <textarea id="cp-desc" class="m3-input" placeholder="Describe mechanical architecture and AI algorithms..." style="padding-left: 12px; height: 70px; resize: none;" required></textarea>
-            </div>
-
-            <div class="field-group">
-              <label class="field-label">Category</label>
-              <select id="cp-cat" class="m3-input" style="padding-left: 12px;">
-                <option>Robotics</option>
-                <option>AI</option>
-                <option>IoT</option>
-                <option>Automation</option>
-                <option>Embedded Systems</option>
-                <option>Other</option>
-              </select>
-            </div>
-
-            <div style="display: flex; gap: 8px;">
-              <div class="field-group" style="flex: 1;">
-                <label class="field-label">Start Date</label>
-                <input type="date" id="cp-start" class="m3-input" value="2026-08-15" style="padding-left: 12px;">
-              </div>
-              <div class="field-group" style="flex: 1;">
-                <label class="field-label">Target Completion</label>
-                <input type="date" id="cp-end" class="m3-input" value="2026-11-30" style="padding-left: 12px;">
-              </div>
-            </div>
-
-            <div style="display: flex; gap: 8px;">
-              <div class="field-group" style="flex: 1;">
-                <label class="field-label">Estimated Budget (₹)</label>
-                <input type="number" id="cp-budget" class="m3-input" value="18000" style="padding-left: 12px;">
-              </div>
-              <div class="field-group" style="flex: 1;">
-                <label class="field-label">Mentor</label>
-                <input type="text" id="cp-mentor" class="m3-input" placeholder="Dr. Rajesh Kumar" style="padding-left: 12px;">
-              </div>
-            </div>
-
-            <div class="field-group">
-              <label class="field-label">GitHub Repository URL</label>
-              <input type="url" id="cp-github" class="m3-input" placeholder="https://github.com/Raj80965/Quadruped" style="padding-left: 12px;">
-            </div>
-
-            <button type="submit" class="btn-primary" style="margin-top: 10px;">
-              🚀 Save Project to Registry
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <!-- 5. PROJECT DETAILS & UPDATES SCREEN (DAY 8) -->
-      <div class="screen" id="screen-project-details" style="padding: 0;">
-        <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('projects-list')">⬅️</button>
-            <div style="font-size: 15px; font-weight: 800;">Project Details</div>
-          </div>
-          <button class="btn-toggle" style="padding: 4px 8px; color: var(--error); border-color: rgba(255,59,48,0.4);" onclick="deleteProjectDemo()">🗑️ Delete</button>
-        </div>
-
-        <div style="flex: 1; overflow-y: auto; padding: 14px;">
-          <!-- Hero Card -->
-          <div class="m3-card" style="margin-top: 0;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="chip inprogress">Robotics • Hardware</span>
-              <span class="chip inprogress" id="det-status-badge">In Progress</span>
-            </div>
-            <div style="font-size: 18px; font-weight: 800; margin-top: 8px;">Autonomous SLAM Maze Rover</div>
-            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.4;">
-              Autonomous navigation & 2D mapping testbed using ROS2 Humble, LiDAR sensor fusion, and Odometry telemetry.
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--surface-border);">
-              <div>
-                <div style="font-size: 10px; color: var(--text-secondary);">OWNER</div>
-                <div style="font-size: 12px; font-weight: 700;">Aarav Sharma (RW-STU-042)</div>
-              </div>
-              <div style="text-align: right;">
-                <div style="font-size: 10px; color: var(--text-secondary);">FACULTY MENTOR</div>
-                <div style="font-size: 12px; font-weight: 700;" id="det-mentor-name">Prof. Vikram Sethi</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Progress Gauge Card with "+ Log Update" -->
-          <div class="m3-card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-size: 13px; font-weight: 800;">⚡ Project Progress</span>
-              <span style="font-size: 18px; font-weight: 800; color: var(--cyber-cyan);" id="det-prog-num">68%</span>
-            </div>
-            <div class="progress-bar-wrap" style="height: 10px; margin-top: 8px;">
-              <div class="progress-bar-fill" id="det-prog-bar" style="width: 68%;"></div>
-            </div>
-
-            <button class="btn-primary" style="margin-top: 12px; height: 38px; font-size: 12px;" onclick="openAddUpdateModal()">
-              ➕ Log Progress Update
-            </button>
-          </div>
-
-          <!-- Updates Timeline -->
-          <div style="font-size: 14px; font-weight: 800; margin-top: 14px; margin-bottom: 6px;">
-            Progress Updates Timeline (<span id="det-updates-count">2</span>)
-          </div>
-
-          <div id="updates-container" style="display: flex; flex-direction: column; gap: 8px;">
-            <!-- Update 1 -->
-            <div class="m3-card" style="margin-top: 0;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <b style="font-size: 13px;">Tuned Nav2 Costmaps & Local Planner</b>
-                <span class="chip inprogress">68%</span>
-              </div>
-              <div style="font-size: 10px; color: var(--text-tertiary); margin-top: 2px;">By Aarav Sharma • Today, 11:30 AM</div>
-              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">Resolved inflation radius bug in ROS2 costmap. Rover now traverses obstacles smoothly.</div>
-              <div style="background: rgba(0, 212, 255, 0.1); border-radius: 6px; padding: 6px; margin-top: 6px; font-size: 11px; color: var(--cyber-cyan);">
-                ➔ Next Steps: Perform outdoor LiDAR SLAM benchmarks.
-              </div>
-            </div>
-
-            <!-- Update 2 -->
-            <div class="m3-card" style="margin-top: 0;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <b style="font-size: 13px;">Completed Chassis 3D Printing & Motor Mounts</b>
-                <span class="chip inprogress">45%</span>
-              </div>
-              <div style="font-size: 10px; color: var(--text-tertiary); margin-top: 2px;">By Kabir Mehta • Aug 12, 2026</div>
-              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">Assembled 4x BLDC geared motors on aluminum extrusion chassis.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 6. ADMIN PROJECT OVERSIGHT (DAY 8) -->
-      <div class="screen" id="screen-admin-projects" style="padding: 0;">
+      <!-- 4. STUDENT MY TASKS SCREEN (DAY 9) -->
+      <div class="screen" id="screen-student-tasks" style="padding: 0;">
         <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
           <div style="display: flex; align-items: center; gap: 8px;">
             <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
             <div>
-              <div style="font-size: 15px; font-weight: 800;">Admin Project Registry</div>
-              <div style="font-size: 10px; color: var(--warning);">MONITORING & MENTOR ASSIGNMENT</div>
+              <div style="font-size: 15px; font-weight: 800;">My Assigned Tasks</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan);">WEEKLY MILESTONES</div>
             </div>
           </div>
         </div>
 
         <div style="flex: 1; overflow-y: auto; padding: 14px;">
-          <!-- Project 1 Admin Card -->
+          <!-- Task 1 Card -->
           <div class="m3-card" style="margin-top: 0;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-              <div>
-                <b style="font-size: 14px;">Autonomous SLAM Maze Rover</b>
-                <div style="font-size: 11px; color: var(--cyber-cyan);">Owner: Aarav Sharma (RW-STU-042)</div>
-              </div>
-              <span class="chip inprogress">In Progress</span>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="chip urgent">Urgent Priority</span>
+              <span class="chip inprogress" id="t1-status-chip">In Progress</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">Calibrate RPLiDAR A1 Sensor</div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Mount LiDAR on top acrylic plate and verify 360-degree point cloud telemetry.</div>
+            <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; color: var(--text-tertiary);">
+              <span>📅 Deadline: Aug 18, 2026</span>
+              <span>Project: SLAM Rover</span>
             </div>
 
-            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 6px;">
-              Mentor: <b id="admin-mentor-label" style="color: #fff;">Prof. Vikram Sethi</b> • Budget: ₹18,000 (Exp: ₹12,400)
+            <div id="t1-action-area" style="margin-top: 12px;">
+              <button class="btn-primary" style="height: 36px;" onclick="openSubmitTaskModal('Calibrate RPLiDAR A1 Sensor')">
+                📤 Submit Completed Work
+              </button>
+            </div>
+          </div>
+
+          <!-- Task 2 Card -->
+          <div class="m3-card" style="margin-top: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="chip medium">Medium Priority</span>
+              <span class="chip pending" id="t2-status-chip">Pending</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">Write Jetson Nano Setup Docs</div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Document JetPack 5.1 installation and ROS2 Humble docker container steps.</div>
+            <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; color: var(--text-tertiary);">
+              <span>📅 Deadline: Aug 22, 2026</span>
+              <span>Project: SLAM Rover</span>
             </div>
 
-            <div class="progress-bar-wrap" style="margin-top: 8px;">
-              <div class="progress-bar-fill" style="width: 68%;"></div>
+            <div id="t2-action-area" style="margin-top: 12px;">
+              <button class="btn-primary" style="height: 36px; background: linear-gradient(135deg, #00D4FF 0%, #0066FF 100%);" onclick="startTaskDemo()">
+                ▶️ Start Task (In Progress)
+              </button>
             </div>
-
-            <button class="btn-outlined" style="margin-top: 12px; height: 34px; font-size: 11px;" onclick="openAdminMentorModal()">
-              ⚙️ Assign Mentor / Update Status
-            </button>
           </div>
         </div>
+      </div>
+
+      <!-- 5. ADMIN TASKS MANAGEMENT SCREEN (DAY 9) -->
+      <div class="screen" id="screen-admin-tasks" style="padding: 0;">
+        <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
+            <div>
+              <div style="font-size: 15px; font-weight: 800;">Admin Task Management</div>
+              <div style="font-size: 10px; color: var(--warning);">ASSIGN & REVIEW SUBMISSIONS</div>
+            </div>
+          </div>
+          <button class="btn-toggle" style="padding: 4px 10px; font-size: 11px; background: var(--primary); border: none;" onclick="openAdminCreateTaskModal()">➕ Assign</button>
+        </div>
+
+        <div style="flex: 1; overflow-y: auto; padding: 14px;">
+          <!-- Admin Task 1 (Submitted) -->
+          <div class="m3-card" style="margin-top: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="chip urgent">Urgent</span>
+              <span class="chip submitted" id="adm-t1-status">Submitted</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 800; margin-top: 8px;">Calibrate RPLiDAR A1 Sensor</div>
+            <div style="font-size: 11px; color: var(--cyber-cyan); margin-top: 2px;">Assigned to: Aarav Sharma (RW-STU-042)</div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">Mount LiDAR on top acrylic plate and verify point cloud.</div>
+
+            <div style="background: rgba(0, 212, 255, 0.1); border-radius: 6px; padding: 8px; margin-top: 8px; font-size: 11px;">
+              <b>📝 Student Submission Note:</b><br/>
+              "Point cloud frequency tested at 10Hz. Node running cleanly on /scan topic."
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-top: 10px;" id="adm-t1-actions">
+              <button class="btn-primary" style="flex: 1; height: 34px; font-size: 11px; background: #00E676; color: #000;" onclick="adminMarkComplete()">
+                ✓ Mark Completed
+              </button>
+              <button class="btn-outlined" style="flex: 1; height: 34px; font-size: 11px;" onclick="adminReturnChanges()">
+                ↩ Return for Changes
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button class="fab" onclick="openAdminCreateTaskModal()">
+          <span>➕</span> <span>Assign Task</span>
+        </button>
       </div>
 
     </div>
 
-    <!-- LOG PROGRESS UPDATE MODAL (DAY 8) -->
-    <div id="add-update-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px;">
+    <!-- LOG WORK MODAL (DAY 9) -->
+    <div id="log-work-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px;">
       <div class="m3-card" style="width: 100%; max-height: 90vh; overflow-y: auto; border-color: var(--cyber-cyan); margin: 0;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <b style="font-size: 16px;">Log Progress Update</b>
-          <button class="btn-toggle" style="padding: 2px 8px;" onclick="closeAddUpdateModal()">✕</button>
+          <b style="font-size: 16px;">Log Daily Lab Work</b>
+          <button class="btn-toggle" style="padding: 2px 8px;" onclick="closeLogWorkModal()">✕</button>
         </div>
 
-        <form onsubmit="handlePostUpdate(event)" style="margin-top: 12px;">
+        <form onsubmit="handleSaveDailyWork(event)" style="margin-top: 12px;">
           <div class="field-group">
-            <label class="field-label">Update Title *</label>
-            <input type="text" id="up-title" class="m3-input" placeholder="e.g. SLAM Mapping Benchmark Verified" style="padding-left: 12px;" required>
+            <label class="field-label">Work Title *</label>
+            <input type="text" id="lw-title" class="m3-input" placeholder="e.g. Solder motor driver & test PWM" style="padding-left: 12px;" required>
           </div>
 
           <div class="field-group">
             <label class="field-label">Work Description *</label>
-            <textarea id="up-desc" class="m3-input" placeholder="What technical milestone was completed?" style="padding-left: 12px; height: 60px; resize: none;" required></textarea>
+            <textarea id="lw-desc" class="m3-input" placeholder="What hardware/software tasks were completed?" style="padding-left: 12px; height: 60px; resize: none;" required></textarea>
           </div>
 
           <div class="field-group">
-            <label class="field-label">Updated Progress: <b id="up-prog-val">85%</b></label>
-            <input type="range" id="up-prog-slider" min="0" max="100" value="85" style="width: 100%;" oninput="document.getElementById('up-prog-val').textContent = this.value + '%'">
+            <label class="field-label">Related Project</label>
+            <input type="text" id="lw-proj" class="m3-input" placeholder="Autonomous SLAM Maze Rover" style="padding-left: 12px;">
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Hours Worked: <b id="lw-hours-val">3.0 hrs</b></label>
+              <input type="range" id="lw-hours" min="0.5" max="12" step="0.5" value="3.0" style="width: 100%;" oninput="document.getElementById('lw-hours-val').textContent = this.value + ' hrs'">
+            </div>
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Work Date</label>
+              <input type="date" id="lw-date" class="m3-input" value="2026-08-15" style="padding-left: 12px;">
+            </div>
           </div>
 
           <div class="field-group">
-            <label class="field-label">Blockers / Problems Faced (Optional)</label>
-            <input type="text" id="up-blockers" class="m3-input" placeholder="e.g. LiDAR baud rate sync" style="padding-left: 12px;">
-          </div>
-
-          <div class="field-group">
-            <label class="field-label">Next Steps (Optional)</label>
-            <input type="text" id="up-next" class="m3-input" placeholder="e.g. Finalize report" style="padding-left: 12px;">
+            <label class="field-label">Blockers / Problems (Optional)</label>
+            <input type="text" id="lw-blockers" class="m3-input" placeholder="e.g. Laser baud rate sync" style="padding-left: 12px;">
           </div>
 
           <button type="submit" class="btn-primary" style="margin-top: 8px;">
-            🚀 Publish Update to Firestore
+            🚀 Save to Firestore dailyWorkUpdates
           </button>
         </form>
       </div>
     </div>
 
-    <!-- ADMIN ASSIGN MENTOR MODAL -->
-    <div id="admin-mentor-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px;">
-      <div class="m3-card" style="width: 100%; max-width: 320px; border-color: var(--warning); margin: 0;">
-        <b style="font-size: 15px;">Assign Mentor & Status</b>
+    <!-- SUBMIT TASK WORK MODAL (DAY 9) -->
+    <div id="submit-task-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px;">
+      <div class="m3-card" style="width: 100%; max-width: 320px; border-color: var(--cyber-cyan); margin: 0;">
+        <b style="font-size: 15px;">Submit Completed Work</b>
+        <div style="font-size: 11px; color: var(--cyber-cyan); margin-top: 4px;" id="st-task-title">Task Name</div>
+
         <div class="field-group" style="margin-top: 10px;">
-          <label class="field-label">Faculty Mentor Name</label>
-          <input type="text" id="adm-mentor-inp" class="m3-input" value="Dr. Rajesh Kumar" style="padding-left: 12px;">
+          <label class="field-label">Submission Notes / Test Results *</label>
+          <textarea id="st-notes" class="m3-input" placeholder="Describe completed deliverable & test links..." style="padding-left: 12px; height: 60px; resize: none;" required></textarea>
         </div>
-        <div class="field-group">
-          <label class="field-label">Status</label>
-          <select id="adm-status-sel" class="m3-input" style="padding-left: 12px;">
-            <option>In Progress</option>
-            <option>Completed</option>
-            <option>On Hold</option>
-          </select>
+
+        <button class="btn-primary" style="margin-top: 8px;" onclick="handleSubmitTaskWork()">📤 Submit for Review</button>
+        <button class="btn-outlined" style="margin-top: 6px;" onclick="closeSubmitTaskModal()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- ADMIN ASSIGN TASK MODAL -->
+    <div id="admin-create-task-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px;">
+      <div class="m3-card" style="width: 100%; max-height: 90vh; overflow-y: auto; border-color: var(--warning); margin: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <b style="font-size: 15px;">Assign Weekly Milestone Task</b>
+          <button class="btn-toggle" style="padding: 2px 8px;" onclick="closeAdminCreateTaskModal()">✕</button>
         </div>
-        <button class="btn-primary" style="margin-top: 8px;" onclick="saveAdminMentor()">Save Admin Changes</button>
+
+        <form onsubmit="handleAdminCreateTask(event)" style="margin-top: 10px;">
+          <div class="field-group">
+            <label class="field-label">Task Title *</label>
+            <input type="text" id="act-title" class="m3-input" placeholder="e.g. Solder motor driver shield" style="padding-left: 12px;" required>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Instructions *</label>
+            <textarea id="act-desc" class="m3-input" placeholder="Specifications & safety guidelines..." style="padding-left: 12px; height: 50px; resize: none;" required></textarea>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Assign to Student *</label>
+            <select id="act-student" class="m3-input" style="padding-left: 12px;">
+              <option>Aarav Sharma (RW-STU-042)</option>
+              <option>Kabir Mehta (RW-STU-019)</option>
+              <option>Diya Patel (RW-STU-088)</option>
+            </select>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Priority</label>
+              <select id="act-prio" class="m3-input" style="padding-left: 12px;">
+                <option>Medium</option>
+                <option>High</option>
+                <option>Urgent</option>
+                <option>Low</option>
+              </select>
+            </div>
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Deadline</label>
+              <input type="date" id="act-deadline" class="m3-input" value="2026-08-25" style="padding-left: 12px;">
+            </div>
+          </div>
+          <button type="submit" class="btn-primary" style="margin-top: 6px;">Assign Task to Student</button>
+        </form>
       </div>
     </div>
 
@@ -920,102 +819,122 @@
     }
     setTimeout(() => goToScreen('student'), 900);
 
-    // Filter handlers
-    function filterCategory(cat, el) {
-      document.querySelectorAll('#proj-cat-pills .chip.tag').forEach(c => c.classList.remove('selected'));
-      el.classList.add('selected');
-      showToast(`Filtered by Category: ${cat}`, '🔍');
-    }
-
-    function filterStatus(stat, el) {
-      el.parentElement.querySelectorAll('.chip.tag').forEach(c => c.classList.remove('selected'));
-      el.classList.add('selected');
-      showToast(`Filtered by Status: ${stat}`, '🔍');
-    }
-
-    function filterProjectsList() {
-      const query = document.getElementById('proj-search-input').value.toLowerCase();
-      // real-time simulated filtering
-    }
-
-    // Modal Controls
-    function openAddUpdateModal() {
-      document.getElementById('add-update-modal').style.display = 'flex';
-    }
-    function closeAddUpdateModal() {
-      document.getElementById('add-update-modal').style.display = 'none';
-    }
-
-    function handleCreateProject(e) {
-      e.preventDefault();
-      const title = document.getElementById('cp-title').value;
-      const cat = document.getElementById('cp-cat').value;
-      showToast(`Project "${title}" created and synced in Firestore!`, '🚀');
-      goToScreen('projects-list');
-    }
-
-    function handlePostUpdate(e) {
-      e.preventDefault();
-      const title = document.getElementById('up-title').value;
-      const desc = document.getElementById('up-desc').value;
-      const prog = document.getElementById('up-prog-slider').value;
-      const blockers = document.getElementById('up-blockers').value;
-
-      closeAddUpdateModal();
-
-      // Synchronize progress UI
-      document.getElementById('det-prog-num').textContent = `${prog}%`;
-      document.getElementById('det-prog-bar').style.width = `${prog}%`;
-      document.getElementById('card1-prog-text').textContent = `${prog}%`;
-      document.getElementById('card1-prog-bar').style.width = `${prog}%`;
-      document.getElementById('dash-proj-prog').textContent = `${prog}%`;
-      document.getElementById('dash-proj-bar').style.width = `${prog}%`;
-
-      if (prog >= 100) {
-        document.getElementById('det-status-badge').textContent = 'Completed';
-        document.getElementById('det-status-badge').className = 'chip completed';
-        document.getElementById('card1-status').textContent = 'Completed';
-        document.getElementById('card1-status').className = 'chip completed';
-        document.getElementById('dash-proj-status').textContent = 'Completed';
-        document.getElementById('dash-proj-status').className = 'chip completed';
+    function switchWorkTab(tab) {
+      if (tab === 'feed') {
+        document.getElementById('tab-feed').style.borderBottom = '2px solid var(--cyber-cyan)';
+        document.getElementById('tab-feed').style.color = 'var(--cyber-cyan)';
+        document.getElementById('tab-history').style.borderBottom = 'none';
+        document.getElementById('tab-history').style.color = 'var(--text-secondary)';
+      } else {
+        document.getElementById('tab-history').style.borderBottom = '2px solid var(--cyber-cyan)';
+        document.getElementById('tab-history').style.color = 'var(--cyber-cyan)';
+        document.getElementById('tab-feed').style.borderBottom = 'none';
+        document.getElementById('tab-feed').style.color = 'var(--text-secondary)';
       }
+      showToast(`Showing ${tab === 'feed' ? 'Lab Work Feed' : 'Personal Logs'}`, '📝');
+    }
 
-      // Prepend update card
-      const container = document.getElementById('updates-container');
-      const newCard = document.createElement('div');
-      newCard.className = 'm3-card';
-      newCard.style.marginTop = '0';
-      newCard.innerHTML = `
+    // Modal controls
+    function openLogWorkModal() {
+      document.getElementById('log-work-modal').style.display = 'flex';
+    }
+    function closeLogWorkModal() {
+      document.getElementById('log-work-modal').style.display = 'none';
+    }
+
+    function handleSaveDailyWork(e) {
+      e.preventDefault();
+      const title = document.getElementById('lw-title').value;
+      const desc = document.getElementById('lw-desc').value;
+      const hours = document.getElementById('lw-hours').value;
+      const date = document.getElementById('lw-date').value;
+
+      closeLogWorkModal();
+
+      const container = document.getElementById('work-feed-container');
+      const card = document.createElement('div');
+      card.className = 'm3-card';
+      card.style.marginTop = '0';
+      card.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <b style="font-size: 13px;">${title}</b>
-          <span class="chip inprogress">${prog}%</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800;">AS</div>
+            <div>
+              <b style="font-size: 13px;">Aarav Sharma (You)</b>
+              <div style="font-size: 10px; color: var(--text-tertiary);">📅 ${date} • RW-STU-042</div>
+            </div>
+          </div>
+          <span class="chip inprogress">${hours} hrs</span>
         </div>
-        <div style="font-size: 10px; color: var(--text-tertiary); margin-top: 2px;">By Aarav Sharma • Just now</div>
-        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">${desc}</div>
-        ${blockers ? `<div style="background: rgba(255, 59, 48, 0.1); border-radius: 6px; padding: 6px; margin-top: 6px; font-size: 11px; color: var(--error);">⚠️ Blockers: ${blockers}</div>` : ''}
+        <div style="font-size: 14px; font-weight: 800; margin-top: 10px;">${title}</div>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">${desc}</div>
       `;
-      container.prepend(newCard);
-      document.getElementById('det-updates-count').textContent = '3';
-
-      showToast(`Progress update posted! Project progress updated to ${prog}%`, '⚡');
+      container.prepend(card);
+      showToast(`Daily work "${title}" recorded in Firestore!`, '🚀');
     }
 
-    function openAdminMentorModal() {
-      document.getElementById('admin-mentor-modal').style.display = 'flex';
+    function openSubmitTaskModal(taskTitle) {
+      document.getElementById('st-task-title').textContent = taskTitle;
+      document.getElementById('submit-task-modal').style.display = 'flex';
     }
-    function saveAdminMentor() {
-      const mentor = document.getElementById('adm-mentor-inp').value;
-      document.getElementById('admin-mentor-label').textContent = mentor;
-      document.getElementById('det-mentor-name').textContent = mentor;
-      document.getElementById('admin-mentor-modal').style.display = 'none';
-      showToast(`Mentor assigned: ${mentor}`, '✅');
+    function closeSubmitTaskModal() {
+      document.getElementById('submit-task-modal').style.display = 'none';
+    }
+    function handleSubmitTaskWork() {
+      closeSubmitTaskModal();
+      document.getElementById('t1-status-chip').textContent = 'Submitted';
+      document.getElementById('t1-status-chip').className = 'chip submitted';
+      document.getElementById('dash-task-status').textContent = 'Submitted';
+      document.getElementById('dash-task-status').className = 'chip submitted';
+      document.getElementById('t1-action-area').innerHTML = `
+        <div style="background: rgba(0, 212, 255, 0.15); border-radius: 8px; padding: 8px; text-align: center; color: var(--cyber-cyan); font-weight: bold; font-size: 12px;">
+          ⏳ Submitted for Admin Review
+        </div>
+      `;
+      showToast("Task work submitted to Admin for review!", "📤");
     }
 
-    function deleteProjectDemo() {
-      if (confirm("Delete this project from registry?")) {
-        showToast("Project deleted from Firestore.", "🗑️");
-        goToScreen('projects-list');
-      }
+    function startTaskDemo() {
+      document.getElementById('t2-status-chip').textContent = 'In Progress';
+      document.getElementById('t2-status-chip').className = 'chip inprogress';
+      document.getElementById('t2-action-area').innerHTML = `
+        <button class="btn-primary" style="height: 36px;" onclick="openSubmitTaskModal('Write Jetson Nano Setup Docs')">
+          📤 Submit Completed Work
+        </button>
+      `;
+      showToast("Task started! Status changed to In Progress", "▶️");
+    }
+
+    function openAdminCreateTaskModal() {
+      document.getElementById('admin-create-task-modal').style.display = 'flex';
+    }
+    function closeAdminCreateTaskModal() {
+      document.getElementById('admin-create-task-modal').style.display = 'none';
+    }
+    function handleAdminCreateTask(e) {
+      e.preventDefault();
+      const title = document.getElementById('act-title').value;
+      const student = document.getElementById('act-student').value;
+      closeAdminCreateTaskModal();
+      showToast(`Task "${title}" assigned to ${student}!`, '📋');
+      goToScreen('admin-tasks');
+    }
+
+    function adminMarkComplete() {
+      document.getElementById('adm-t1-status').textContent = 'Completed';
+      document.getElementById('adm-t1-status').className = 'chip completed';
+      document.getElementById('adm-t1-actions').innerHTML = `
+        <div style="width: 100%; background: rgba(0, 230, 118, 0.15); border-radius: 8px; padding: 8px; text-align: center; color: #00E676; font-weight: bold; font-size: 12px;">
+          ✓ Completed & Verified
+        </div>
+      `;
+      showToast("Task marked as Completed!", "✅");
+    }
+
+    function adminReturnChanges() {
+      document.getElementById('adm-t1-status').textContent = 'In Progress';
+      document.getElementById('adm-t1-status').className = 'chip inprogress';
+      showToast("Task returned to student for requested revisions.", "↩️");
     }
 
     // Toast

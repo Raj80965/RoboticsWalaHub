@@ -106,6 +106,7 @@ fun StudentHomeScreen(
     onNavigateToBookings: () -> Unit = {},
     onNavigateToProjects: () -> Unit = {},
     onNavigateToProjectDetails: (String) -> Unit = {},
+    onNavigateToTasks: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
@@ -308,7 +309,21 @@ fun StudentHomeScreen(
                 Spacer(modifier = Modifier.height(22.dp))
 
                 // ── 5. Assigned Tasks ────────────────────────────────────
-                SectionTitle(text = "Assigned Tasks", isDark = isDark)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SectionTitle(text = "Assigned Tasks", isDark = isDark)
+                    Text(
+                        text = "View All (${uiState.tasks.size}) ➔",
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = if (isDark) CyberCyan else ElectricBlue,
+                        modifier = Modifier
+                            .clickable(onClick = onNavigateToTasks)
+                            .padding(4.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.height(10.dp))
                 AssignedTasksCard(tasks = uiState.tasks, isDark = isDark)
 

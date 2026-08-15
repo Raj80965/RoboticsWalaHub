@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.Logout
@@ -61,6 +62,7 @@ fun AdminMoreScreen(
     val isDark = isSystemInDarkTheme()
     val scrollState = rememberScrollState()
     var showingProjects by remember { mutableStateOf(false) }
+    var showingTasks by remember { mutableStateOf(false) }
 
     if (showingProjects) {
         Column(modifier = modifier.fillMaxSize()) {
@@ -88,6 +90,32 @@ fun AdminMoreScreen(
         return
     }
 
+    if (showingTasks) {
+        Column(modifier = modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { showingTasks = false }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back to Settings",
+                        tint = if (isDark) CyberCyan else ElectricBlue
+                    )
+                }
+                Text(
+                    text = "Back to Admin Options",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    color = if (isDark) CyberCyan else ElectricBlue
+                )
+            }
+            AdminTasksScreen()
+        }
+        return
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -100,14 +128,25 @@ fun AdminMoreScreen(
             color = if (isDark) TextPrimaryDark else TextPrimaryLight
         )
         Text(
-            text = "Facility controls, project monitoring, and inventory management",
+            text = "Facility controls, task assignments, and project monitoring",
             style = MaterialTheme.typography.bodySmall,
             color = if (isDark) TextSecondaryDark else TextSecondaryLight
         )
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        // Day 8 Highlight Card
+        // Day 9 Highlight Card: Tasks Management
+        AdminOptionCard(
+            title = "📋 Weekly Tasks & Milestones",
+            subtitle = "Assign tasks to approved students & review submitted deliverables",
+            icon = Icons.Filled.Assignment,
+            isDark = isDark,
+            onClick = { showingTasks = true }
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Day 8 Highlight Card: Projects Registry
         AdminOptionCard(
             title = "⚡ Projects Registry & Mentorship",
             subtitle = "Review all lab robotics projects, assign mentors, and audit budgets",

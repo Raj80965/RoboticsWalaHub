@@ -62,6 +62,17 @@ object BookingTimeUtils {
         }
     }
 
+    fun isFutureDate(dateStr: String): Boolean {
+        return try {
+            val target = dateFormat.parse(dateStr) ?: return false
+            val todayStr = getTodayDateString()
+            val today = dateFormat.parse(todayStr) ?: return false
+            target.after(today)
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     /**
      * Checks if two time intervals [startA, endA) and [startB, endB) overlap.
      * Example:

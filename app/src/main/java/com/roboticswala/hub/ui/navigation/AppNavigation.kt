@@ -28,6 +28,7 @@ import com.roboticswala.hub.ui.screens.student.booking.StudentBookingViewModelFa
 import com.roboticswala.hub.ui.screens.student.projects.CreateProjectScreen
 import com.roboticswala.hub.ui.screens.student.projects.ProjectDetailsScreen
 import com.roboticswala.hub.ui.screens.student.qr.StudentQRScannerScreen
+import com.roboticswala.hub.ui.screens.student.tasks.StudentTasksScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
@@ -255,6 +256,11 @@ fun AppNavigation(
                     navController.navigate(Screen.ProjectDetails.createRoute(projectId)) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateToTasks = {
+                    navController.navigate(Screen.StudentTasks.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -438,7 +444,40 @@ fun AppNavigation(
             )
         }
 
-        // 11. Admin Main Dashboard
+        // 11. Student Assigned Tasks Screen (Day 9)
+        composable(
+            route = Screen.StudentTasks.route,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(350)
+                ) + fadeIn(animationSpec = tween(350))
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(350)
+                ) + fadeOut(animationSpec = tween(350))
+            }
+        ) {
+            val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            val studentProfile = UserProfile(
+                uid = currentUid,
+                fullName = currentUser?.displayName ?: "Student",
+                email = currentUser?.email ?: "",
+                status = "Approved"
+            )
+
+            StudentTasksScreen(
+                studentProfile = studentProfile,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // 12. Admin Main Dashboard
         composable(
             route = Screen.AdminMain.route,
             enterTransition = {
