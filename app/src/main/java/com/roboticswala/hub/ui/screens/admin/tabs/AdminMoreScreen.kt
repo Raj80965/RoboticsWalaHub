@@ -70,6 +70,33 @@ fun AdminMoreScreen(
     var showingEvents by remember { mutableStateOf(false) }
     var showingEquipment by remember { mutableStateOf(false) }
     var showingEquipmentRequests by remember { mutableStateOf(false) }
+    var showingBudget by remember { mutableStateOf(false) }
+
+    if (showingBudget) {
+        Column(modifier = modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { showingBudget = false }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back to Settings",
+                        tint = if (isDark) CyberCyan else ElectricBlue
+                    )
+                }
+                Text(
+                    text = "Back to Admin Options",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    color = if (isDark) CyberCyan else ElectricBlue
+                )
+            }
+            AdminBudgetScreen()
+        }
+        return
+    }
 
     if (showingEquipmentRequests) {
         AdminEquipmentRequestsScreen(
@@ -318,6 +345,15 @@ fun AdminMoreScreen(
             icon = Icons.Filled.Event,
             isDark = isDark,
             onClick = { showingEvents = true }
+        )
+
+        // Day 13 Highlight Card: Budget & Expense Management
+        AdminOptionCard(
+            title = "💰 Budget & Expense Management",
+            subtitle = "Manage project grants, approve component receipts & audit finances",
+            icon = Icons.Filled.Inventory2,
+            isDark = isDark,
+            onClick = { showingBudget = true }
         )
 
         Spacer(modifier = Modifier.height(12.dp))

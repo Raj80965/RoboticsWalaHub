@@ -113,6 +113,7 @@ fun StudentHomeScreen(
     onNavigateToNotices: () -> Unit = {},
     onNavigateToEvents: () -> Unit = {},
     onNavigateToEquipment: () -> Unit = {},
+    onNavigateToExpenses: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
@@ -498,6 +499,70 @@ fun StudentHomeScreen(
                             )
                             Text(
                                 text = "Request microcontrollers, motors, LiPo batteries & tools for your projects",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(22.dp))
+
+                // ── 10. Project Budget & Expenses (Day 13) ────────────────
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SectionTitle(text = "Project Budget & Grants", isDark = isDark)
+                    Text(
+                        text = "Claim Expenses ➔",
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = if (isDark) CyberCyan else ElectricBlue,
+                        modifier = Modifier
+                            .clickable(onClick = onNavigateToExpenses)
+                            .padding(4.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = onNavigateToExpenses)
+                        .border(
+                            width = 1.dp,
+                            color = if (isDark) DarkSurfaceBorder else LightSurfaceBorder,
+                            shape = RoundedCornerShape(18.dp)
+                        ),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isDark) DarkSurface.copy(alpha = 0.95f) else LightSurface
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(42.dp)
+                                .clip(CircleShape)
+                                .background(if (isDark) CyberCyan.copy(alpha = 0.15f) else ElectricBlue.copy(alpha = 0.12f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(imageVector = Icons.Filled.Assessment, contentDescription = null, tint = if (isDark) CyberCyan else ElectricBlue, modifier = Modifier.size(22.dp))
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Budget Utilization & Bill Claims",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                            )
+                            Text(
+                                text = "Submit component bills, upload receipts & track remaining project funds",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = if (isDark) TextSecondaryDark else TextSecondaryLight
                             )

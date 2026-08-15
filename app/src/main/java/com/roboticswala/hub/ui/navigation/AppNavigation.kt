@@ -290,6 +290,11 @@ fun AppNavigation(
                     navController.navigate(Screen.StudentEquipment.route) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateToExpenses = {
+                    navController.navigate(Screen.StudentExpenses.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -677,7 +682,41 @@ fun AppNavigation(
             )
         }
 
-        // 17. Admin Main Dashboard
+        // 17. Student Budget & Expenses Screen (Day 13)
+        composable(
+            route = Screen.StudentExpenses.route,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(350)
+                ) + fadeIn(animationSpec = tween(350))
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(350)
+                ) + fadeOut(animationSpec = tween(350))
+            }
+        ) {
+            val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            val studentProfile = UserProfile(
+                uid = currentUid,
+                fullName = currentUser?.displayName ?: "Robotics Student",
+                studentId = if (currentUid.isNotEmpty()) "STU-${currentUid.take(4)}" else "STU-0001",
+                email = currentUser?.email ?: "",
+                status = "Approved"
+            )
+
+            com.roboticswala.hub.ui.screens.student.expenses.StudentExpensesScreen(
+                userProfile = studentProfile,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // 18. Admin Main Dashboard
         composable(
             route = Screen.AdminMain.route,
             enterTransition = {

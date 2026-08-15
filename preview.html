@@ -401,6 +401,8 @@
 
   <!-- Quick Screen Switcher -->
   <div class="quick-nav-bar">
+    <button class="quick-nav-btn" onclick="goToScreen('expenses')">💰 Project Budget</button>
+    <button class="quick-nav-btn" onclick="goToScreen('admin-budget')">🛡️ Admin Budget</button>
     <button class="quick-nav-btn" onclick="goToScreen('equipment')">📦 Hardware Catalog</button>
     <button class="quick-nav-btn" onclick="goToScreen('admin-equipment')">🛡️ Admin Inventory</button>
     <button class="quick-nav-btn" onclick="goToScreen('notices')">📢 Student Notices</button>
@@ -851,6 +853,191 @@
         </button>
       </div>
 
+      <!-- 9. STUDENT BUDGET & EXPENSES SCREEN (DAY 13) -->
+      <div class="screen" id="screen-expenses" style="padding: 0;">
+        <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
+            <div>
+              <div style="font-size: 15px; font-weight: 800;">Budget & Expenses</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan);">FIRESTORE /expenses</div>
+            </div>
+          </div>
+          <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px; background: var(--primary); border: none;" onclick="openAddExpenseModal()">➕ Claim</button>
+        </div>
+
+        <div style="flex: 1; overflow-y: auto; padding: 14px;">
+          <!-- Budget KPI Card -->
+          <div class="m3-card" style="margin-top: 0; border-color: var(--cyber-cyan);" id="student-budget-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 14px; font-weight: 800;">Autonomous Drone Rover</span>
+              <span class="chip approved" id="stu-budget-health">NORMAL (33.6%)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+              <div>
+                <div style="font-size: 10px; color: var(--text-secondary);">Approved Budget</div>
+                <div style="font-size: 15px; font-weight: 800; color: var(--cyber-cyan);" id="stu-budget-alloc">₹25,000</div>
+              </div>
+              <div>
+                <div style="font-size: 10px; color: var(--text-secondary);">Approved Claims</div>
+                <div style="font-size: 15px; font-weight: 800; color: var(--success);" id="stu-budget-spent">₹8,400</div>
+              </div>
+              <div>
+                <div style="font-size: 10px; color: var(--text-secondary);">Remaining</div>
+                <div style="font-size: 15px; font-weight: 800;" id="stu-budget-rem">₹16,600</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; margin-bottom: 6px;">
+            <span style="font-size: 13px; font-weight: 800;">Submitted Expense Claims</span>
+            <span style="font-size: 11px; color: var(--text-secondary);">3 Claims</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;" id="student-expenses-container">
+            <!-- Expense 1 -->
+            <div class="m3-card" style="margin-top: 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="chip tag">Motors</span>
+                <span class="chip approved">APPROVED</span>
+              </div>
+              <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">4x MG996R High Torque Servos</div>
+              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">📁 Drone Rover • Vendor: Robu.in • Date: 2026-08-12</div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                <span style="font-size: 15px; font-weight: 800; color: var(--cyber-cyan);">₹2,400</span>
+                <span style="font-size: 11px; color: var(--cyber-cyan);">📄 Tax_Invoice_883.pdf</span>
+              </div>
+            </div>
+
+            <!-- Expense 2 -->
+            <div class="m3-card" style="margin-top: 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="chip tag">Sensors</span>
+                <span class="chip high">PENDING APPROVAL</span>
+              </div>
+              <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">TFmini-S Micro LiDAR Distance Sensor</div>
+              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">📁 Drone Rover • Vendor: SunRobotics • Date: 2026-08-14</div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                <span style="font-size: 15px; font-weight: 800; color: var(--cyber-cyan);">₹3,200</span>
+                <button class="btn-outlined" style="height: 24px; font-size: 10px; color: var(--error); border-color: rgba(255,59,48,0.4);" onclick="this.closest('.m3-card').remove(); showToast('Expense claim deleted', '🗑️')">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="fab" onclick="openAddExpenseModal()">
+          <span>➕</span> <span>Submit Claim</span>
+        </button>
+      </div>
+
+      <!-- 10. ADMIN BUDGET & EXPENSES SCREEN (DAY 13) -->
+      <div class="screen" id="screen-admin-budget" style="padding: 0;">
+        <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
+            <div>
+              <div style="font-size: 15px; font-weight: 800;">Financial Oversight</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan);">ADMIN /budget & claims</div>
+            </div>
+          </div>
+          <button class="btn-toggle" style="padding: 4px 10px; font-size: 11px; background: var(--primary); border: none;" onclick="showToast('Audit report exported to PDF', '📄')">📊 Export</button>
+        </div>
+
+        <div style="flex: 1; overflow-y: auto; padding: 14px;">
+          <!-- Financial KPI -->
+          <div class="m3-card" style="margin-top: 0; background: linear-gradient(135deg, rgba(0, 102, 255, 0.15) 0%, rgba(0, 212, 255, 0.1) 100%);">
+            <div style="display: flex; justify-content: space-between;">
+              <div>
+                <div style="font-size: 10px; color: var(--text-secondary);">Total Allocated Grants</div>
+                <div style="font-size: 17px; font-weight: 800; color: var(--cyber-cyan);">₹1,50,000</div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 10px; color: var(--text-secondary);">Total Approved Expenses</div>
+                <div style="font-size: 17px; font-weight: 800; color: var(--success);" id="adm-total-spent">₹42,500</div>
+              </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px;">
+              <span>Remaining: <b>₹1,07,500</b></span>
+              <span style="color: var(--warning);">Pending Approval: <b>₹6,800</b></span>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; margin-bottom: 6px;">
+            <span style="font-size: 13px; font-weight: 800;">Pending Expense Approvals</span>
+            <span class="chip high">2 CLAIMS</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;" id="admin-expenses-container">
+            <!-- Pending Claim 1 -->
+            <div class="m3-card" style="margin-top: 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="chip approved">PENDING APPROVAL</span>
+                <span style="font-size: 15px; font-weight: 800; color: var(--cyber-cyan);">₹3,200</span>
+              </div>
+              <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">TFmini-S Micro LiDAR Distance Sensor</div>
+              <div style="font-size: 11px; color: var(--cyber-cyan); margin-top: 2px;">👤 Aarav Sharma (STU-042) • 📁 Drone Rover</div>
+              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Vendor: SunRobotics • Date: 2026-08-14</div>
+              <div style="display: flex; gap: 6px; margin-top: 10px;">
+                <button class="btn-primary" style="height: 28px; font-size: 11px; flex: 1;" onclick="handleApproveExpense(this, 3200, 'TFmini-S Micro LiDAR Distance Sensor')">Approve (₹3,200)</button>
+                <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4); flex: 1;" onclick="this.closest('.m3-card').remove(); showToast('Expense claim rejected', '🚫')">Reject</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SUBMIT EXPENSE MODAL -->
+    <div id="add-expense-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px;">
+      <div class="m3-card" style="width: 100%; max-height: 90vh; overflow-y: auto; border-color: var(--cyber-cyan); margin: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <b style="font-size: 16px;">Submit Project Expense Claim</b>
+          <button class="btn-toggle" style="padding: 2px 8px;" onclick="closeAddExpenseModal()">✕</button>
+        </div>
+
+        <form onsubmit="handleSaveNewExpense(event)" style="margin-top: 12px;">
+          <div class="field-group">
+            <label class="field-label">Expense Title *</label>
+            <input type="text" id="exp-title" class="m3-input" placeholder="e.g. Ultrasonic Sensors & Breadboard Pack" style="padding-left: 12px;" required>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Category</label>
+              <select id="exp-cat" class="m3-input" style="padding-left: 12px;">
+                <option>Components</option>
+                <option>Sensors</option>
+                <option>Motors</option>
+                <option>Microcontrollers</option>
+                <option>Batteries</option>
+                <option>Tools</option>
+                <option>3D Printing</option>
+              </select>
+            </div>
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Amount (₹) *</label>
+              <input type="number" id="exp-amt" class="m3-input" placeholder="1850" min="1" style="padding-left: 12px;" required>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Purchase Date *</label>
+              <input type="date" id="exp-date" class="m3-input" value="2026-08-15" style="padding-left: 12px;" required>
+            </div>
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Vendor / Shop</label>
+              <input type="text" id="exp-vendor" class="m3-input" placeholder="Robu.in" style="padding-left: 12px;">
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Bill / Receipt Notes</label>
+            <input type="text" id="exp-notes" class="m3-input" placeholder="GST invoice attached #INV-9921" style="padding-left: 12px;">
+          </div>
+          <button type="submit" class="btn-primary" style="margin-top: 6px;">
+            💰 Submit Expense Claim
+          </button>
+        </form>
+      </div>
     </div>
 
     <!-- REQUEST EQUIPMENT MODAL -->
@@ -1360,6 +1547,96 @@
         </div>
       `;
       showToast(`1 unit of "${name}" issued to student. Inventory stock reduced!`, '⚡');
+    }
+
+    // ── DAY 13 BUDGET & EXPENSES JAVASCRIPT HANDLERS ─────────────────────────
+    let currentApprovedExpensesTotal = 8400;
+    const projectAllocatedBudget = 25000;
+
+    function openAddExpenseModal() { document.getElementById('add-expense-modal').style.display = 'flex'; }
+    function closeAddExpenseModal() { document.getElementById('add-expense-modal').style.display = 'none'; }
+
+    function handleSaveNewExpense(e) {
+      e.preventDefault();
+      const title = document.getElementById('exp-title').value;
+      const cat = document.getElementById('exp-cat').value;
+      const amt = parseFloat(document.getElementById('exp-amt').value) || 0;
+      const pDate = document.getElementById('exp-date').value;
+      const vendor = document.getElementById('exp-vendor').value;
+      const notes = document.getElementById('exp-notes').value;
+
+      closeAddExpenseModal();
+
+      // 1. Add to Student Expenses list
+      const stuList = document.getElementById('student-expenses-container');
+      if (stuList) {
+        const card = document.createElement('div');
+        card.className = 'm3-card';
+        card.style.marginTop = '0';
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="chip tag">${cat}</span>
+            <span class="chip high">PENDING APPROVAL</span>
+          </div>
+          <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">${title}</div>
+          <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">📁 Drone Rover • Vendor: ${vendor || 'N/A'} • Date: ${pDate}</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+            <span style="font-size: 15px; font-weight: 800; color: var(--cyber-cyan);">₹${amt}</span>
+            <button class="btn-outlined" style="height: 24px; font-size: 10px; color: var(--error); border-color: rgba(255,59,48,0.4);" onclick="this.closest('.m3-card').remove(); showToast('Expense claim deleted', '🗑️')">Delete</button>
+          </div>
+        `;
+        stuList.prepend(card);
+      }
+
+      // 2. Add to Admin Approval Queue
+      const admList = document.getElementById('admin-expenses-container');
+      if (admList) {
+        const card = document.createElement('div');
+        card.className = 'm3-card';
+        card.style.marginTop = '0';
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="chip approved">PENDING APPROVAL</span>
+            <span style="font-size: 15px; font-weight: 800; color: var(--cyber-cyan);">₹${amt}</span>
+          </div>
+          <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">${title}</div>
+          <div style="font-size: 11px; color: var(--cyber-cyan); margin-top: 2px;">👤 Aarav Sharma (STU-042) • 📁 Drone Rover</div>
+          <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Vendor: ${vendor || 'N/A'} • Date: ${pDate}</div>
+          <div style="display: flex; gap: 6px; margin-top: 10px;">
+            <button class="btn-primary" style="height: 28px; font-size: 11px; flex: 1;" onclick="handleApproveExpense(this, ${amt}, '${title}')">Approve (₹${amt})</button>
+            <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4); flex: 1;" onclick="this.closest('.m3-card').remove(); showToast('Expense claim rejected', '🚫')">Reject</button>
+          </div>
+        `;
+        admList.prepend(card);
+      }
+
+      showToast(`Expense claim for ₹${amt} submitted!`, '💰');
+    }
+
+    function handleApproveExpense(btn, amt, title) {
+      const card = btn.closest('.m3-card');
+      card.remove();
+
+      currentApprovedExpensesTotal += amt;
+      const remaining = Math.max(0, projectAllocatedBudget - currentApprovedExpensesTotal);
+      const utilPct = ((currentApprovedExpensesTotal / projectAllocatedBudget) * 100).toFixed(1);
+
+      // Update student dashboard KPI
+      const spentEl = document.getElementById('stu-budget-spent');
+      const remEl = document.getElementById('stu-budget-rem');
+      const healthEl = document.getElementById('stu-budget-health');
+      if (spentEl) spentEl.textContent = `₹${currentApprovedExpensesTotal}`;
+      if (remEl) remEl.textContent = `₹${remaining}`;
+      if (healthEl) {
+        healthEl.textContent = utilPct >= 100 ? `OVER BUDGET (${utilPct}%)` : utilPct >= 75 ? `WARNING (${utilPct}%)` : `NORMAL (${utilPct}%)`;
+        healthEl.className = utilPct >= 100 ? 'chip urgent' : utilPct >= 75 ? 'chip high' : 'chip approved';
+      }
+
+      // Update admin spent
+      const admSpent = document.getElementById('adm-total-spent');
+      if (admSpent) admSpent.textContent = `₹${42500 + amt}`;
+
+      showToast(`Expense of ₹${amt} approved! Remaining project budget: ₹${remaining}`, '✅');
     }
 
     // Toast
