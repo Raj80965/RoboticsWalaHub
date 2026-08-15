@@ -401,6 +401,8 @@
 
   <!-- Quick Screen Switcher -->
   <div class="quick-nav-bar">
+    <button class="quick-nav-btn" onclick="goToScreen('equipment')">📦 Hardware Catalog</button>
+    <button class="quick-nav-btn" onclick="goToScreen('admin-equipment')">🛡️ Admin Inventory</button>
     <button class="quick-nav-btn" onclick="goToScreen('notices')">📢 Student Notices</button>
     <button class="quick-nav-btn" onclick="goToScreen('events')">📅 Student Events</button>
     <button class="quick-nav-btn" onclick="goToScreen('admin-notices')">🛠️ Admin Notices</button>
@@ -429,7 +431,7 @@
           🤖
         </div>
         <h1 style="font-size: 26px; font-weight: 800; background: linear-gradient(135deg, #00D4FF 0%, #0066FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Robotics Wala Hub</h1>
-        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 6px; letter-spacing: 1px;">NOTICE BOARD & EVENTS SYSTEM</p>
+        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 6px; letter-spacing: 1px;">HARDWARE & INVENTORY MANAGEMENT</p>
       </div>
 
       <!-- 2. STUDENT DASHBOARD (INTEGRATED NOTICES & EVENTS) -->
@@ -439,10 +441,11 @@
             <span style="font-size: 22px;">🤖</span>
             <div>
               <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">Robotics Wala Hub</div>
-              <div style="font-size: 10px; color: var(--cyber-cyan); font-weight: 700;">DAY 11: NOTICES & EVENTS</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan); font-weight: 700;">DAY 12: EQUIPMENT & INVENTORY</div>
             </div>
           </div>
           <div style="display: flex; gap: 6px;">
+            <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="goToScreen('equipment')">📦</button>
             <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="goToScreen('notices')">📢</button>
             <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="restartSplash()">🚪</button>
           </div>
@@ -461,6 +464,21 @@
                 AS
               </div>
             </div>
+          </div>
+
+          <!-- Lab Equipment & Components (Day 12) -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; margin-bottom: 4px;">
+            <span style="font-size: 14px; font-weight: 800;">Lab Hardware & Inventory</span>
+            <span style="font-size: 11px; color: var(--cyber-cyan); font-weight: 700; cursor: pointer;" onclick="goToScreen('equipment')">Browse Stock ➔</span>
+          </div>
+
+          <div class="m3-card" style="cursor: pointer; border-color: var(--cyber-cyan); margin-top: 0;" onclick="goToScreen('equipment')">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="chip tag">Hardware Stock</span>
+              <span class="chip approved">12 Sensors Avail</span>
+            </div>
+            <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">Request Sensors, LiPo & Controllers</div>
+            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Browse lab robotics components & track active issue requests.</div>
           </div>
 
           <!-- Latest Notice Card (Day 11) -->
@@ -497,9 +515,10 @@
 
         <div class="bottom-nav">
           <button class="nav-item active"><span style="font-size:16px;">🏠</span><span>Home</span></button>
+          <button class="nav-item" onclick="goToScreen('equipment')"><span style="font-size:16px;">📦</span><span>Equipment</span></button>
           <button class="nav-item" onclick="goToScreen('notices')"><span style="font-size:16px;">📢</span><span>Notices</span></button>
           <button class="nav-item" onclick="goToScreen('events')"><span style="font-size:16px;">📅</span><span>Events</span></button>
-          <button class="nav-item" onclick="goToScreen('admin-notices')"><span style="font-size:16px;">🛡️</span><span>Admin</span></button>
+          <button class="nav-item" onclick="goToScreen('admin-equipment')"><span style="font-size:16px;">🛡️</span><span>Admin</span></button>
         </div>
       </div>
 
