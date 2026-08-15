@@ -25,31 +25,7 @@ data class AttendanceData(
     }
 }
 
-/**
- * Lab booking from Firestore: /labBookings/{bookingId}
- * Query by studentUid + date == today
- */
-data class LabBooking(
-    val id: String = "",
-    val date: String = "",           // "yyyy-MM-dd"
-    val startTime: String = "",      // "02:00 PM"
-    val endTime: String = "",        // "05:00 PM"
-    val projectName: String = "",
-    val status: String = "Pending"   // "Approved", "Pending", "Rejected"
-) {
-    companion object {
-        fun fromMap(id: String, map: Map<String, Any?>): LabBooking {
-            return LabBooking(
-                id = id,
-                date = map["date"] as? String ?: "",
-                startTime = map["startTime"] as? String ?: "",
-                endTime = map["endTime"] as? String ?: "",
-                projectName = map["projectName"] as? String ?: "",
-                status = map["status"] as? String ?: "Pending"
-            )
-        }
-    }
-}
+
 
 /**
  * Student project from Firestore: /projects/{projectId}

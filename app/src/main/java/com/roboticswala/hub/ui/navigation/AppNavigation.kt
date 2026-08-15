@@ -22,6 +22,9 @@ import com.roboticswala.hub.data.models.UserProfile
 import com.roboticswala.hub.ui.screens.student.attendance.StudentAttendanceHistoryScreen
 import com.roboticswala.hub.ui.screens.student.attendance.StudentAttendanceViewModel
 import com.roboticswala.hub.ui.screens.student.attendance.StudentAttendanceViewModelFactory
+import com.roboticswala.hub.ui.screens.student.booking.StudentBookingsScreen
+import com.roboticswala.hub.ui.screens.student.booking.StudentBookingViewModel
+import com.roboticswala.hub.ui.screens.student.booking.StudentBookingViewModelFactory
 import com.roboticswala.hub.ui.screens.student.qr.StudentQRScannerScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -235,6 +238,11 @@ fun AppNavigation(
                     navController.navigate(Screen.StudentAttendanceHistory.route) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateToBookings = {
+                    navController.navigate(Screen.StudentBookings.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -310,7 +318,44 @@ fun AppNavigation(
             )
         }
 
-        // 8. Admin Main Dashboard
+        // 8. Student Lab Slot Bookings Screen (Day 7)
+        composable(
+            route = Screen.StudentBookings.route,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(350)
+                ) + fadeIn(animationSpec = tween(350))
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(350)
+                ) + fadeOut(animationSpec = tween(350))
+            }
+        ) {
+            val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            val studentProfile = UserProfile(
+                uid = currentUid,
+                fullName = currentUser?.displayName ?: "Student",
+                email = currentUser?.email ?: "",
+                status = "Approved"
+            )
+            val bookingViewModel: StudentBookingViewModel = viewModel(
+                factory = StudentBookingViewModelFactory(studentUid = currentUid)
+            )
+
+            StudentBookingsScreen(
+                studentProfile = studentProfile,
+                viewModel = bookingViewModel,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // 9. Admin Main Dashboard
         composable(
             route = Screen.AdminMain.route,
             enterTransition = {

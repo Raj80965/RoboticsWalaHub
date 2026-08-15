@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -102,6 +103,7 @@ fun StudentHomeScreen(
     onRefresh: () -> Unit,
     onNavigateToScanner: () -> Unit = {},
     onNavigateToAttendanceHistory: () -> Unit = {},
+    onNavigateToBookings: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
@@ -254,9 +256,27 @@ fun StudentHomeScreen(
                 Spacer(modifier = Modifier.height(22.dp))
 
                 // ── 3. Today's Lab Slot ──────────────────────────────────
-                SectionTitle(text = "Today's Lab Slot", isDark = isDark)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SectionTitle(text = "Today's Lab Slot", isDark = isDark)
+                    Text(
+                        text = "+ Book Slot ➔",
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = if (isDark) CyberCyan else ElectricBlue,
+                        modifier = Modifier
+                            .clickable(onClick = onNavigateToBookings)
+                            .padding(4.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.height(10.dp))
-                TodayLabSlotCard(booking = uiState.todayLabBooking, isDark = isDark)
+                TodayLabSlotCard(
+                    booking = uiState.todayLabBooking,
+                    isDark = isDark,
+                    onClick = onNavigateToBookings
+                )
 
                 Spacer(modifier = Modifier.height(22.dp))
 
@@ -633,11 +653,13 @@ private fun AttendanceStat(label: String, value: String, isDark: Boolean) {
 @Composable
 private fun TodayLabSlotCard(
     booking: LabBooking?,
-    isDark: Boolean
+    isDark: Boolean,
+    onClick: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .border(
                 1.dp,
                 if (isDark) CyberCyan.copy(alpha = 0.3f) else ElectricBlue.copy(alpha = 0.3f),

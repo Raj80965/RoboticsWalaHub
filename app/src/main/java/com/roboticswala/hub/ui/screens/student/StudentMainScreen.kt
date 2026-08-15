@@ -68,7 +68,8 @@ import com.roboticswala.hub.ui.theme.TextSecondaryLight
 fun StudentMainScreen(
     onLogout: () -> Unit,
     onNavigateToScanner: () -> Unit = {},
-    onNavigateToAttendanceHistory: () -> Unit = {}
+    onNavigateToAttendanceHistory: () -> Unit = {},
+    onNavigateToBookings: () -> Unit = {}
 ) {
     // Get current user uid from FirebaseAuth — ViewModel is created with this uid
     val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
@@ -197,7 +198,8 @@ fun StudentMainScreen(
                         uiState = uiState,
                         onRefresh = { viewModel.refresh() },
                         onNavigateToScanner = onNavigateToScanner,
-                        onNavigateToAttendanceHistory = onNavigateToAttendanceHistory
+                        onNavigateToAttendanceHistory = onNavigateToAttendanceHistory,
+                        onNavigateToBookings = onNavigateToBookings
                     )
                     StudentNavRoute.Projects.route -> StudentProjectsScreen(
                         projects = uiState.projectsList
@@ -213,7 +215,8 @@ fun StudentMainScreen(
                         uiState = uiState,
                         onRefresh = { viewModel.refresh() },
                         onNavigateToScanner = onNavigateToScanner,
-                        onNavigateToAttendanceHistory = onNavigateToAttendanceHistory
+                        onNavigateToAttendanceHistory = onNavigateToAttendanceHistory,
+                        onNavigateToBookings = onNavigateToBookings
                     )
                 }
             }

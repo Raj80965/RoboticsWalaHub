@@ -185,10 +185,7 @@ fun AdminMainScreen(
                         students = uiState.studentsList,
                         onApproveStudent = viewModel::approveStudent
                     )
-                    AdminNavRoute.Bookings.route -> AdminBookingsScreen(
-                        bookings = uiState.bookingsList,
-                        onApproveBooking = viewModel::approveBooking
-                    )
+                    AdminNavRoute.Bookings.route -> AdminBookingsScreen()
                     AdminNavRoute.More.route -> AdminMoreScreen(onLogout = onLogout)
                     else -> AdminDashboardScreen(data = uiState.dashboardData)
                 }
