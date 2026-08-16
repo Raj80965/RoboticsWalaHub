@@ -1,26 +1,21 @@
 {
   "project_info": {
-    "project_number": "109876543210",
+    "project_number": "357229968762",
     "project_id": "robotics-wala-hub",
-    "storage_bucket": "robotics-wala-hub.appspot.com"
+    "storage_bucket": "robotics-wala-hub.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:109876543210:android:abcdef0123456789",
+        "mobilesdk_app_id": "1:357229968762:android:f68ff6f017379177d9eac3",
         "android_client_info": {
           "package_name": "com.roboticswala.hub"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "109876543210-abcdefghijklmnopqrstuvwxyz.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDummyKeyForRoboticsWalaHubApp123456"
+          "current_key": "AIzaSyDLadih7fiHD281uw9b4ZbSHCbmeBBoFww"
         }
       ],
       "services": {

@@ -1,4 +1,4 @@
-﻿package com.roboticswala.hub.ui.screens.admin.tabs
+package com.roboticswala.hub.ui.screens.admin.tabs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -120,7 +120,51 @@ fun AdminStudentsScreen(
             )
         }
 
-        items(filteredList) { student ->
+        if (filteredList.isEmpty()) {
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 24.dp)
+                        .border(
+                            width = 1.dp,
+                            color = if (isDark) DarkSurfaceBorder else LightSurfaceBorder,
+                            shape = RoundedCornerShape(16.dp)
+                        ),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isDark) DarkSurface.copy(alpha = 0.8f) else LightSurface
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(28.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Person,
+                            contentDescription = null,
+                            modifier = Modifier.size(48.dp),
+                            tint = if (isDark) CyberCyan.copy(alpha = 0.6f) else ElectricBlue.copy(alpha = 0.6f)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "No Students Found",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = if (searchQuery.isNotBlank()) "No students match '$searchQuery'" else "Registered students will appear here in real-time.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                        )
+                    }
+                }
+            }
+        } else {
+            items(filteredList) { student ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -229,6 +273,7 @@ fun AdminStudentsScreen(
                 }
             }
         }
+    }
 
         item {
             Spacer(modifier = Modifier.height(40.dp))
