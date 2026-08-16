@@ -17,7 +17,6 @@ local.properties
 secrets.properties
 
 # Android Studio Navigation / Layout editor caches
-# Android APKs
-*.apk
+# Build artifacts
 app/build/
 build/
