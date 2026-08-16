@@ -1,0 +1,49 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Profile photos (Max 5MB, images only)
+    match /profile_images/{userId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId) && request.resource.size < 5 * 1024 * 1024 && request.resource.contentType.matches('image/.*');
+    }
+
+    // Certificates & Achievements (Max 10MB, PDF or images)
+    match /certificates/{userId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId) && request.resource.size < 10 * 1024 * 1024 && (request.resource.contentType.matches('image/.*') || request.resource.contentType == 'application/pdf');
+    }
+
+    // Expense Receipts (Max 10MB, PDF or images)
+    match /receipts/{userId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId) && request.resource.size < 10 * 1024 * 1024 && (request.resource.contentType.matches('image/.*') || request.resource.contentType == 'application/pdf');
+    }
+
+    // Project Documents & Images (Max 25MB)
+    match /project_files/{projectId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.resource.size < 25 * 1024 * 1024;
+    }
+
+    // Daily Work attachments (Max 15MB)
+    match /work_updates/{userId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId) && request.resource.size < 15 * 1024 * 1024;
+    }
+
+    // Achievement supporting files
+    match /achievement_docs/{userId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId) && request.resource.size < 10 * 1024 * 1024;
+    }
+  }
+}

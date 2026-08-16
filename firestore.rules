@@ -1,0 +1,164 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && getUserData().role == 'ADMIN';
+    }
+
+    function isApprovedStudent() {
+      return isAuthenticated() && 
+             getUserData().role == 'STUDENT' && 
+             getUserData().status == 'APPROVED';
+    }
+
+    // 1. Users Collection
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(userId);
+      allow update: if isAdmin() || (
+        isOwner(userId) && 
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'status', 'approvedBy', 'approvedAt'])
+      );
+      allow delete: if isAdmin();
+    }
+
+    // 2. Attendance Sessions & Records
+    match /attendanceSessions/{sessionId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /attendanceRecords/{recordId} {
+      allow read: if isAuthenticated() && (isAdmin() || resource.data.studentUid == request.auth.uid);
+      allow create: if isAuthenticated() && (isAdmin() || (request.resource.data.studentUid == request.auth.uid && isApprovedStudent()));
+      allow update: if isAuthenticated() && (isAdmin() || (resource.data.studentUid == request.auth.uid && isApprovedStudent()));
+      allow delete: if isAdmin();
+    }
+
+    // 3. Lab Bookings
+    match /labBookings/{bookingId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && (isAdmin() || (request.resource.data.studentUid == request.auth.uid && isApprovedStudent()));
+      allow update: if isAuthenticated() && (isAdmin() || (resource.data.studentUid == request.auth.uid && isApprovedStudent() && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['status', 'approvedBy'])));
+      allow delete: if isAdmin() || (resource.data.studentUid == request.auth.uid && resource.data.status == 'PENDING');
+    }
+
+    // 4. Projects & Project Updates
+    match /projects/{projectId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && (isAdmin() || isApprovedStudent());
+      allow update: if isAuthenticated() && (
+        isAdmin() || 
+        (resource.data.createdBy == request.auth.uid || request.auth.uid in resource.data.teamMemberUids)
+      );
+      allow delete: if isAdmin();
+
+      match /updates/{updateId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && (
+          isAdmin() || 
+          get(/databases/$(database)/documents/projects/$(projectId)).data.createdBy == request.auth.uid ||
+          request.auth.uid in get(/databases/$(database)/documents/projects/$(projectId)).data.teamMemberUids
+        );
+      }
+    }
+
+    // 5. Daily Work Progress Updates
+    match /dailyWorkUpdates/{updateId} {
+      allow read: if isAuthenticated() && (isAdmin() || resource.data.studentUid == request.auth.uid);
+      allow create: if isAuthenticated() && (isAdmin() || (request.resource.data.studentUid == request.auth.uid && isApprovedStudent()));
+      allow update, delete: if isAuthenticated() && (isAdmin() || resource.data.studentUid == request.auth.uid);
+    }
+
+    // 6. Tasks
+    match /tasks/{taskId} {
+      allow read: if isAuthenticated();
+      allow create, delete: if isAdmin();
+      allow update: if isAuthenticated() && (
+        isAdmin() || 
+        (resource.data.assignedStudentUid == request.auth.uid && 
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'submissionNote', 'submissionFiles', 'submittedAt']))
+      );
+    }
+
+    // 7. Achievements & Certificates
+    match /achievements/{achievementId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && (isAdmin() || (request.resource.data.studentUid == request.auth.uid && isApprovedStudent()));
+      allow update: if isAuthenticated() && (
+        isAdmin() || 
+        (resource.data.studentUid == request.auth.uid && resource.data.status != 'APPROVED' && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['status', 'approvedBy', 'approvedAt', 'points']))
+      );
+      allow delete: if isAdmin();
+    }
+
+    // 8. Notices
+    match /notices/{noticeId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // 9. Events & Registrations
+    match /events/{eventId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+
+      match /registrations/{studentUid} {
+        allow read: if isAuthenticated();
+        allow create, delete: if isAuthenticated() && (isAdmin() || (studentUid == request.auth.uid && isApprovedStudent()));
+        allow update: if isAdmin();
+      }
+    }
+
+    match /eventRegistrations/{regId} {
+      allow read: if isAuthenticated();
+      allow create, delete: if isAuthenticated() && (isAdmin() || (request.resource.data.studentUid == request.auth.uid && isApprovedStudent()));
+      allow update: if isAdmin();
+    }
+
+    // 10. Equipment & Inventory
+    match /equipment/{equipmentId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /equipmentRequests/{requestId} {
+      allow read: if isAuthenticated() && (isAdmin() || resource.data.studentUid == request.auth.uid);
+      allow create: if isAuthenticated() && (isAdmin() || (request.resource.data.studentUid == request.auth.uid && isApprovedStudent()));
+      allow update: if isAdmin() || (resource.data.studentUid == request.auth.uid && resource.data.status == 'PENDING');
+      allow delete: if isAdmin();
+    }
+
+    match /inventoryTransactions/{transId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // 11. Expenses & Budget Audit
+    match /expenses/{expenseId} {
+      allow read: if isAuthenticated() && (isAdmin() || resource.data.submittedBy == request.auth.uid);
+      allow create: if isAuthenticated() && (isAdmin() || (request.resource.data.submittedBy == request.auth.uid && isApprovedStudent()));
+      allow update: if isAdmin() || (resource.data.submittedBy == request.auth.uid && resource.data.status == 'PENDING');
+      allow delete: if isAdmin();
+    }
+
+    match /budgetAuditLogs/{logId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+  }
+}

@@ -1,127 +1,162 @@
 # 🤖 Robotics Wala Hub
 
-A modern, high-tech Android application for robotics enthusiasts, engineers, and makers built using **Kotlin**, **Jetpack Compose**, **Material Design 3**, and **MVVM Architecture**.
+A complete, enterprise-grade, cyber-robotics Android application and management portal designed for robotics laboratories, research clubs, engineering students, faculty mentors, and lab administrators. Built using **Kotlin 2.0+**, **Jetpack Compose**, **Material Design 3 (M3)**, **MVVM Architecture**, and **Google Firebase Suite (Auth, Firestore, Storage)**.
 
 ---
 
-## 🚀 Overview (Day 1 Foundation)
+## 🌟 Key Highlights & Full System Architecture (Day 1 - Day 15)
 
-The Day 1 release of **Robotics Wala Hub** delivers the complete application foundation, cyber-robotics design system, reactive MVVM architecture, and core authentication navigation flows:
+Robotics Wala Hub is an all-in-one ecosystem for end-to-end robotics lab workflows, resource scheduling, project tracking, hardware inventory, and student analytics:
 
-1. **Splash Screen**:
-   - Custom animated **Robotics Logo** emblem with dynamic glowing visor, pulse aura, and cyber circuit nodes.
-   - High-tech typography with the title **"Robotics Wala Hub"** and tagline.
-   - Smooth animated linear system initialization loader.
-   - Timed automatic transition (with tap-to-skip support) to the Login screen.
+1. **🔐 Authentication & Role-Based Access Control**:
+   - Dynamic Student Registration with institutional profile verification.
+   - Admin Approval pipeline (Pending, Approved, Rejected, Suspended status checks).
+   - Firebase Auth session persistence, edge-to-edge login flow, and password reset.
 
-2. **Login Screen**:
-   - Clean Material 3 card container with cyber glow borders.
-   - **Email & Password inputs** with live validation and error handling.
-   - Password visibility toggle (show/hide).
-   - Interactive **"Forgot Password?"** modal dialog for simulated password recovery.
-   - High-tech **Primary Gradient Sign In** button with simulated loading state.
-   - **"Create Account"** action button navigating to the Registration screen.
+2. **📱 Multi-Role Dashboards**:
+   - **Student Dashboard**: Live attendance status, upcoming lab bookings, ongoing robotics projects, pending weekly tasks, published notices, and performance rankings.
+   - **Admin Command Center**: Real-time metrics overview, pending student approvals, equipment inventory tracking, lab budget approvals, event attendance, and report generators.
 
-3. **Registration Screen**:
-   - Full registration form: **Full Name**, **Email**, **Password**, and **Confirm Password**.
-   - Real-time password confirmation check and match validation.
-   - Interactive **Terms of Service & Privacy Policy** checkbox.
-   - **"Create Account"** action button.
-   - Back navigation and **"Already have an account? Log In"** link.
+3. **📷 Digital QR Attendance & Check-In**:
+   - Hardware-accelerated camera QR scanner powered by Google ML Kit Barcode API.
+   - Dynamic QR code generator using ZXing for faculty/admins.
+   - Duplicate check-in prevention, automated lab hours calculation, and comprehensive attendance history.
 
-4. **Navigation Flow**:
-   - `Splash` ➔ `Login` (replaces splash on backstack).
-   - `Login` ⇄ `Registration` (smooth bidirectional slide & fade transitions).
+4. **🗓️ Lab Slot & Workstation Booking System**:
+   - Interactive scheduling with date/time pickers.
+   - Conflict-detection engine preventing overlapping bookings for workstations.
+   - Real-time Admin approval/rejection pipeline and booking cancellation.
+
+5. **🚀 Robotics Project Management**:
+   - Project creation, milestone tracking, progress percentage validation.
+   - Multi-student team collaboration with duplicate member prevention.
+   - Real-time project update logs and Firebase Storage integration for schematics and CAD files.
+
+6. **📝 Daily Work Progress & Weekly Task Boards**:
+   - Daily laboratory logs with verified hour tracking.
+   - Admin-assigned weekly milestones with status workflows (Pending, In Progress, Submitted, Completed, Changes Requested).
+   - Document and code submission attachments.
+
+7. **🏆 Digital Achievements & Certificates**:
+   - Student achievement portfolio with digital certificate uploads.
+   - Verification workflow with admin reviews and score adjustments.
+   - Automated gamification badges and point allocation.
+
+8. **📢 Notice Board & Event Management**:
+   - Campus notices with priority tags (Urgent, General, Workshop).
+   - Event creation, seat capacity enforcement, RSVP registration, and attendance tracking.
+
+9. **⚙️ Hardware Equipment & Inventory Management**:
+   - Microcontrollers, sensors, actuators, and 3D printing filament stock management.
+   - Atomic checkout/return flow with low-stock warnings and overdue tracking.
+   - Complete inventory transaction audit trails.
+
+10. **💰 Project Budget & Expense Management**:
+    - Project budget allocation and real-time expense claim submissions.
+    - Receipt image uploads to Firebase Storage with review workflows.
+    - Financial audit logs and remaining budget calculations.
+
+11. **📊 Advanced Reports, Analytics & Leaderboards**:
+    - Comprehensive lab metrics (active students, equipment utilization, project completions).
+    - Gamified student leaderboards with weekly, monthly, and all-time rankings.
+    - Exportable CSV/PDF summary generation for institutional auditing.
+
+---
+
+## 🛠️ Technology Stack
+
+| Category | Technology |
+|---|---|
+| **Language** | Kotlin 2.0+ |
+| **UI Toolkit** | Jetpack Compose (Compose BOM), Material Design 3 (M3) |
+| **Architecture** | MVVM (Model-View-ViewModel) + Repository Pattern |
+| **Reactive State** | Kotlin Coroutines & `StateFlow` / `SharedFlow` |
+| **Backend & Database** | Firebase Cloud Firestore |
+| **Authentication** | Firebase Authentication (Email/Password) |
+| **Cloud Storage** | Firebase Cloud Storage |
+| **Camera & Barcode** | CameraX & Google ML Kit Barcode Scanning |
+| **QR Generation** | ZXing Core |
+| **Image Loading** | Coil Compose |
+| **Navigation** | Jetpack Navigation Compose (`NavHost`) |
 
 ---
 
 ## 🎨 Design System & Theme
 
-- **Palette**: Professional Blue, Black, and White Cyber-Robotics Theme
+- **Palette**: Obsidian Cyber-Robotics
   - **Primary**: Electric Blue (`#0066FF`), Cyber Neon Cyan (`#00D4FF`), Deep Cobalt (`#0038A8`)
-  - **Dark Mode**: Obsidian Black (`#0A0D14`), Dark Matte Surface (`#121824`), Elevated Surface (`#1A2232`)
-  - **Light Mode**: High-Tech Clean Ice (`#F5F8FC`), Pure White Surface (`#FFFFFF`), Slate Borders (`#D7E2EE`)
-  - **Accents**: Neon Cyber Green (`#00E676`), Warning Amber (`#FFB300`), Error Red (`#FF3B30`)
-- **Theme Support**: Seamless **Light Mode** and **Dark Mode** with adaptive contrast and system bar styling.
-- **Ambient Graphics**: Custom Canvas-rendered cyber coordinate grid and radial glow mesh.
+  - **Dark Theme**: Obsidian Black (`#0A0D14`), Matte Surface (`#121824`), Elevated Surface (`#1A2232`)
+  - **Light Theme**: High-Tech Ice (`#F5F8FC`), Pure White (`#FFFFFF`), Slate Borders (`#D7E2EE`)
+  - **Accents**: Neon Cyber Green (`#00E676`), Amber Alert (`#FFB300`), Cyber Red (`#FF3B30`)
+- **Graphics**: Hardware-accelerated Canvas cyber coordinate grid, glowing visors, and circuit nodes.
 
 ---
 
-## 🏗️ Architecture & Project Structure
+## 🔒 Security & Firebase Rules
 
-```
-robotics_hub/
-├── build.gradle.kts                          # Root Gradle build script
-├── settings.gradle.kts                       # Project settings & repositories
-├── gradle.properties                         # JVM & AndroidX configurations
-├── gradle/
-│   ├── libs.versions.toml                   # Version catalog (Compose BOM, M3, Navigation)
-│   └── wrapper/
-│       └── gradle-wrapper.properties         # Gradle 8.7 wrapper
-├── app/
-│   ├── build.gradle.kts                      # App module configuration
-│   ├── proguard-rules.pro                   # ProGuard rules
-│   └── src/
-│       └── main/
-│           ├── AndroidManifest.xml           # Android Manifest declaration
-│           ├── res/
-│           │   ├── values/
-│           │   │   ├── strings.xml           # String resources
-│           │   │   ├── colors.xml            # Fallback colors
-│           │   │   └── themes.xml            # Android theme
-│           │   └── drawable/
-│           │       ├── ic_launcher_background.xml
-│           │       └── ic_launcher_foreground.xml
-│           └── java/com/roboticswala/hub/
-│               ├── MainActivity.kt           # Edge-to-edge Compose entry point
-│               ├── RoboticsApp.kt            # Application root
-│               ├── ui/
-│               │   ├── theme/
-│               │   │   ├── Color.kt          # Robotics color palette & gradients
-│               │   │   ├── Type.kt           # Modern geometric typography
-│               │   │   ├── Shape.kt          # Rounded tech corner shapes
-│               │   │   └── Theme.kt          # M3 Dark/Light theme provider
-│               │   ├── components/
-│               │   │   ├── RoboticsLogo.kt   # High-tech animated robot emblem
-│               │   │   ├── RoboticsTextField.kt # Custom styled input with icons & toggle
-│               │   │   ├── RoboticsButton.kt # Futuristic primary/secondary buttons
-│               │   │   ├── RoboticsBackground.kt # Circuit grid & tech mesh background
-│               │   │   └── ForgotPasswordDialog.kt # Interactive password reset dialog
-│               │   ├── navigation/
-│               │   │   ├── Screen.kt         # Navigation route definitions
-│               │   │   └── AppNavigation.kt  # Animated NavHost (Splash -> Login <-> Register)
-│               │   └── screens/
-│               │       ├── splash/
-│               │       │   ├── SplashScreen.kt # Logo, title, pulse animation & timer
-│               │       │   └── SplashViewModel.kt
-│               │       ├── auth/
-│               │       │   ├── login/
-│               │       │   │   ├── LoginScreen.kt # Email, password, login, create account
-│               │       │   │   ├── LoginViewModel.kt # MVVM StateFlow logic
-│               │       │   │   └── LoginUiState.kt
-│               │       │   └── register/
-│               │       │       ├── RegistrationScreen.kt # Full Name, email, pass, confirm, terms
-│               │       │       ├── RegisterViewModel.kt # MVVM validation & submit logic
-│               │       │       └── RegisterUiState.kt
-```
+### Firestore Security (`firestore.rules`)
+- **Role-Based Access**: Role validation stored securely in server-side `/users/{uid}` documents.
+- **Student Privacy**: Students can only read/write their own attendance, work progress, and equipment requests.
+- **Admin Isolation**: Only administrators can approve users, modify budgets, audit logs, and approve achievements.
+- **Field-Level Protection**: Users cannot modify their own `role` or `status` fields.
+
+### Storage Security (`storage.rules`)
+- **Path Isolation**: Files scoped to `/profile_images/{userId}`, `/certificates/{userId}`, `/receipts/{userId}`, and `/project_files/{projectId}`.
+- **Size Limits**: Strict validation (5MB for avatars, 10MB for receipts/certificates, 25MB for project archives).
+- **MIME Validation**: Restricted to valid image formats and PDF documents.
+
+> [!CAUTION]
+> **Security Notice**: Do NOT commit private signing keys (`*.jks`, `*.keystore`), `local.properties`, or sensitive production API keys to public repositories.
 
 ---
 
-## 🛠️ Tech Stack
+## 🚀 Setup & Build Instructions
 
-- **Language**: Kotlin 2.0+
-- **UI Toolkit**: Jetpack Compose with Compose BOM
-- **Design System**: Material Design 3 (M3)
-- **Architecture**: MVVM with `StateFlow` and `viewModelScope`
-- **Navigation**: Jetpack Navigation Compose (`NavHost`)
-- **Graphics**: Hardware-accelerated Compose Canvas & Vector graphics
+### Prerequisites
+- **Android Studio** (Ladybug / Hedgehog / Koala or newer)
+- **JDK 17 or JDK 21**
+- **Android SDK** (API Level 24 minimum, API 35 target)
+
+### Step-by-Step Setup
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/Raj80965/RoboticsWalaHub.git
+   cd RoboticsWalaHub
+   ```
+
+2. **Configure Firebase**:
+   - Create a project in [Firebase Console](https://console.firebase.google.com/).
+   - Enable **Firebase Authentication** (Email/Password provider).
+   - Enable **Cloud Firestore** and deploy `firestore.rules`.
+   - Enable **Cloud Storage** and deploy `storage.rules`.
+   - Download your `google-services.json` and place it in the `app/` folder.
+
+3. **Build the Debug APK**:
+   ```bash
+   ./gradlew assembleDebug
+   ```
+
+4. **Build the Production Release APK**:
+   ```bash
+   ./gradlew assembleRelease
+   ```
+   *Generated output:* `app/build/outputs/apk/release/app-release-unsigned.apk`
 
 ---
 
-## 📱 How to Open & Run
+## 📱 Interactive Web Simulator
 
-1. Open **Android Studio** (Koala / Ladybug or newer recommended).
-2. Select **File ➔ Open...** and choose the `robotics_hub` folder (`c:\Users\hp\Desktop\robotics_hub`).
-3. Allow Gradle to sync the project dependencies.
-4. Select an Android Emulator (API 24+) or physical device.
-5. Click **Run (`Shift + F10`)** to launch **Robotics Wala Hub**!
+An interactive, zero-installation web simulator is bundled with the project for desktop testing and UI/UX presentation:
+- Open [`preview.html`](preview.html) in any modern browser (Google Chrome recommended) to test all user journeys, roles, and workflows in real time.
+
+---
+
+## 🔮 Future Scope
+
+- IoT-enabled real-time hardware telemetry integration (MQTT / WebSockets).
+- Automated AI code review and component recommendation engine for robotics projects.
+- Push notifications via Firebase Cloud Messaging (FCM) for real-time slot and approval alerts.
+
+---
+
+**Developed with ❤️ for the Robotics Community**
