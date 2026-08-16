@@ -17,5 +17,7 @@ local.properties
 secrets.properties
 
 # Android Studio Navigation / Layout editor caches
-.navigation/
-.gradletasknamecache
+# Android APKs
+*.apk
+app/build/
+build/
