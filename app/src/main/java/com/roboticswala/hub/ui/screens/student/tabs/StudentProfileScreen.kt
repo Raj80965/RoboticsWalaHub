@@ -64,6 +64,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -145,6 +146,20 @@ fun StudentProfileScreen(
         }
     }
 
+    val avatarBitmap = remember(profile.photoUrl) {
+        if (profile.photoUrl.isNotBlank() && !profile.photoUrl.startsWith("http")) {
+            try {
+                val cleanBase64 = if (profile.photoUrl.contains(",")) {
+                    profile.photoUrl.substringAfter(",")
+                } else profile.photoUrl
+                val bytes = Base64.decode(cleanBase64, Base64.DEFAULT)
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            } catch (e: Exception) {
+                null
+            }
+        } else null
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -180,7 +195,16 @@ fun StudentProfileScreen(
                         color = Color.White,
                         strokeWidth = 3.dp
                     )
-                } else if (profile.photoUrl.isNotBlank()) {
+                } else if (avatarBitmap != null) {
+                    androidx.compose.foundation.Image(
+                        bitmap = avatarBitmap.asImageBitmap(),
+                        contentDescription = "Profile Photo",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                    )
+                } else if (profile.photoUrl.startsWith("http")) {
                     AsyncImage(
                         model = profile.photoUrl,
                         contentDescription = "Profile Photo",

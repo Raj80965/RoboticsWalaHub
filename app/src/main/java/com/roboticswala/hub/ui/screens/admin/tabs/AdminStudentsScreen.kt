@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -194,13 +195,23 @@ fun AdminStudentsScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.weight(1f)
                         ) {
+                            val studentAvatarBitmap = remember(student.photoUrl) {
+                                if (student.photoUrl.isNotBlank() && !student.photoUrl.startsWith("http")) {
+                                    try {
+                                        val clean = if (student.photoUrl.contains(",")) student.photoUrl.substringAfter(",") else student.photoUrl
+                                        val bytes = android.util.Base64.decode(clean, android.util.Base64.DEFAULT)
+                                        android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                                    } catch (e: Exception) {
+                                        null
+                                    }
+                                } else null
+                            }
+
                             Box(
                                 modifier = Modifier
-                                    .size(44.dp)
+                                    .size(46.dp)
                                     .clip(CircleShape)
-                                    .background(
-                                        if (isDark) DarkSurfaceElevated else LightSurfaceElevated
-                                    )
+                                    .background(if (isDark) DarkSurfaceElevated else LightSurfaceElevated)
                                     .border(
                                         width = 1.dp,
                                         color = if (isDark) CyberCyan.copy(alpha = 0.5f) else ElectricBlue.copy(alpha = 0.5f),
@@ -208,7 +219,16 @@ fun AdminStudentsScreen(
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {
-                                if (student.photoUrl.isNotBlank()) {
+                                if (studentAvatarBitmap != null) {
+                                    androidx.compose.foundation.Image(
+                                        bitmap = studentAvatarBitmap.asImageBitmap(),
+                                        contentDescription = student.name,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(CircleShape)
+                                    )
+                                } else if (student.photoUrl.startsWith("http")) {
                                     AsyncImage(
                                         model = student.photoUrl,
                                         contentDescription = student.name,
