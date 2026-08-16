@@ -1,0 +1,278 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="utf-8">
+<title>Robotics Wala Hub - User Manual & Operating Guide</title>
+<!--[if gte mso 9]>
+<xml>
+<w:WordDocument>
+<w:View>Print</w:View>
+<w:Zoom>100</w:Zoom>
+<w:DoNotOptimizeForBrowser/>
+</w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+  body {
+    font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+    margin: 40px;
+  }
+  h1 {
+    color: #0052cc;
+    font-size: 24pt;
+    border-bottom: 2px solid #0052cc;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+  }
+  h2 {
+    color: #00875a;
+    font-size: 16pt;
+    margin-top: 25px;
+    border-bottom: 1px solid #dfe1e6;
+    padding-bottom: 5px;
+  }
+  h3 {
+    color: #172b4d;
+    font-size: 13pt;
+    margin-top: 15px;
+  }
+  .header-box {
+    background-color: #f4f5f7;
+    border-left: 5px solid #0052cc;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  .highlight-card {
+    background-color: #e6fcff;
+    border: 1px solid #b3f5ff;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 15px;
+    margin-bottom: 20px;
+  }
+  th, td {
+    border: 1px solid #dfe1e6;
+    padding: 10px 12px;
+    text-align: left;
+  }
+  th {
+    background-color: #0052cc;
+    color: #ffffff;
+    font-weight: bold;
+  }
+  tr:nth-child(even) {
+    background-color: #f4f5f7;
+  }
+  .badge {
+    display: inline-block;
+    padding: 3px 8px;
+    font-size: 9pt;
+    font-weight: bold;
+    border-radius: 4px;
+    background-color: #0052cc;
+    color: #ffffff;
+  }
+  .link-btn {
+    background-color: #00875a;
+    color: #ffffff;
+    padding: 8px 14px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 4px;
+    display: inline-block;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-box">
+  <h1 style="margin:0; color:#0052cc;">🤖 Robotics Wala Hub</h1>
+  <p style="margin:5px 0 0 0; font-size:13pt; font-weight:bold; color:#42526e;">
+    Complete User Guide & Operating Manual (Students & Admins)
+  </p>
+  <p style="margin:5px 0 0 0; color:#6b778c; font-size:10pt;">
+    Official Guide for Laboratory Workflow, Hardware Scheduling & Research Project Management
+  </p>
+</div>
+
+<div class="highlight-card">
+  <b>📲 Quick Download & Live Simulator Links:</b><br>
+  • <b>Direct Android App (APK):</b> https://raj80965.github.io/RoboticsWalaHub/RoboticsWalaHub.apk<br>
+  • <b>Live Web Simulator:</b> https://raj80965.github.io/RoboticsWalaHub/<br>
+  • <b>GitHub Repository:</b> https://github.com/Raj80965/RoboticsWalaHub
+</div>
+
+<hr>
+
+<h2>🌟 1. System Overview (सिस्टम का परिचय)</h2>
+<p>
+  <b>Robotics Wala Hub</b> ek complete cyber-robotics laboratory management platform hai. Ye do mukhya roles ke sath kaam karta hai:
+</p>
+<ul>
+  <li><b>🎓 Student Role:</b> Engineering Students, Robotics Club Members, aur Lab Researchers ke liye.</li>
+  <li><b>🛡️ Admin Role:</b> Lab Incharge, Professors, Mentors, aur Lab Administrators ke liye.</li>
+</ul>
+
+<hr>
+
+<h2>🎓 2. STUDENT USER GUIDE (विद्यार्थियों के लिए स्टेप-बाय-स्टेप गाइड)</h2>
+
+<h3>🔹 Step 1: Account Registration (खाता बनाना)</h3>
+<ol>
+  <li>App open karke <b>"Register as Student"</b> par tap karein.</li>
+  <li>Apna <b>Full Name</b>, <b>Email Address</b>, <b>Password</b>, <b>College Name</b>, <b>Branch</b>, aur <b>Academic Year</b> bharein.</li>
+  <li>Register button dabate hi account <i>"Pending Approval"</i> screen par chala jayega. Admin ke approve karte hi full access mil jayega.</li>
+</ol>
+
+<h3>🔹 Step 2: Profile & Photo Setup (प्रोफाइल और फोटो अपलोड)</h3>
+<ol>
+  <li>Bottom bar me <b>"Profile"</b> tab par jayein.</li>
+  <li><b>Photo Upload:</b> Avatar ke upar bane <b>📷 Camera Icon</b> par tap karein aur Gallery se photo select karein. Photo turant save hokar dikhne lagegi.</li>
+  <li><b>Student ID:</b> Har student ko system dwara ek unique ID (jaise <code>RWH-8F2A19</code>) milti hai.</li>
+  <li><b>Edit Profile:</b> <b>"Edit"</b> button dabakar Name, College, Roll Number aur Year kabhi bhi update karein.</li>
+</ol>
+
+<h3>🔹 Step 3: QR Code Lab Attendance (डिजिटल अटेंडेंस)</h3>
+<ol>
+  <li>Home screen par <b>"Scan Attendance QR"</b> button tap karein.</li>
+  <li>Lab me Admin/Faculty screen par chal rahe dynamic QR Code ko camera se scan karein.</li>
+  <li><b>Clock-In:</b> Entry ke waqt scan karein.</li>
+  <li><b>Clock-Out:</b> Lab chhodte waqt scan karein — system automatically aapke lab hours calculate karega.</li>
+  <li>Apni poori attendance history <b>"Attendance History"</b> card me dekhein.</li>
+</ol>
+
+<h3>🔹 Step 4: Workstation & Lab Slot Booking (लैब स्लॉट बुक करना)</h3>
+<ol>
+  <li>Home screen se <b>"Book Lab Slot"</b> open karein.</li>
+  <li>Date, Time Slot (e.g. 02:00 PM - 05:00 PM), aur Bench/Bay No. (Robotics Bay, Soldering Station, 3D Print Fab Lab) select karein.</li>
+  <li>Purpose likhkar request submit karein. Admin approve karte hi slot confirm ho jayega.</li>
+</ol>
+
+<h3>🔹 Step 5: Robotics Projects Tracking (प्रोजेक्ट्स बनाना और ट्रैक करना)</h3>
+<ol>
+  <li><b>"Projects"</b> tab me jakar <b>"+ Create Project"</b> par click karein.</li>
+  <li>Project Title, Description, Tech Stack (ROS2, Arduino, Jetson, OpenCV), aur Team Members add karein.</li>
+  <li>Progress Percentage bar ko regularly update karein taaki mentor aapka project evaluate kar sakein.</li>
+</ol>
+
+<h3>🔹 Step 6: Hardware Catalog, Budget, Notices & Leaderboard</h3>
+<ul>
+  <li><b>📦 Hardware Catalog:</b> Lab me available Sensors, Motors, aur Microcontrollers ka stock dekhein.</li>
+  <li><b>💰 Project Budget:</b> Hardware khareedne ke bills aur expense receipts log karein approval ke liye.</li>
+  <li><b>🏆 Leaderboard:</b> Top students ki ranking dekhein aur apne certificates verify karwayein.</li>
+  <li><b>📢 Notices & 📅 Events:</b> Lab notices aur aane wali workshops ki details check karein.</li>
+</ul>
+
+<hr>
+
+<h2>🛡️ 3. ADMIN COMMAND CENTER GUIDE (एडमिन के लिए गाइड)</h2>
+
+<h3>🔸 Step 1: Admin Login & Live Dashboard</h3>
+<p>
+  Admin credentials se login karte hi screen par total active students, chal rahe robotics projects, total lab hours, aur pending requests ki live analytics metrics dikhti hain.
+</p>
+
+<h3>🔸 Step 2: Student Verification & Approvals (छात्रों को अनुमति देना)</h3>
+<ol>
+  <li>Bottom bar me <b>"Directory / Students"</b> tab par jayein.</li>
+  <li>Sabhi naye registered students <b>"Pending"</b> status me unki photo aur roll number ke sath dikhenge.</li>
+  <li><b>"✅ Approve Lab Access"</b> button dabate hi student ka account instantly active ho jayega.</li>
+  <li>Student ki attendance percentage, branch, aur profile details check kar sakte hain.</li>
+</ol>
+
+<h3>🔸 Step 3: Dynamic QR Code Generator (अटेंडेंस क्यूआर कोड)</h3>
+<ol>
+  <li>Admin panel me <b>"Generate QR Code"</b> button dabayein.</li>
+  <li>Screen par dynamic attendance QR code display hoga.</li>
+  <li>Ise lab screen/projector par open rakhein taaki sabhi students scan karke attendance laga sakein.</li>
+</ol>
+
+<h3>🔸 Step 4: Workstation Approvals & Inventory Management</h3>
+<ul>
+  <li><b>Lab Bookings:</b> Students ki workstation requests ko approve ya reschedule karein.</li>
+  <li><b>Hardware Inventory:</b> Naye components (Servo Motors, Jetson Nano, 3D Filaments) stock me add karein aur available quantity manage karein.</li>
+  <li><b>Budget Approvals:</b> Students dwara submit kiye gaye hardware bills verify aur pass karein.</li>
+  <li><b>Broadcast Notices:</b> Lab alerts aur announcements sabhi students ke app par broadcast karein.</li>
+</ul>
+
+<hr>
+
+<h2>⚡ 4. Quick Feature Summary Matrix</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature (फीचर)</th>
+      <th>Student Role (विद्यार्थी)</th>
+      <th>Admin Role (एडमिन)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>Login & Profile</b></td>
+      <td>Profile edit, photo upload, Student ID</td>
+      <td>Sabhi students ki profile aur photo view</td>
+    </tr>
+    <tr>
+      <td><b>Lab Access</b></td>
+      <td>Registration submit karna</td>
+      <td>1-Click Approve / Suspend access</td>
+    </tr>
+    <tr>
+      <td><b>Attendance</b></td>
+      <td>Camera se QR scan karke clock-in/out</td>
+      <td>Dynamic attendance QR code generate karna</td>
+    </tr>
+    <tr>
+      <td><b>Lab Bookings</b></td>
+      <td>Workstation aur time slot request</td>
+      <td>Slot requests approve / schedule karna</td>
+    </tr>
+    <tr>
+      <td><b>Robotics Projects</b></td>
+      <td>Project banana, progress bar update</td>
+      <td>Projects monitor karna, mentor feedback</td>
+    </tr>
+    <tr>
+      <td><b>Hardware Inventory</b></td>
+      <td>Available stock aur catalog dekhna</td>
+      <td>Naye components add karna, stock update</td>
+    </tr>
+    <tr>
+      <td><b>Budget & Expenses</b></td>
+      <td>Hardware expense bill log karna</td>
+      <td>Bills audit aur pass/approve karna</td>
+    </tr>
+    <tr>
+      <td><b>Notice Board</b></td>
+      <td>Lab alerts aur notices padhna</td>
+      <td>Naye notices likhna aur broadcast karna</td>
+    </tr>
+    <tr>
+      <td><b>Events & Workshops</b></td>
+      <td>Events dekhna aur register karna</td>
+      <td>Events create aur manage karna</td>
+    </tr>
+    <tr>
+      <td><b>Leaderboard</b></td>
+      <td>Rank dekhna aur certificates submit</td>
+      <td>Certificates verify aur points award</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<p style="text-align: center; color: #6b778c; font-size: 10pt; margin-top: 30px;">
+  <b>Robotics Wala Hub © 2026</b> • Enterprise Cyber-Robotics Management System
+</p>
+
+</body>
+</html>
