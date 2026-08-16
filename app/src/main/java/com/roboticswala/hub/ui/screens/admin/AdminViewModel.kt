@@ -57,7 +57,9 @@ class AdminViewModel(
                                 rfidStatus = if (profile.isApproved) "Active" else "Pending Review",
                                 currentProject = profile.branch.ifBlank { "Robotics Lab Member" },
                                 attendance = 95.0,
-                                status = profile.status.ifBlank { "Pending" }
+                                status = profile.status.ifBlank { "Pending" },
+                                photoUrl = profile.photoUrl,
+                                initials = profile.initials
                             )
                         } else null
                     }

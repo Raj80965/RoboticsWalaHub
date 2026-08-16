@@ -41,8 +41,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.roboticswala.hub.data.models.StudentDirectoryItem
 import com.roboticswala.hub.ui.components.StatusChip
 import com.roboticswala.hub.ui.theme.CircuitSuccess
@@ -194,19 +196,41 @@ fun AdminStudentsScreen(
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(40.dp)
+                                    .size(44.dp)
                                     .clip(CircleShape)
                                     .background(
                                         if (isDark) DarkSurfaceElevated else LightSurfaceElevated
+                                    )
+                                    .border(
+                                        width = 1.dp,
+                                        color = if (isDark) CyberCyan.copy(alpha = 0.5f) else ElectricBlue.copy(alpha = 0.5f),
+                                        shape = CircleShape
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Person,
-                                    contentDescription = null,
-                                    tint = if (isDark) CyberCyan else ElectricBlue,
-                                    modifier = Modifier.size(20.dp)
-                                )
+                                if (student.photoUrl.isNotBlank()) {
+                                    AsyncImage(
+                                        model = student.photoUrl,
+                                        contentDescription = student.name,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(CircleShape)
+                                    )
+                                } else if (student.initials.isNotBlank()) {
+                                    Text(
+                                        text = student.initials,
+                                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                                        color = if (isDark) CyberCyan else ElectricBlue
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Filled.Person,
+                                        contentDescription = null,
+                                        tint = if (isDark) CyberCyan else ElectricBlue,
+                                        modifier = Modifier.size(22.dp)
+                                    )
+                                }
                             }
 
                             Spacer(modifier = Modifier.width(12.dp))

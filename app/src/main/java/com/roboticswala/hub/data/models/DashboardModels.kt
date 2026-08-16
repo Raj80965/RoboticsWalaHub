@@ -177,7 +177,9 @@ data class StudentDirectoryItem(
     val rfidStatus: String,
     val currentProject: String,
     val attendance: Double,
-    val status: String
+    val status: String,
+    val photoUrl: String = "",
+    val initials: String = ""
 )
 
 data class BookingRequestItem(
