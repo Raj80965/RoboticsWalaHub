@@ -75,19 +75,20 @@ class FirestoreAttendanceRepository(
     override fun observeActiveAttendanceSession(): Flow<AttendanceSession?> = callbackFlow {
         val listener = sessionsCollection
             .whereEqualTo("isActive", true)
-            .orderBy("createdAt", Query.Direction.DESCENDING)
-            .limit(1)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     trySend(null)
                     return@addSnapshotListener
                 }
-                val session = snapshot?.documents?.firstOrNull()?.toObject(AttendanceSession::class.java)
-                if (session != null && session.remainingSeconds > 0) {
-                    trySend(session)
-                } else {
-                    trySend(null)
-                }
+                val activeSessions = snapshot?.documents?.mapNotNull { doc ->
+                    doc.toObject(AttendanceSession::class.java)?.copy(sessionId = doc.id)
+                } ?: emptyList()
+
+                val latestSession = activeSessions
+                    .filter { it.remainingSeconds > 0 }
+                    .maxByOrNull { it.createdAt }
+
+                trySend(latestSession)
             }
 
         awaitClose { listener.remove() }
@@ -97,13 +98,14 @@ class FirestoreAttendanceRepository(
         val queryDate = dateFilter ?: dateFormat.format(Date())
         val listener = recordsCollection
             .whereEqualTo("date", queryDate)
-            .orderBy("checkInTime", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     trySend(emptyList())
                     return@addSnapshotListener
                 }
-                val records = snapshot?.documents?.mapNotNull { it.toObject(AttendanceRecord::class.java) } ?: emptyList()
+                val records = snapshot?.documents?.mapNotNull { doc ->
+                    doc.toObject(AttendanceRecord::class.java)?.copy(recordId = doc.id)
+                }?.sortedByDescending { it.checkInTime } ?: emptyList()
                 trySend(records)
             }
 
@@ -113,13 +115,14 @@ class FirestoreAttendanceRepository(
     override fun observeStudentAttendanceHistory(studentUid: String): Flow<List<AttendanceRecord>> = callbackFlow {
         val listener = recordsCollection
             .whereEqualTo("studentUid", studentUid)
-            .orderBy("checkInTime", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     trySend(emptyList())
                     return@addSnapshotListener
                 }
-                val records = snapshot?.documents?.mapNotNull { it.toObject(AttendanceRecord::class.java) } ?: emptyList()
+                val records = snapshot?.documents?.mapNotNull { doc ->
+                    doc.toObject(AttendanceRecord::class.java)?.copy(recordId = doc.id)
+                }?.sortedByDescending { it.checkInTime } ?: emptyList()
                 trySend(records)
             }
 

@@ -126,11 +126,34 @@ class AdminAttendanceViewModel(
                 when (resource) {
                     is Resource.Loading -> _uiState.update { it.copy(isCreatingSession = true) }
                     is Resource.Success -> {
-                        _uiState.update {
-                            it.copy(
-                                isCreatingSession = false,
-                                snackbarMessage = "Attendance Session started for $labName (${durationMinutes}m)!"
+                        val session = resource.data
+                        if (session != null) {
+                            val qrPayload = QRCodeGenerator.encodeSessionPayload(
+                                SessionQRData(
+                                    sessionId = session.sessionId,
+                                    sessionToken = session.sessionToken,
+                                    labName = session.labName,
+                                    expiresAt = session.expiresAt
+                                )
                             )
+                            val bitmap = QRCodeGenerator.generateQRCodeBitmap(qrPayload, size = 600)
+                            _uiState.update {
+                                it.copy(
+                                    isCreatingSession = false,
+                                    activeSession = session,
+                                    qrBitmap = bitmap,
+                                    remainingSeconds = session.remainingSeconds,
+                                    snackbarMessage = "Attendance Session started for $labName (${durationMinutes}m)!"
+                                )
+                            }
+                            startCountdown(session)
+                        } else {
+                            _uiState.update {
+                                it.copy(
+                                    isCreatingSession = false,
+                                    snackbarMessage = "Attendance Session started for $labName (${durationMinutes}m)!"
+                                )
+                            }
                         }
                     }
                     is Resource.Error -> {
