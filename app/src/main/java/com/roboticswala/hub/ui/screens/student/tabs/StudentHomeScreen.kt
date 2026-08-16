@@ -3,10 +3,15 @@ package com.roboticswala.hub.ui.screens.student.tabs
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import android.graphics.BitmapFactory
+import android.util.Base64
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -769,7 +774,8 @@ private fun StudentHeaderCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 // Student ID
-                if (!profile?.studentId.isNullOrBlank()) {
+                val displayId = profile?.displayStudentId ?: ""
+                if (displayId.isNotBlank()) {
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
@@ -779,12 +785,12 @@ private fun StudentHeaderCard(
                             .padding(horizontal = 8.dp, vertical = 3.dp)
                     ) {
                         Text(
-                            text = "ID: ${profile!!.studentId}",
+                            text = "ID: $displayId",
                             style = MaterialTheme.typography.bodySmall.copy(
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 11.sp
                             ),
-                            color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                            color = if (isDark) CyberCyan else ElectricBlue
                         )
                     }
                     Spacer(modifier = Modifier.height(6.dp))
@@ -828,6 +834,18 @@ private fun ProfileAvatar(
     initials: String,
     isDark: Boolean
 ) {
+    val avatarBitmap = remember(photoUrl) {
+        if (photoUrl.isNotBlank() && !photoUrl.startsWith("http")) {
+            try {
+                val clean = if (photoUrl.contains(",")) photoUrl.substringAfter(",") else photoUrl
+                val bytes = Base64.decode(clean, Base64.DEFAULT)
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            } catch (e: Exception) {
+                null
+            }
+        } else null
+    }
+
     Box(
         modifier = Modifier
             .size(64.dp)
@@ -840,7 +858,16 @@ private fun ProfileAvatar(
             .border(2.dp, if (isDark) CyberCyan else ElectricBlue, CircleShape),
         contentAlignment = Alignment.Center
     ) {
-        if (photoUrl.isNotBlank()) {
+        if (avatarBitmap != null) {
+            Image(
+                bitmap = avatarBitmap.asImageBitmap(),
+                contentDescription = "Profile Photo",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape)
+            )
+        } else if (photoUrl.startsWith("http")) {
             AsyncImage(
                 model = photoUrl,
                 contentDescription = "Profile Photo",
