@@ -1,5 +1,9 @@
 package com.roboticswala.hub.ui.screens.student.tabs
 
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,27 +24,37 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Badge
-import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Domain
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.School
+import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,11 +62,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.roboticswala.hub.data.models.Achievement
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.roboticswala.hub.data.models.UserProfile
 import com.roboticswala.hub.data.repository.FirestoreAchievementRepository
 import com.roboticswala.hub.ui.components.RoboticsOutlinedButton
@@ -70,10 +86,8 @@ import com.roboticswala.hub.ui.theme.TextPrimaryDark
 import com.roboticswala.hub.ui.theme.TextPrimaryLight
 import com.roboticswala.hub.ui.theme.TextSecondaryDark
 import com.roboticswala.hub.ui.theme.TextSecondaryLight
-
-// ─────────────────────────────────────────────────────────────────────────────
-// StudentProfileScreen — Day 5: Real Firestore Profile Data
-// ─────────────────────────────────────────────────────────────────────────────
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @Composable
 fun StudentProfileScreen(
@@ -83,10 +97,44 @@ fun StudentProfileScreen(
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
+    val context = LocalContext.current
     val scrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
     val profile = userProfile ?: UserProfile()
     val achievementRepo = remember { FirestoreAchievementRepository() }
     val approvedAchievements by achievementRepo.observeApprovedAchievements(profile.uid).collectAsState(initial = emptyList())
+
+    var isUploadingPhoto by remember { mutableStateOf(false) }
+    var showEditProfileDialog by remember { mutableStateOf(false) }
+
+    // Image Picker Launcher
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null && profile.uid.isNotBlank()) {
+            scope.launch {
+                try {
+                    isUploadingPhoto = true
+                    val storageRef = FirebaseStorage.getInstance().reference
+                        .child("profile_images/${profile.uid}/avatar_${System.currentTimeMillis()}.jpg")
+                    
+                    storageRef.putFile(uri).await()
+                    val downloadUrl = storageRef.downloadUrl.await().toString()
+
+                    FirebaseFirestore.getInstance().collection("users")
+                        .document(profile.uid)
+                        .update("photoUrl", downloadUrl)
+                        .await()
+
+                    Toast.makeText(context, "Profile Photo Updated!", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Upload failed: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                } finally {
+                    isUploadingPhoto = false
+                }
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -97,45 +145,77 @@ fun StudentProfileScreen(
     ) {
         Spacer(modifier = Modifier.height(8.dp))
 
-        // ── Profile Avatar ────────────────────────────────────────────────────
+        // ── Profile Avatar with Photo Upload Button ────────────────────────────
         Box(
-            modifier = Modifier
-                .size(90.dp)
-                .clip(CircleShape)
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(ElectricBlue, CyberCyan)
-                    )
-                )
-                .border(2.dp, if (isDark) CyberCyan else ElectricBlue, CircleShape),
-            contentAlignment = Alignment.Center
+            modifier = Modifier.size(105.dp),
+            contentAlignment = Alignment.BottomEnd
         ) {
-            if (profile.photoUrl.isNotBlank()) {
-                AsyncImage(
-                    model = profile.photoUrl,
-                    contentDescription = "Profile Photo",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(CircleShape)
-                )
-            } else {
-                Text(
-                    text = profile.initials,
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 28.sp
-                    ),
-                    color = Color.White
+            Box(
+                modifier = Modifier
+                    .size(96.dp)
+                    .clip(CircleShape)
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(ElectricBlue, CyberCyan)
+                        )
+                    )
+                    .border(2.5.dp, if (isDark) CyberCyan else ElectricBlue, CircleShape)
+                    .clickable {
+                        imagePickerLauncher.launch("image/*")
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                if (isUploadingPhoto) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(32.dp),
+                        color = Color.White,
+                        strokeWidth = 3.dp
+                    )
+                } else if (profile.photoUrl.isNotBlank()) {
+                    AsyncImage(
+                        model = profile.photoUrl,
+                        contentDescription = "Profile Photo",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                    )
+                } else {
+                    Text(
+                        text = profile.initials,
+                        style = MaterialTheme.typography.headlineSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 30.sp
+                        ),
+                        color = Color.White
+                    )
+                }
+            }
+
+            // Camera Action Badge
+            Box(
+                modifier = Modifier
+                    .size(30.dp)
+                    .clip(CircleShape)
+                    .background(if (isDark) CyberCyan else ElectricBlue)
+                    .border(2.dp, if (isDark) DarkSurface else LightSurface, CircleShape)
+                    .clickable { imagePickerLauncher.launch("image/*") },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.CameraAlt,
+                    contentDescription = "Change Photo",
+                    tint = Color.Black,
+                    modifier = Modifier.size(16.dp)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         // Name
         Text(
-            text = profile.fullName.ifBlank { "Student" },
+            text = profile.fullName.ifBlank { "Student Engineer" },
             style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
             color = if (isDark) TextPrimaryDark else TextPrimaryLight
         )
@@ -158,9 +238,9 @@ fun StudentProfileScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        StatusChip(status = "Approved")
+        StatusChip(status = profile.status.ifBlank { "Approved" })
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         // ── Student Information Card ──────────────────────────────────────────
         Card(
@@ -182,20 +262,46 @@ fun StudentProfileScreen(
                     .padding(18.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(
-                    text = "Student Information",
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = if (isDark) CyberCyan else ElectricBlue
-                )
-
-                if (profile.studentId.isNotBlank()) {
-                    ProfileInfoRow(
-                        icon = Icons.Filled.Badge,
-                        label = "Student ID",
-                        value = profile.studentId,
-                        isDark = isDark
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Student Information",
+                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                        color = if (isDark) CyberCyan else ElectricBlue
                     )
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable { showEditProfileDialog = true }
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Edit,
+                            contentDescription = "Edit Profile",
+                            tint = if (isDark) CyberCyan else ElectricBlue,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Edit",
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                            color = if (isDark) CyberCyan else ElectricBlue
+                        )
+                    }
                 }
+
+                ProfileInfoRow(
+                    icon = Icons.Filled.Badge,
+                    label = "Student ID",
+                    value = profile.displayStudentId,
+                    isDark = isDark,
+                    valueColor = if (isDark) CyberCyan else ElectricBlue
+                )
 
                 ProfileInfoRow(
                     icon = Icons.Filled.Email,
@@ -204,38 +310,32 @@ fun StudentProfileScreen(
                     isDark = isDark
                 )
 
-                if (profile.college.isNotBlank()) {
-                    ProfileInfoRow(
-                        icon = Icons.Filled.Domain,
-                        label = "College",
-                        value = profile.college,
-                        isDark = isDark
-                    )
-                }
+                ProfileInfoRow(
+                    icon = Icons.Filled.Domain,
+                    label = "College / Institution",
+                    value = profile.college.ifBlank { "Robotics Innovation Lab" },
+                    isDark = isDark
+                )
 
-                if (profile.branch.isNotBlank()) {
-                    ProfileInfoRow(
-                        icon = Icons.Filled.School,
-                        label = "Branch",
-                        value = profile.branch,
-                        isDark = isDark
-                    )
-                }
+                ProfileInfoRow(
+                    icon = Icons.Filled.School,
+                    label = "Branch / Specialization",
+                    value = profile.branch.ifBlank { "Robotics & Automation Engineering" },
+                    isDark = isDark
+                )
 
-                if (profile.year.isNotBlank()) {
-                    ProfileInfoRow(
-                        icon = Icons.Filled.Star,
-                        label = "Year",
-                        value = profile.year,
-                        isDark = isDark
-                    )
-                }
+                ProfileInfoRow(
+                    icon = Icons.Filled.Star,
+                    label = "Academic Year",
+                    value = profile.year.ifBlank { "Year 3" },
+                    isDark = isDark
+                )
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // ── Account Information Card (Read-Only locked fields) ────────────────
+        // ── Account & Security Card ───────────────────────────────────────────
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -253,61 +353,35 @@ fun StudentProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(18.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "Account Details",
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                        color = if (isDark) CyberCyan else ElectricBlue
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Icon(
-                        imageVector = Icons.Filled.Lock,
-                        contentDescription = "Read-only",
-                        tint = if (isDark) TextSecondaryDark else TextSecondaryLight,
-                        modifier = Modifier.size(14.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "Read-only",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = if (isDark) TextSecondaryDark else TextSecondaryLight
-                    )
-                }
+                Text(
+                    text = "Account & System Security",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                )
 
                 ProfileInfoRow(
-                    icon = Icons.Filled.Person,
-                    label = "Role",
+                    icon = Icons.Filled.Security,
+                    label = "User Role",
                     value = profile.role,
                     isDark = isDark,
                     isLocked = true
                 )
 
                 ProfileInfoRow(
-                    icon = Icons.Filled.CheckCircle,
-                    label = "Account Status",
-                    value = profile.status,
+                    icon = Icons.Filled.Fingerprint,
+                    label = "Firebase UID",
+                    value = profile.uid.take(18) + "...",
                     isDark = isDark,
-                    isLocked = true,
-                    valueColor = CircuitSuccess
+                    isLocked = true
                 )
-
-                if (profile.studentId.isNotBlank()) {
-                    ProfileInfoRow(
-                        icon = Icons.Filled.Badge,
-                        label = "UID",
-                        value = profile.uid.take(20) + "...",
-                        isDark = isDark,
-                        isLocked = true
-                    )
-                }
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // ── Day 10: Verified Achievements & Certifications Showcase ──────────
+        // ── Verified Achievements Showcase ───────────────────────────────────
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -416,6 +490,97 @@ fun StudentProfileScreen(
         )
 
         Spacer(modifier = Modifier.height(40.dp))
+    }
+
+    // ── Edit Profile Dialog ───────────────────────────────────────────────────
+    if (showEditProfileDialog) {
+        var editName by remember { mutableStateOf(profile.fullName) }
+        var editStudentId by remember { mutableStateOf(profile.studentId.ifBlank { profile.displayStudentId }) }
+        var editCollege by remember { mutableStateOf(profile.college) }
+        var editBranch by remember { mutableStateOf(profile.branch) }
+        var editYear by remember { mutableStateOf(profile.year) }
+        var isSaving by remember { mutableStateOf(false) }
+
+        AlertDialog(
+            onDismissRequest = { if (!isSaving) showEditProfileDialog = false },
+            title = { Text("Edit Student Profile") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    OutlinedTextField(
+                        value = editName,
+                        onValueChange = { editName = it },
+                        label = { Text("Full Name") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = editStudentId,
+                        onValueChange = { editStudentId = it },
+                        label = { Text("Student ID (e.g. RWH-2026-042)") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = editCollege,
+                        onValueChange = { editCollege = it },
+                        label = { Text("College / Institute") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = editBranch,
+                        onValueChange = { editBranch = it },
+                        label = { Text("Branch / Department") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = editYear,
+                        onValueChange = { editYear = it },
+                        label = { Text("Academic Year (e.g. Year 3)") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        scope.launch {
+                            try {
+                                isSaving = true
+                                FirebaseFirestore.getInstance().collection("users")
+                                    .document(profile.uid)
+                                    .update(
+                                        mapOf(
+                                            "fullName" to editName.trim(),
+                                            "studentId" to editStudentId.trim(),
+                                            "college" to editCollege.trim(),
+                                            "branch" to editBranch.trim(),
+                                            "year" to editYear.trim()
+                                        )
+                                    )
+                                    .await()
+                                Toast.makeText(context, "Profile updated successfully!", Toast.LENGTH_SHORT).show()
+                                showEditProfileDialog = false
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "Failed: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                            } finally {
+                                isSaving = false
+                            }
+                        }
+                    },
+                    enabled = !isSaving
+                ) {
+                    Text(if (isSaving) "Saving..." else "Save Changes")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEditProfileDialog = false }, enabled = !isSaving) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
 

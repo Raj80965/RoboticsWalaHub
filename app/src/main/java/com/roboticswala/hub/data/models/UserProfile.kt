@@ -42,6 +42,8 @@ data class UserProfile(
     val isRejected: Boolean get() = status.equals("Rejected", ignoreCase = true)
     val isSuspended: Boolean get() = status.equals("Suspended", ignoreCase = true)
 
+    val displayStudentId: String get() = studentId.ifBlank { "RWH-${uid.take(6).uppercase()}" }
+
     /** Initials for avatar fallback (e.g. "Raj Kumar" → "RK") */
     val initials: String
         get() {
