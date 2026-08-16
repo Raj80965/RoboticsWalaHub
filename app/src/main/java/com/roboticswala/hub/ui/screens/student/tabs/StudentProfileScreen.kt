@@ -1,6 +1,10 @@
 package com.roboticswala.hub.ui.screens.student.tabs
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Base64
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -67,8 +71,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import com.roboticswala.hub.data.models.UserProfile
 import com.roboticswala.hub.data.repository.FirestoreAchievementRepository
 import com.roboticswala.hub.ui.components.RoboticsOutlinedButton
@@ -86,8 +90,11 @@ import com.roboticswala.hub.ui.theme.TextPrimaryDark
 import com.roboticswala.hub.ui.theme.TextPrimaryLight
 import com.roboticswala.hub.ui.theme.TextSecondaryDark
 import com.roboticswala.hub.ui.theme.TextSecondaryLight
+import java.io.ByteArrayOutputStream
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 @Composable
 fun StudentProfileScreen(
@@ -107,28 +114,30 @@ fun StudentProfileScreen(
     var isUploadingPhoto by remember { mutableStateOf(false) }
     var showEditProfileDialog by remember { mutableStateOf(false) }
 
-    // Image Picker Launcher
+    // Image Picker Launcher that directly encodes to Base64 and updates Firestore (100% Free on Spark Plan)
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        if (uri != null && profile.uid.isNotBlank()) {
-            scope.launch {
+        val targetUid = profile.uid.ifBlank { FirebaseAuth.getInstance().currentUser?.uid.orEmpty() }
+        if (uri != null && targetUid.isNotBlank()) {
+            scope.launch(Dispatchers.IO) {
                 try {
                     isUploadingPhoto = true
-                    val storageRef = FirebaseStorage.getInstance().reference
-                        .child("profile_images/${profile.uid}/avatar_${System.currentTimeMillis()}.jpg")
-                    
-                    storageRef.putFile(uri).await()
-                    val downloadUrl = storageRef.downloadUrl.await().toString()
+                    val base64Data = convertImageUriToBase64(context, uri)
+                        ?: throw Exception("Could not process selected image")
 
                     FirebaseFirestore.getInstance().collection("users")
-                        .document(profile.uid)
-                        .update("photoUrl", downloadUrl)
+                        .document(targetUid)
+                        .update("photoUrl", base64Data)
                         .await()
 
-                    Toast.makeText(context, "Profile Photo Updated!", Toast.LENGTH_SHORT).show()
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Profile photo updated successfully!", Toast.LENGTH_SHORT).show()
+                    }
                 } catch (e: Exception) {
-                    Toast.makeText(context, "Upload failed: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Failed: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                    }
                 } finally {
                     isUploadingPhoto = false
                 }
@@ -546,11 +555,12 @@ fun StudentProfileScreen(
             confirmButton = {
                 Button(
                     onClick = {
+                        val targetUid = profile.uid.ifBlank { FirebaseAuth.getInstance().currentUser?.uid.orEmpty() }
                         scope.launch {
                             try {
                                 isSaving = true
                                 FirebaseFirestore.getInstance().collection("users")
-                                    .document(profile.uid)
+                                    .document(targetUid)
                                     .update(
                                         mapOf(
                                             "fullName" to editName.trim(),
@@ -581,6 +591,43 @@ fun StudentProfileScreen(
                 }
             }
         )
+    }
+}
+
+/**
+ * Converts image Uri to a compressed Base64 JPEG data string.
+ * Completely free, bypasses Cloud Storage billing limits, and saves directly in Firestore.
+ */
+private fun convertImageUriToBase64(context: Context, uri: Uri): String? {
+    return try {
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+        val originalBitmap = BitmapFactory.decodeStream(inputStream)
+        inputStream.close() ?: return null
+
+        // Scale down to max 280x280 for crisp avatar & low Firestore footprint (<25KB)
+        val maxDimension = 280
+        val width = originalBitmap.width
+        val height = originalBitmap.height
+        val ratio = width.toFloat() / height.toFloat()
+
+        val newWidth: Int
+        val newHeight: Int
+        if (width > height) {
+            newWidth = maxDimension
+            newHeight = (maxDimension / ratio).toInt()
+        } else {
+            newHeight = maxDimension
+            newWidth = (maxDimension * ratio).toInt()
+        }
+
+        val scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, true)
+        val outputStream = ByteArrayOutputStream()
+        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
+        val bytes = outputStream.toByteArray()
+
+        "data:image/jpeg;base64," + Base64.encodeToString(bytes, Base64.NO_WRAP)
+    } catch (e: Exception) {
+        null
     }
 }
 
