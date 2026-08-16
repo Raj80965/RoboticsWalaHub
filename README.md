@@ -2,6 +2,14 @@
 
 A complete, enterprise-grade, cyber-robotics Android application and management portal designed for robotics laboratories, research clubs, engineering students, faculty mentors, and lab administrators. Built using **Kotlin 2.0+**, **Jetpack Compose**, **Material Design 3 (M3)**, **MVVM Architecture**, and **Google Firebase Suite (Auth, Firestore, Storage)**.
 
+### 🚀 Quick Links & Downloads
+
+[![Download Android App](https://img.shields.io/badge/📲_Download_Android_App-(APK_Package)-00E676?style=for-the-badge&logo=android&logoColor=black)](https://raj80965.github.io/RoboticsWalaHub/RoboticsWalaHub-App.zip)
+[![Live Web Portal](https://img.shields.io/badge/🌐_Open_Live_Web_Portal-Simulator-00B0FF?style=for-the-badge&logo=google-chrome&logoColor=white)](https://raj80965.github.io/RoboticsWalaHub/)
+
+* 📱 **Direct APK Download:** [`RoboticsWalaHub-App.zip`](RoboticsWalaHub-App.zip) *(Instant 1-Click Download)*
+* 🌐 **Live Interactive App Simulator:** [`https://raj80965.github.io/RoboticsWalaHub/`](https://raj80965.github.io/RoboticsWalaHub/)
+
 ---
 
 ## 🌟 Key Highlights & Full System Architecture (Day 1 - Day 15)
