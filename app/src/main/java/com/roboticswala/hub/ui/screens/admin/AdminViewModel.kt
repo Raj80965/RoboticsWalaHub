@@ -52,6 +52,7 @@ class AdminViewModel(
                         if (!profile.isAdmin) {
                             StudentDirectoryItem(
                                 id = if (profile.uid.isNotBlank()) profile.uid else doc.id,
+                                studentId = profile.displayStudentId,
                                 name = profile.fullName.ifBlank { "Student (${profile.email})" },
                                 email = profile.email,
                                 rfidStatus = if (profile.isApproved) "Active" else "Pending Review",

@@ -172,6 +172,7 @@ data class EquipmentItem(
 
 data class StudentDirectoryItem(
     val id: String,
+    val studentId: String = "",
     val name: String,
     val email: String,
     val rfidStatus: String,

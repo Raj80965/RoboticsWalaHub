@@ -272,7 +272,7 @@ fun AdminStudentsScreen(
                                     color = if (isDark) TextPrimaryDark else TextPrimaryLight
                                 )
                                 Text(
-                                    text = "${student.id} • ${student.email}",
+                                    text = if (student.studentId.isNotBlank()) "${student.studentId} • ${student.email}" else student.email,
                                     style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
                                     color = if (isDark) TextSecondaryDark else TextSecondaryLight
                                 )

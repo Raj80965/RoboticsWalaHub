@@ -30,6 +30,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ContactPhone
 import androidx.compose.material.icons.filled.Domain
 import androidx.compose.material.icons.filled.Edit
@@ -461,15 +462,15 @@ fun StudentProfileScreen(
                 ProfileInfoRow(
                     icon = Icons.Filled.Security,
                     label = "User Role",
-                    value = profile.role,
+                    value = profile.role.ifBlank { "STUDENT" },
                     isDark = isDark,
                     isLocked = true
                 )
 
                 ProfileInfoRow(
-                    icon = Icons.Filled.Fingerprint,
-                    label = "Firebase UID",
-                    value = profile.uid.take(18) + "...",
+                    icon = Icons.Filled.CheckCircle,
+                    label = "Account Status",
+                    value = if (profile.isApproved) "Active & Verified" else profile.status.ifBlank { "Pending Review" },
                     isDark = isDark,
                     isLocked = true
                 )
