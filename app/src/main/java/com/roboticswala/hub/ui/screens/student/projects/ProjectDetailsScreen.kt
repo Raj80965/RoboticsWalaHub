@@ -23,8 +23,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -162,6 +164,15 @@ fun ProjectDetailsScreen(
                     }
                 },
                 actions = {
+                    if (isOwner) {
+                        IconButton(onClick = viewModel::openEditProjectDialog) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Edit Project",
+                                tint = if (isDark) CyberCyan else ElectricBlue
+                            )
+                        }
+                    }
                     if (isOwner && project?.isCompleted == false) {
                         IconButton(onClick = viewModel::openDeleteConfirmDialog) {
                             Icon(
@@ -505,13 +516,31 @@ fun ProjectDetailsScreen(
                     }
                 } else {
                     items(uiState.updates, key = { it.updateId }) { update ->
-                        ProjectUpdateTimelineCard(update = update, isDark = isDark)
+                        ProjectUpdateTimelineCard(
+                            update = update,
+                            isDark = isDark,
+                            canDelete = (update.createdByUid == currentUser.uid || isOwner),
+                            onDelete = { viewModel.deleteProjectUpdate(update.updateId) }
+                        )
                     }
                 }
 
                 item { Spacer(modifier = Modifier.height(40.dp)) }
             }
         }
+    }
+
+    // EDIT PROJECT DIALOG
+    if (uiState.showEditProjectDialog && project != null) {
+        EditProjectDialog(
+            project = project,
+            isUpdating = uiState.isUpdatingProject,
+            errorMessage = uiState.errorMessage,
+            onDismiss = viewModel::closeEditProjectDialog,
+            onSubmit = { title, desc, category, github, requiredComps ->
+                viewModel.updateProjectDetails(title, desc, category, github, requiredComps)
+            }
+        )
     }
 
     // ADD UPDATE DIALOG
@@ -563,7 +592,12 @@ fun ProjectDetailsScreen(
 }
 
 @Composable
-fun ProjectUpdateTimelineCard(update: ProjectUpdate, isDark: Boolean) {
+fun ProjectUpdateTimelineCard(
+    update: ProjectUpdate,
+    isDark: Boolean,
+    canDelete: Boolean = false,
+    onDelete: () -> Unit = {}
+) {
     val surfaceColor = if (isDark) DarkSurface else LightSurface
     val elevatedColor = if (isDark) DarkSurfaceElevated else LightSurfaceElevated
     val borderColor = if (isDark) DarkSurfaceBorder else LightSurfaceBorder
@@ -589,13 +623,27 @@ fun ProjectUpdateTimelineCard(update: ProjectUpdate, isDark: Boolean) {
                     Text(text = "By ${update.createdByName} • ${dateFormat.format(Date(update.createdAt))}", style = MaterialTheme.typography.labelSmall, color = textSecColor)
                 }
 
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(if (isDark) CyberCyan.copy(alpha = 0.2f) else ElectricBlue.copy(alpha = 0.15f))
-                        .padding(horizontal = 8.dp, vertical = 2.dp)
-                ) {
-                    Text(text = "${update.progressPercentage}%", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = if (isDark) CyberCyan else ElectricBlue)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(if (isDark) CyberCyan.copy(alpha = 0.2f) else ElectricBlue.copy(alpha = 0.15f))
+                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                    ) {
+                        Text(text = "${update.progressPercentage}%", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = if (isDark) CyberCyan else ElectricBlue)
+                    }
+
+                    if (canDelete) {
+                        Spacer(modifier = Modifier.width(4.dp))
+                        IconButton(onClick = onDelete, modifier = Modifier.size(28.dp)) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Delete Update",
+                                tint = CircuitError.copy(alpha = 0.8f),
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    }
                 }
             }
 
@@ -630,6 +678,57 @@ fun ProjectUpdateTimelineCard(update: ProjectUpdate, isDark: Boolean) {
             }
         }
     }
+}
+
+@Composable
+fun EditProjectDialog(
+    project: Project,
+    isUpdating: Boolean,
+    errorMessage: String?,
+    onDismiss: () -> Unit,
+    onSubmit: (title: String, desc: String, category: String, github: String, requiredComponents: String) -> Unit
+) {
+    var title by remember { mutableStateOf(project.title) }
+    var description by remember { mutableStateOf(project.description) }
+    var category by remember { mutableStateOf(project.category) }
+    var githubLink by remember { mutableStateOf(project.githubLink) }
+    var requiredComponents by remember { mutableStateOf(project.requiredComponents) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = "Edit Project Details", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+        },
+        text = {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (!errorMessage.isNullOrBlank()) {
+                    Text(text = "⚠️ $errorMessage", color = CircuitError, fontSize = 12.sp)
+                }
+
+                RoboticsTextField(value = title, onValueChange = { title = it }, label = "Project Title *", placeholder = "e.g. Quadruped Robot")
+                RoboticsTextField(value = description, onValueChange = { description = it }, label = "Project Description *", placeholder = "Describe the goals and scope", singleLine = false)
+                RoboticsTextField(value = category, onValueChange = { category = it }, label = "Category", placeholder = "Robotics, IoT, AI, Automation")
+                RoboticsTextField(value = requiredComponents, onValueChange = { requiredComponents = it }, label = "Required Components / Hardware", placeholder = "e.g. Arduino, ESP32, Servo Motor")
+                RoboticsTextField(value = githubLink, onValueChange = { githubLink = it }, label = "GitHub Repository Link", placeholder = "https://github.com/...")
+            }
+        },
+        confirmButton = {
+            RoboticsPrimaryButton(
+                text = if (isUpdating) "Saving..." else "Save Changes",
+                onClick = {
+                    onSubmit(title, description, category, githubLink, requiredComponents)
+                },
+                isLoading = isUpdating,
+                enabled = title.isNotBlank() && description.isNotBlank()
+            )
+        },
+        dismissButton = {
+            RoboticsOutlinedButton(text = "Cancel", onClick = onDismiss)
+        }
+    )
 }
 
 @Composable

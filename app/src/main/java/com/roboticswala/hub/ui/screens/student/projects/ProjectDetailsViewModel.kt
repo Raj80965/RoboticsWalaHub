@@ -21,8 +21,10 @@ data class ProjectDetailsUiState(
     val updates: List<ProjectUpdate> = emptyList(),
     val isLoading: Boolean = true,
     val isPostingUpdate: Boolean = false,
+    val isUpdatingProject: Boolean = false,
     val isDeleting: Boolean = false,
     val showAddUpdateDialog: Boolean = false,
+    val showEditProjectDialog: Boolean = false,
     val showDeleteConfirmDialog: Boolean = false,
     val isDeleted: Boolean = false,
     val snackbarMessage: String? = null,
@@ -62,8 +64,70 @@ class ProjectDetailsViewModel(
     fun openAddUpdateDialog() = _uiState.update { it.copy(showAddUpdateDialog = true, errorMessage = null) }
     fun closeAddUpdateDialog() = _uiState.update { it.copy(showAddUpdateDialog = false, errorMessage = null) }
 
+    fun openEditProjectDialog() = _uiState.update { it.copy(showEditProjectDialog = true, errorMessage = null) }
+    fun closeEditProjectDialog() = _uiState.update { it.copy(showEditProjectDialog = false, errorMessage = null) }
+
     fun openDeleteConfirmDialog() = _uiState.update { it.copy(showDeleteConfirmDialog = true) }
     fun closeDeleteConfirmDialog() = _uiState.update { it.copy(showDeleteConfirmDialog = false) }
+
+    fun updateProjectDetails(
+        title: String,
+        description: String,
+        category: String,
+        githubLink: String,
+        requiredComponents: String
+    ) {
+        val currentProject = _uiState.value.project ?: return
+        val updated = currentProject.copy(
+            title = title.trim(),
+            description = description.trim(),
+            category = category.trim(),
+            githubLink = githubLink.trim(),
+            requiredComponents = requiredComponents.trim(),
+            updatedAt = System.currentTimeMillis()
+        )
+
+        viewModelScope.launch {
+            projectRepository.updateProject(updated).collect { resource ->
+                when (resource) {
+                    is Resource.Loading -> _uiState.update { it.copy(isUpdatingProject = true, errorMessage = null) }
+                    is Resource.Success -> {
+                        _uiState.update {
+                            it.copy(
+                                isUpdatingProject = false,
+                                showEditProjectDialog = false,
+                                snackbarMessage = "Project details updated successfully!"
+                            )
+                        }
+                    }
+                    is Resource.Error -> {
+                        _uiState.update {
+                            it.copy(
+                                isUpdatingProject = false,
+                                errorMessage = resource.message ?: "Failed to update project."
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteProjectUpdate(updateId: String) {
+        viewModelScope.launch {
+            try {
+                com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    .collection("projects")
+                    .document(projectId)
+                    .collection("updates")
+                    .document(updateId)
+                    .delete()
+                _uiState.update { it.copy(snackbarMessage = "Update removed successfully.") }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(snackbarMessage = "Failed to delete update.") }
+            }
+        }
+    }
 
     fun postProgressUpdate(
         title: String,
