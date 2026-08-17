@@ -1,7 +1,11 @@
 package com.roboticswala.hub.ui.screens.admin.tabs
 
+import android.graphics.BitmapFactory
+import android.util.Base64
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,8 +20,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Check
@@ -80,6 +86,7 @@ fun AdminStudentsScreen(
     val isDark = isSystemInDarkTheme()
     var searchQuery by remember { mutableStateOf("") }
     var studentToDelete by remember { mutableStateOf<StudentDirectoryItem?>(null) }
+    var selectedStudentAadhar by remember { mutableStateOf<StudentDirectoryItem?>(null) }
 
     val filteredList = students.filter {
         it.name.contains(searchQuery, ignoreCase = true) ||
@@ -362,6 +369,35 @@ fun AdminStudentsScreen(
                         }
                     }
 
+                    if (student.aadharNumber.isNotBlank() || student.aadharCardUrl.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(if (isDark) DarkSurfaceElevated.copy(alpha = 0.3f) else LightSurfaceElevated.copy(alpha = 0.5f))
+                                .padding(horizontal = 10.dp, vertical = 6.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "🪪 Aadhaar: ${if (student.aadharNumber.isNotBlank()) student.aadharNumber else "Document Attached"}",
+                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
+                                color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                            )
+                            if (student.aadharCardUrl.isNotBlank()) {
+                                Text(
+                                    text = "View Aadhaar ➔",
+                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 11.sp),
+                                    color = if (isDark) CyberCyan else ElectricBlue,
+                                    modifier = Modifier
+                                        .clickable { selectedStudentAadhar = student }
+                                        .padding(2.dp)
+                                )
+                            }
+                        }
+                    }
+
                     if (student.status == "Pending") {
                         Spacer(modifier = Modifier.height(12.dp))
                         Row(
@@ -483,6 +519,69 @@ fun AdminStudentsScreen(
                     onClick = { studentToDelete = null }
                 ) {
                     Text("Cancel", color = if (isDark) TextSecondaryDark else TextSecondaryLight)
+                }
+            }
+        )
+    }
+
+    if (selectedStudentAadhar != null) {
+        val student = selectedStudentAadhar!!
+        val aadharBitmap = remember(student.aadharCardUrl) {
+            if (student.aadharCardUrl.isNotBlank() && !student.aadharCardUrl.startsWith("http")) {
+                try {
+                    val cleanBase64 = if (student.aadharCardUrl.contains(",")) {
+                        student.aadharCardUrl.substringAfter(",")
+                    } else student.aadharCardUrl
+                    val bytes = Base64.decode(cleanBase64, Base64.DEFAULT)
+                    BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                } catch (e: Exception) {
+                    null
+                }
+            } else null
+        }
+
+        AlertDialog(
+            onDismissRequest = { selectedStudentAadhar = null },
+            title = {
+                Text("🪪 Student Aadhaar Card (${student.name})")
+            },
+            text = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (aadharBitmap != null) {
+                        Image(
+                            bitmap = aadharBitmap.asImageBitmap(),
+                            contentDescription = "Aadhaar Card",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(260.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .border(1.dp, if (isDark) DarkSurfaceBorder else LightSurfaceBorder, RoundedCornerShape(12.dp)),
+                            contentScale = ContentScale.Fit
+                        )
+                    } else {
+                        Text(
+                            text = "No preview available for this document.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "Aadhaar No: ${if (student.aadharNumber.isNotBlank()) student.aadharNumber else "Document Attached"}",
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                        color = if (isDark) CyberCyan else ElectricBlue
+                    )
+                }
+            },
+            confirmButton = {
+                Button(onClick = { selectedStudentAadhar = null }) {
+                    Text("Close")
                 }
             }
         )

@@ -8,6 +8,7 @@ import android.util.Base64
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,6 +28,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.CameraAlt
@@ -86,7 +89,9 @@ import com.roboticswala.hub.data.models.UserProfile
 import com.roboticswala.hub.data.repository.FirestoreAchievementRepository
 import com.roboticswala.hub.ui.components.RoboticsOutlinedButton
 import com.roboticswala.hub.ui.components.StatusChip
+import com.roboticswala.hub.ui.theme.CircuitError
 import com.roboticswala.hub.ui.theme.CircuitSuccess
+import com.roboticswala.hub.ui.theme.CircuitWarning
 import com.roboticswala.hub.ui.theme.CyberCyan
 import com.roboticswala.hub.ui.theme.DarkSurface
 import com.roboticswala.hub.ui.theme.DarkSurfaceBorder
@@ -121,20 +126,27 @@ fun StudentProfileScreen(
     val approvedAchievements by achievementRepo.observeApprovedAchievements(profile.uid).collectAsState(initial = emptyList())
 
     var isUploadingPhoto by remember { mutableStateOf(false) }
+    var isUploadingAadhar by remember { mutableStateOf(false) }
     var showEditProfileDialog by remember { mutableStateOf(false) }
+    var showAadharPreviewDialog by remember { mutableStateOf(false) }
 
     // Image Picker Launcher that directly encodes to Base64 and updates Firestore (100% Free on Spark Plan)
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        val targetUid = profile.uid.ifBlank { FirebaseAuth.getInstance().currentUser?.uid.orEmpty() }
-        if (uri != null && targetUid.isNotBlank()) {
+        if (uri != null) {
             scope.launch(Dispatchers.IO) {
                 try {
                     isUploadingPhoto = true
                     val base64Data = convertImageUriToBase64(context, uri)
-                        ?: throw Exception("Could not process selected image")
+                    if (base64Data == null) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "Failed to read image", Toast.LENGTH_SHORT).show()
+                        }
+                        return@launch
+                    }
 
+                    val targetUid = profile.uid.ifBlank { FirebaseAuth.getInstance().currentUser?.uid.orEmpty() }
                     FirebaseFirestore.getInstance().collection("users")
                         .document(targetUid)
                         .update("photoUrl", base64Data)
@@ -154,12 +166,66 @@ fun StudentProfileScreen(
         }
     }
 
+    val aadharPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            scope.launch(Dispatchers.IO) {
+                try {
+                    isUploadingAadhar = true
+                    val base64Data = convertImageUriToBase64(context, uri)
+                    if (base64Data == null) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "Failed to read document image", Toast.LENGTH_SHORT).show()
+                        }
+                        return@launch
+                    }
+
+                    val targetUid = profile.uid.ifBlank { FirebaseAuth.getInstance().currentUser?.uid.orEmpty() }
+                    FirebaseFirestore.getInstance().collection("users")
+                        .document(targetUid)
+                        .update(
+                            mapOf(
+                                "aadharCardUrl" to base64Data,
+                                "aadharUploadedAt" to System.currentTimeMillis()
+                            )
+                        )
+                        .await()
+
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Aadhaar Card uploaded successfully!", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Upload failed: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                    }
+                } finally {
+                    isUploadingAadhar = false
+                }
+            }
+        }
+    }
+
     val avatarBitmap = remember(profile.photoUrl) {
         if (profile.photoUrl.isNotBlank() && !profile.photoUrl.startsWith("http")) {
             try {
                 val cleanBase64 = if (profile.photoUrl.contains(",")) {
                     profile.photoUrl.substringAfter(",")
                 } else profile.photoUrl
+                val bytes = Base64.decode(cleanBase64, Base64.DEFAULT)
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            } catch (e: Exception) {
+                null
+            }
+        } else null
+    }
+
+    val aadharBitmap = remember(profile.aadharCardUrl) {
+        if (profile.aadharCardUrl.isNotBlank() && !profile.aadharCardUrl.startsWith("http")) {
+            try {
+                val cleanBase64 = if (profile.aadharCardUrl.contains(",")) {
+                    profile.aadharCardUrl.substringAfter(",")
+                } else profile.aadharCardUrl
                 val bytes = Base64.decode(cleanBase64, Base64.DEFAULT)
                 BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
             } catch (e: Exception) {
@@ -434,6 +500,95 @@ fun StudentProfileScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // ── Identity & Aadhaar Card Documentation ───────────────────────────
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = if (isDark) DarkSurfaceBorder else LightSurfaceBorder,
+                    shape = RoundedCornerShape(18.dp)
+                ),
+            shape = RoundedCornerShape(18.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = if (isDark) DarkSurface.copy(alpha = 0.95f) else LightSurface
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(18.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Identity & Aadhaar Card",
+                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                        color = if (isDark) CyberCyan else ElectricBlue
+                    )
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(if (profile.aadharCardUrl.isNotBlank()) CircuitSuccess.copy(alpha = 0.15f) else CircuitWarning.copy(alpha = 0.15f))
+                            .padding(horizontal = 8.dp, vertical = 3.dp)
+                    ) {
+                        Text(
+                            text = if (profile.aadharCardUrl.isNotBlank()) "UPLOADED" else "PENDING UPLOAD",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = if (profile.aadharCardUrl.isNotBlank()) CircuitSuccess else CircuitWarning
+                        )
+                    }
+                }
+
+                ProfileInfoRow(
+                    icon = Icons.Filled.Badge,
+                    label = "Aadhaar Card Number",
+                    value = if (profile.aadharNumber.isNotBlank()) profile.aadharNumber else "Not added (Edit to add)",
+                    isDark = isDark
+                )
+
+                if (profile.aadharCardUrl.isNotBlank()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = { showAadharPreviewDialog = true },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text("👁️ View Document", fontSize = 12.sp)
+                        }
+
+                        Button(
+                            onClick = { aadharPickerLauncher.launch("image/*") },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(10.dp),
+                            enabled = !isUploadingAadhar
+                        ) {
+                            Text(if (isUploadingAadhar) "Uploading..." else "🔄 Replace", fontSize = 12.sp)
+                        }
+                    }
+                } else {
+                    Button(
+                        onClick = { aadharPickerLauncher.launch("image/*") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        enabled = !isUploadingAadhar
+                    ) {
+                        Text(if (isUploadingAadhar) "Uploading Document..." else "📤 Upload Aadhaar Card (Image)")
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         // ── Account & Security Card ───────────────────────────────────────────
         Card(
             modifier = Modifier
@@ -610,6 +765,7 @@ fun StudentProfileScreen(
         var editParentName by remember { mutableStateOf(profile.parentName) }
         var editParentPhone by remember { mutableStateOf(profile.parentPhone) }
         var editEmergencyContact by remember { mutableStateOf(profile.emergencyContact) }
+        var editAadharNumber by remember { mutableStateOf(profile.aadharNumber) }
         var isSaving by remember { mutableStateOf(false) }
 
         AlertDialog(
@@ -631,6 +787,13 @@ fun StudentProfileScreen(
                         value = editStudentId,
                         onValueChange = { editStudentId = it },
                         label = { Text("Student ID (e.g. RWH-2026-042)") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = editAadharNumber,
+                        onValueChange = { editAadharNumber = it },
+                        label = { Text("Aadhaar Card Number (12 Digits)") },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -702,6 +865,7 @@ fun StudentProfileScreen(
                                             "parentName" to editParentName.trim(),
                                             "parentPhone" to editParentPhone.trim(),
                                             "emergencyContact" to editEmergencyContact.trim(),
+                                            "aadharNumber" to editAadharNumber.trim(),
                                             "college" to editCollege.trim(),
                                             "branch" to editBranch.trim(),
                                             "year" to editYear.trim()
@@ -725,6 +889,54 @@ fun StudentProfileScreen(
             dismissButton = {
                 TextButton(onClick = { showEditProfileDialog = false }, enabled = !isSaving) {
                     Text("Cancel")
+                }
+            }
+        )
+    }
+
+    if (showAadharPreviewDialog) {
+        AlertDialog(
+            onDismissRequest = { showAadharPreviewDialog = false },
+            title = {
+                Text("🪪 Aadhaar Card Document")
+            },
+            text = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (aadharBitmap != null) {
+                        Image(
+                            bitmap = aadharBitmap.asImageBitmap(),
+                            contentDescription = "Aadhaar Card",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(260.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .border(1.dp, if (isDark) DarkSurfaceBorder else LightSurfaceBorder, RoundedCornerShape(12.dp)),
+                            contentScale = ContentScale.Fit
+                        )
+                    } else {
+                        Text(
+                            text = "No preview available for this document.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "Aadhaar No: ${if (profile.aadharNumber.isNotBlank()) profile.aadharNumber else "Not added"}",
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                        color = if (isDark) CyberCyan else ElectricBlue
+                    )
+                }
+            },
+            confirmButton = {
+                Button(onClick = { showAadharPreviewDialog = false }) {
+                    Text("Close")
                 }
             }
         )

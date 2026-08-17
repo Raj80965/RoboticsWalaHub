@@ -62,6 +62,8 @@ class AdminViewModel(
                                 phone = profile.phone,
                                 parentName = profile.parentName,
                                 parentPhone = profile.parentPhone,
+                                aadharNumber = profile.aadharNumber,
+                                aadharCardUrl = profile.aadharCardUrl,
                                 photoUrl = profile.photoUrl,
                                 initials = profile.initials
                             )

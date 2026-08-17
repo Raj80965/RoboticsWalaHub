@@ -18,6 +18,9 @@ data class UserProfile(
     val parentName: String = "",        // Parent / Guardian Name
     val parentPhone: String = "",       // Parent Contact Number
     val emergencyContact: String = "",  // Emergency Contact Number
+    val aadharNumber: String = "",      // Aadhaar Card Number
+    val aadharCardUrl: String = "",     // Aadhaar Card Document Image URL
+    val aadharUploadedAt: Long = 0L,    // Timestamp when Aadhaar was uploaded
     val photoUrl: String = "",          // Firebase Storage URL or Base64
     val createdAt: Long = System.currentTimeMillis(),
     val approvedAt: Long = 0L           // Set when admin approves
@@ -37,6 +40,9 @@ data class UserProfile(
             "parentName" to parentName,
             "parentPhone" to parentPhone,
             "emergencyContact" to emergencyContact,
+            "aadharNumber" to aadharNumber,
+            "aadharCardUrl" to aadharCardUrl,
+            "aadharUploadedAt" to aadharUploadedAt,
             "photoUrl" to photoUrl,
             "createdAt" to createdAt,
             "approvedAt" to approvedAt
@@ -85,6 +91,9 @@ data class UserProfile(
                 parentName = map["parentName"] as? String ?: "",
                 parentPhone = map["parentPhone"] as? String ?: "",
                 emergencyContact = map["emergencyContact"] as? String ?: "",
+                aadharNumber = map["aadharNumber"] as? String ?: "",
+                aadharCardUrl = map["aadharCardUrl"] as? String ?: "",
+                aadharUploadedAt = (map["aadharUploadedAt"] as? Number)?.toLong() ?: 0L,
                 photoUrl = map["photoUrl"] as? String ?: "",
                 createdAt = (map["createdAt"] as? Number)?.toLong() ?: System.currentTimeMillis(),
                 approvedAt = (map["approvedAt"] as? Number)?.toLong() ?: 0L
