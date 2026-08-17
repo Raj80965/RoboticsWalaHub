@@ -179,13 +179,18 @@ data class StudentDirectoryItem(
     val currentProject: String,
     val attendance: Double,
     val status: String,
+    val college: String = "",
+    val branch: String = "",
+    val year: String = "",
     val phone: String = "",
     val parentName: String = "",
     val parentPhone: String = "",
+    val emergencyContact: String = "",
     val aadharNumber: String = "",
     val aadharCardUrl: String = "",
     val photoUrl: String = "",
-    val initials: String = ""
+    val initials: String = "",
+    val createdAt: Long = 0L
 )
 
 data class BookingRequestItem(

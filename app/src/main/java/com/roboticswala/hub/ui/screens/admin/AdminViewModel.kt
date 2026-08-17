@@ -59,13 +59,18 @@ class AdminViewModel(
                                 currentProject = profile.branch.ifBlank { "Robotics Lab Member" },
                                 attendance = 95.0,
                                 status = profile.status.ifBlank { "Pending" },
+                                college = profile.college,
+                                branch = profile.branch,
+                                year = profile.year,
                                 phone = profile.phone,
                                 parentName = profile.parentName,
                                 parentPhone = profile.parentPhone,
+                                emergencyContact = profile.emergencyContact,
                                 aadharNumber = profile.aadharNumber,
                                 aadharCardUrl = profile.aadharCardUrl,
                                 photoUrl = profile.photoUrl,
-                                initials = profile.initials
+                                initials = profile.initials,
+                                createdAt = profile.createdAt
                             )
                         } else null
                     }
