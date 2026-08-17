@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ContactPhone
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Domain
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
@@ -473,6 +474,14 @@ fun StudentProfileScreen(
                     value = if (profile.isApproved) "Active & Verified" else profile.status.ifBlank { "Pending Review" },
                     isDark = isDark,
                     isLocked = true
+                )
+
+                ProfileInfoRow(
+                    icon = Icons.Filled.DateRange,
+                    label = "Lab Attendance Status",
+                    value = "Tracked via QR Check-in (≥85% Target)",
+                    isDark = isDark,
+                    valueColor = CircuitSuccess
                 )
             }
         }
