@@ -346,7 +346,7 @@ fun AdminStudentsScreen(
                                 onClick = { studentToDelete = student },
                                 modifier = Modifier.weight(1f),
                                 shape = RoundedCornerShape(10.dp),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, CircuitError.copy(alpha = 0.6f)),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, CircuitError.copy(alpha = 0.8f)),
                                 colors = ButtonDefaults.outlinedButtonColors(contentColor = CircuitError)
                             ) {
                                 Icon(
@@ -363,6 +363,32 @@ fun AdminStudentsScreen(
                                     fontSize = 13.sp
                                 )
                             }
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        OutlinedButton(
+                            onClick = { studentToDelete = student },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(10.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, CircuitError.copy(alpha = 0.5f)),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = CircuitError.copy(alpha = 0.08f),
+                                contentColor = CircuitError
+                            )
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Delete,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp),
+                                tint = CircuitError
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Remove Student",
+                                color = CircuitError,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 13.sp
+                            )
                         }
                     }
                 }
