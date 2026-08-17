@@ -51,7 +51,7 @@ class AdminViewModel(
                         // Show all registered students or non-admins
                         if (!profile.isAdmin) {
                             StudentDirectoryItem(
-                                id = profile.uid,
+                                id = if (profile.uid.isNotBlank()) profile.uid else doc.id,
                                 name = profile.fullName.ifBlank { "Student (${profile.email})" },
                                 email = profile.email,
                                 rfidStatus = if (profile.isApproved) "Active" else "Pending Review",
@@ -118,8 +118,18 @@ class AdminViewModel(
                     it.copy(snackbarMessage = "Student removed successfully!")
                 }
             } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(snackbarMessage = e.localizedMessage ?: "Failed to remove student.")
+                try {
+                    firestore.collection("users")
+                        .document(studentUid)
+                        .update("status", "Rejected")
+                        .await()
+                    _uiState.update {
+                        it.copy(snackbarMessage = "Student access revoked (Rejected).")
+                    }
+                } catch (_: Exception) {
+                    _uiState.update {
+                        it.copy(snackbarMessage = e.localizedMessage ?: "Failed to remove student.")
+                    }
                 }
             }
         }

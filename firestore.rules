@@ -16,13 +16,17 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isAuthenticated() && getUserData().role == 'ADMIN';
+      return isAuthenticated() && (
+        getUserData().role == 'ADMIN' || 
+        getUserData().role == 'Admin' || 
+        getUserData().role == 'admin'
+      );
     }
 
     function isApprovedStudent() {
       return isAuthenticated() && 
-             getUserData().role == 'STUDENT' && 
-             getUserData().status == 'APPROVED';
+             (getUserData().role == 'STUDENT' || getUserData().role == 'Student' || getUserData().role == 'student') && 
+             (getUserData().status == 'APPROVED' || getUserData().status == 'Approved' || getUserData().status == 'approved');
     }
 
     // 1. Users Collection
