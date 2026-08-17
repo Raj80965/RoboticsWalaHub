@@ -64,6 +64,17 @@ data class UserProfile(
             return "RWH-$year-$seq"
         }
 
+    val displayAdminId: String
+        get() {
+            if (studentId.isNotBlank() && studentId.startsWith("RWH-ADM")) return studentId
+            val year = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
+            val seq = String.format(java.util.Locale.getDefault(), "%03d", (Math.abs(uid.hashCode()) % 50) + 1)
+            return "RWH-ADM-$year-$seq"
+        }
+
+    val displayId: String
+        get() = if (isAdmin) displayAdminId else displayStudentId
+
     /** Initials for avatar fallback (e.g. "Raj Kumar" → "RK") */
     val initials: String
         get() {
@@ -71,7 +82,7 @@ data class UserProfile(
             return when {
                 parts.size >= 2 -> "${parts.first().first()}${parts.last().first()}".uppercase()
                 parts.size == 1 -> parts.first().take(2).uppercase()
-                else -> "ST"
+                else -> if (isAdmin) "AD" else "ST"
             }
         }
 

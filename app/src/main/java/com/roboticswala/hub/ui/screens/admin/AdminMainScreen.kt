@@ -2,6 +2,7 @@ package com.roboticswala.hub.ui.screens.admin
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -106,6 +107,7 @@ fun AdminMainScreen(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(6.dp))
                                     .background(CircuitWarning.copy(alpha = 0.2f))
+                                    .clickable { viewModel.onTabSelected(AdminNavRoute.More.route) }
                                     .padding(horizontal = 6.dp, vertical = 2.dp)
                             ) {
                                 Text(
@@ -187,7 +189,12 @@ fun AdminMainScreen(
                         onDeleteStudent = viewModel::deleteStudent
                     )
                     AdminNavRoute.Bookings.route -> AdminBookingsScreen()
-                    AdminNavRoute.More.route -> AdminMoreScreen(onLogout = onLogout)
+                    AdminNavRoute.More.route -> AdminMoreScreen(
+                        adminProfile = uiState.adminProfile,
+                        onUpdateProfile = viewModel::updateAdminProfile,
+                        onUpdatePhoto = viewModel::updateAdminPhoto,
+                        onLogout = onLogout
+                    )
                     else -> AdminDashboardScreen(data = uiState.dashboardData)
                 }
             }

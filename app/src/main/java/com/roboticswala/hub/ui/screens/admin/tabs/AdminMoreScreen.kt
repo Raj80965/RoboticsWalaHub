@@ -56,13 +56,20 @@ import com.roboticswala.hub.ui.theme.TextPrimaryLight
 import com.roboticswala.hub.ui.theme.TextSecondaryDark
 import com.roboticswala.hub.ui.theme.TextSecondaryLight
 
+import androidx.compose.material.icons.filled.Person
+import com.roboticswala.hub.data.models.UserProfile
+
 @Composable
 fun AdminMoreScreen(
     onLogout: () -> Unit,
+    adminProfile: UserProfile? = null,
+    onUpdateProfile: (fullName: String, phone: String, college: String, branch: String, year: String, adminId: String, emergencyContact: String) -> Unit = { _, _, _, _, _, _, _ -> },
+    onUpdatePhoto: (photoBase64: String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
     val scrollState = rememberScrollState()
+    var showingProfile by remember { mutableStateOf(false) }
     var showingProjects by remember { mutableStateOf(false) }
     var showingTasks by remember { mutableStateOf(false) }
     var showingAchievements by remember { mutableStateOf(false) }
@@ -72,6 +79,37 @@ fun AdminMoreScreen(
     var showingEquipmentRequests by remember { mutableStateOf(false) }
     var showingBudget by remember { mutableStateOf(false) }
     var showingAnalytics by remember { mutableStateOf(false) }
+
+    if (showingProfile) {
+        Column(modifier = modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { showingProfile = false }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back to Settings",
+                        tint = if (isDark) CyberCyan else ElectricBlue
+                    )
+                }
+                Text(
+                    text = "Back to Admin Options",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    color = if (isDark) CyberCyan else ElectricBlue
+                )
+            }
+            AdminProfileScreen(
+                adminProfile = adminProfile,
+                onUpdateProfile = onUpdateProfile,
+                onUpdatePhoto = onUpdatePhoto,
+                onLogout = onLogout
+            )
+        }
+        return
+    }
 
     if (showingAnalytics) {
         Column(modifier = modifier.fillMaxSize()) {
@@ -309,6 +347,17 @@ fun AdminMoreScreen(
         )
 
         Spacer(modifier = Modifier.height(18.dp))
+
+        // 👑 ADMIN PROFILE & ID CARD
+        AdminOptionCard(
+            title = "👑 My Admin Profile & ID Dossier",
+            subtitle = "ID: ${adminProfile?.displayAdminId ?: "RWH-ADM-2026-001"} • Designation, Permissions & Photo",
+            icon = Icons.Filled.Person,
+            isDark = isDark,
+            onClick = { showingProfile = true }
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         // Day 10 Highlight Card: Achievements Approvals
         AdminOptionCard(
