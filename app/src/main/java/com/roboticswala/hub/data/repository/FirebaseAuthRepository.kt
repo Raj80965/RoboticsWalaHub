@@ -33,8 +33,17 @@ class FirebaseAuthRepository(
             val authResult = auth.createUserWithEmailAndPassword(email.trim(), password).await()
             val firebaseUser = authResult.user ?: throw Exception("Failed to create Firebase user")
 
+            val currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
+            val userCount = try {
+                firestore.collection("users").get().await().size()
+            } catch (e: Exception) {
+                0
+            }
+            val autoStudentId = String.format(java.util.Locale.getDefault(), "RWH-%d-%03d", currentYear, userCount + 1)
+
             val profile = UserProfile(
                 uid = firebaseUser.uid,
+                studentId = autoStudentId,
                 fullName = fullName.trim(),
                 email = email.trim(),
                 role = "Student",

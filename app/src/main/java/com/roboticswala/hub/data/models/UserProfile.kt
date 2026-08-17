@@ -50,7 +50,13 @@ data class UserProfile(
     val isRejected: Boolean get() = status.equals("Rejected", ignoreCase = true)
     val isSuspended: Boolean get() = status.equals("Suspended", ignoreCase = true)
 
-    val displayStudentId: String get() = studentId.ifBlank { "RWH-${uid.take(6).uppercase()}" }
+    val displayStudentId: String
+        get() {
+            if (studentId.isNotBlank()) return studentId
+            val year = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
+            val seq = String.format(java.util.Locale.getDefault(), "%03d", (Math.abs(uid.hashCode()) % 100) + 1)
+            return "RWH-$year-$seq"
+        }
 
     /** Initials for avatar fallback (e.g. "Raj Kumar" → "RK") */
     val initials: String
