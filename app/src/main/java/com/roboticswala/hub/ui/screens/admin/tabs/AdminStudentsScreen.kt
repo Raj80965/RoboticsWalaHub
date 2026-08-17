@@ -19,9 +19,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -313,6 +315,51 @@ fun AdminStudentsScreen(
                             style = MaterialTheme.typography.labelSmall,
                             color = if (isDark) TextSecondaryDark else TextSecondaryLight
                         )
+                    }
+
+                    if (student.phone.isNotBlank() || student.parentPhone.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(if (isDark) DarkSurfaceElevated.copy(alpha = 0.5f) else LightSurfaceElevated.copy(alpha = 0.8f))
+                                .padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            if (student.phone.isNotBlank()) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Phone,
+                                        contentDescription = null,
+                                        tint = if (isDark) CyberCyan else ElectricBlue,
+                                        modifier = Modifier.size(13.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "Student: ${student.phone}",
+                                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
+                                        color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                                    )
+                                }
+                            }
+                            if (student.parentPhone.isNotBlank() || student.parentName.isNotBlank()) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Call,
+                                        contentDescription = null,
+                                        tint = CircuitSuccess,
+                                        modifier = Modifier.size(13.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "Parent: ${student.parentName.ifBlank { "Guardian" }} (${student.parentPhone.ifBlank { "N/A" }})",
+                                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
+                                        color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                                    )
+                                }
+                            }
+                        }
                     }
 
                     if (student.status == "Pending") {

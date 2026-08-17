@@ -14,7 +14,11 @@ data class UserProfile(
     val college: String = "",           // e.g. "IIT Robotics College"
     val branch: String = "",            // e.g. "Robotics & Mechatronics"
     val year: String = "",              // e.g. "Year 3"
-    val photoUrl: String = "",          // Firebase Storage URL or empty
+    val phone: String = "",             // Student Mobile Number
+    val parentName: String = "",        // Parent / Guardian Name
+    val parentPhone: String = "",       // Parent Contact Number
+    val emergencyContact: String = "",  // Emergency Contact Number
+    val photoUrl: String = "",          // Firebase Storage URL or Base64
     val createdAt: Long = System.currentTimeMillis(),
     val approvedAt: Long = 0L           // Set when admin approves
 ) {
@@ -29,6 +33,10 @@ data class UserProfile(
             "college" to college,
             "branch" to branch,
             "year" to year,
+            "phone" to phone,
+            "parentName" to parentName,
+            "parentPhone" to parentPhone,
+            "emergencyContact" to emergencyContact,
             "photoUrl" to photoUrl,
             "createdAt" to createdAt,
             "approvedAt" to approvedAt
@@ -67,6 +75,10 @@ data class UserProfile(
                 college = map["college"] as? String ?: "",
                 branch = map["branch"] as? String ?: "",
                 year = map["year"] as? String ?: "",
+                phone = map["phone"] as? String ?: "",
+                parentName = map["parentName"] as? String ?: "",
+                parentPhone = map["parentPhone"] as? String ?: "",
+                emergencyContact = map["emergencyContact"] as? String ?: "",
                 photoUrl = map["photoUrl"] as? String ?: "",
                 createdAt = (map["createdAt"] as? Number)?.toLong() ?: System.currentTimeMillis(),
                 approvedAt = (map["approvedAt"] as? Number)?.toLong() ?: 0L

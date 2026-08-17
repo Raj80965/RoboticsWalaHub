@@ -1,4 +1,4 @@
-﻿package com.roboticswala.hub.ui.screens.auth.register
+package com.roboticswala.hub.ui.screens.auth.register
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -30,6 +30,8 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PersonOutline
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.RocketLaunch
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -205,6 +207,61 @@ fun RegistrationScreen(
                             errorMessage = uiState.emailError,
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Email,
+                                imeAction = ImeAction.Next
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                            )
+                        )
+
+                        Spacer(modifier = Modifier.height(14.dp))
+
+                        // Student Mobile Number
+                        RoboticsTextField(
+                            value = uiState.phone,
+                            onValueChange = viewModel::onPhoneChanged,
+                            label = "Student Mobile Number",
+                            placeholder = "+91 98765 43210",
+                            leadingIcon = Icons.Filled.Phone,
+                            errorMessage = uiState.phoneError,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Phone,
+                                imeAction = ImeAction.Next
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                            )
+                        )
+
+                        Spacer(modifier = Modifier.height(14.dp))
+
+                        // Parent / Guardian Name
+                        RoboticsTextField(
+                            value = uiState.parentName,
+                            onValueChange = viewModel::onParentNameChanged,
+                            label = "Parent / Guardian Name",
+                            placeholder = "Father/Mother Name",
+                            leadingIcon = Icons.Filled.PersonOutline,
+                            keyboardOptions = KeyboardOptions(
+                                capitalization = KeyboardCapitalization.Words,
+                                imeAction = ImeAction.Next
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                            )
+                        )
+
+                        Spacer(modifier = Modifier.height(14.dp))
+
+                        // Parent Contact Number
+                        RoboticsTextField(
+                            value = uiState.parentPhone,
+                            onValueChange = viewModel::onParentPhoneChanged,
+                            label = "Parent's Mobile Number",
+                            placeholder = "+91 98765 00000",
+                            leadingIcon = Icons.Filled.Phone,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Phone,
                                 imeAction = ImeAction.Next
                             ),
                             keyboardActions = KeyboardActions(

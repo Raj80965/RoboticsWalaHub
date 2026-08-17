@@ -58,6 +58,9 @@ class AdminViewModel(
                                 currentProject = profile.branch.ifBlank { "Robotics Lab Member" },
                                 attendance = 95.0,
                                 status = profile.status.ifBlank { "Pending" },
+                                phone = profile.phone,
+                                parentName = profile.parentName,
+                                parentPhone = profile.parentPhone,
                                 photoUrl = profile.photoUrl,
                                 initials = profile.initials
                             )

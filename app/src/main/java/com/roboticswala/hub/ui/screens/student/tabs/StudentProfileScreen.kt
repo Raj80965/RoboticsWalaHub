@@ -30,13 +30,19 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.ContactPhone
 import androidx.compose.material.icons.filled.Domain
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Emergency
 import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.FamilyRestroom
 import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PersonOutline
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Star
@@ -368,6 +374,64 @@ fun StudentProfileScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // ── Contact & Parents Information Card ───────────────────────────────
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = if (isDark) DarkSurfaceBorder else LightSurfaceBorder,
+                    shape = RoundedCornerShape(18.dp)
+                ),
+            shape = RoundedCornerShape(18.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = if (isDark) DarkSurface.copy(alpha = 0.95f) else LightSurface
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(18.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                Text(
+                    text = "Contact & Guardian Details",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = if (isDark) CyberCyan else ElectricBlue
+                )
+
+                ProfileInfoRow(
+                    icon = Icons.Filled.Phone,
+                    label = "Student Mobile Number",
+                    value = profile.phone.ifBlank { "Not provided" },
+                    isDark = isDark
+                )
+
+                ProfileInfoRow(
+                    icon = Icons.Filled.FamilyRestroom,
+                    label = "Parent / Guardian Name",
+                    value = profile.parentName.ifBlank { "Not provided" },
+                    isDark = isDark
+                )
+
+                ProfileInfoRow(
+                    icon = Icons.Filled.ContactPhone,
+                    label = "Parent's Mobile Number",
+                    value = profile.parentPhone.ifBlank { "Not provided" },
+                    isDark = isDark
+                )
+
+                ProfileInfoRow(
+                    icon = Icons.Filled.Emergency,
+                    label = "Emergency Contact",
+                    value = profile.emergencyContact.ifBlank { profile.parentPhone.ifBlank { "Not provided" } },
+                    isDark = isDark
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         // ── Account & Security Card ───────────────────────────────────────────
         Card(
             modifier = Modifier
@@ -532,13 +596,20 @@ fun StudentProfileScreen(
         var editCollege by remember { mutableStateOf(profile.college) }
         var editBranch by remember { mutableStateOf(profile.branch) }
         var editYear by remember { mutableStateOf(profile.year) }
+        var editPhone by remember { mutableStateOf(profile.phone) }
+        var editParentName by remember { mutableStateOf(profile.parentName) }
+        var editParentPhone by remember { mutableStateOf(profile.parentPhone) }
+        var editEmergencyContact by remember { mutableStateOf(profile.emergencyContact) }
         var isSaving by remember { mutableStateOf(false) }
 
         AlertDialog(
             onDismissRequest = { if (!isSaving) showEditProfileDialog = false },
             title = { Text("Edit Student Profile") },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
                     OutlinedTextField(
                         value = editName,
                         onValueChange = { editName = it },
@@ -550,6 +621,34 @@ fun StudentProfileScreen(
                         value = editStudentId,
                         onValueChange = { editStudentId = it },
                         label = { Text("Student ID (e.g. RWH-2026-042)") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = editPhone,
+                        onValueChange = { editPhone = it },
+                        label = { Text("Student Mobile Number") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = editParentName,
+                        onValueChange = { editParentName = it },
+                        label = { Text("Parent / Guardian Name") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = editParentPhone,
+                        onValueChange = { editParentPhone = it },
+                        label = { Text("Parent's Mobile Number") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = editEmergencyContact,
+                        onValueChange = { editEmergencyContact = it },
+                        label = { Text("Emergency Contact Number") },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -589,6 +688,10 @@ fun StudentProfileScreen(
                                         mapOf(
                                             "fullName" to editName.trim(),
                                             "studentId" to editStudentId.trim(),
+                                            "phone" to editPhone.trim(),
+                                            "parentName" to editParentName.trim(),
+                                            "parentPhone" to editParentPhone.trim(),
+                                            "emergencyContact" to editEmergencyContact.trim(),
                                             "college" to editCollege.trim(),
                                             "branch" to editBranch.trim(),
                                             "year" to editYear.trim()

@@ -178,6 +178,9 @@ data class StudentDirectoryItem(
     val currentProject: String,
     val attendance: Double,
     val status: String,
+    val phone: String = "",
+    val parentName: String = "",
+    val parentPhone: String = "",
     val photoUrl: String = "",
     val initials: String = ""
 )

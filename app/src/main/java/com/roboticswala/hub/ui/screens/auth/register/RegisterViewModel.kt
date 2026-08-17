@@ -30,6 +30,24 @@ class RegisterViewModel(
         }
     }
 
+    fun onPhoneChanged(newPhone: String) {
+        _uiState.update {
+            it.copy(phone = newPhone, phoneError = null, generalMessage = null)
+        }
+    }
+
+    fun onParentNameChanged(newParentName: String) {
+        _uiState.update {
+            it.copy(parentName = newParentName, generalMessage = null)
+        }
+    }
+
+    fun onParentPhoneChanged(newParentPhone: String) {
+        _uiState.update {
+            it.copy(parentPhone = newParentPhone, generalMessage = null)
+        }
+    }
+
     fun onPasswordChanged(newPassword: String) {
         _uiState.update {
             it.copy(password = newPassword, passwordError = null, generalMessage = null)
@@ -117,7 +135,10 @@ class RegisterViewModel(
             authRepository.registerUser(
                 fullName = current.fullName,
                 email = current.email,
-                password = current.password
+                password = current.password,
+                phone = current.phone,
+                parentName = current.parentName,
+                parentPhone = current.parentPhone
             ).onSuccess { profile ->
                 _uiState.update {
                     it.copy(

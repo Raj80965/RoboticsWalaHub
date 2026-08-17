@@ -24,7 +24,10 @@ class FirebaseAuthRepository(
     override suspend fun registerUser(
         fullName: String,
         email: String,
-        password: String
+        password: String,
+        phone: String,
+        parentName: String,
+        parentPhone: String
     ): Result<UserProfile> {
         return try {
             val authResult = auth.createUserWithEmailAndPassword(email.trim(), password).await()
@@ -36,6 +39,9 @@ class FirebaseAuthRepository(
                 email = email.trim(),
                 role = "Student",
                 status = "Pending",
+                phone = phone.trim(),
+                parentName = parentName.trim(),
+                parentPhone = parentPhone.trim(),
                 createdAt = System.currentTimeMillis()
             )
 
