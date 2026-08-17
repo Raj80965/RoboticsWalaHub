@@ -106,6 +106,25 @@ class AdminViewModel(
         }
     }
 
+    fun deleteStudent(studentUid: String) {
+        viewModelScope.launch {
+            try {
+                firestore.collection("users")
+                    .document(studentUid)
+                    .delete()
+                    .await()
+
+                _uiState.update {
+                    it.copy(snackbarMessage = "Student removed successfully!")
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(snackbarMessage = e.localizedMessage ?: "Failed to remove student.")
+                }
+            }
+        }
+    }
+
     fun clearMessage() {
         _uiState.update { it.copy(snackbarMessage = null) }
     }

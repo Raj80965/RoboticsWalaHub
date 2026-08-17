@@ -183,7 +183,8 @@ fun AdminMainScreen(
                     AdminNavRoute.Attendance.route -> AdminAttendanceScreen()
                     AdminNavRoute.Students.route -> AdminStudentsScreen(
                         students = uiState.studentsList,
-                        onApproveStudent = viewModel::approveStudent
+                        onApproveStudent = viewModel::approveStudent,
+                        onDeleteStudent = viewModel::deleteStudent
                     )
                     AdminNavRoute.Bookings.route -> AdminBookingsScreen()
                     AdminNavRoute.More.route -> AdminMoreScreen(onLogout = onLogout)

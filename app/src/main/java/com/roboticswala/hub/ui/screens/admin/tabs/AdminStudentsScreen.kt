@@ -20,17 +20,22 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.roboticswala.hub.data.models.StudentDirectoryItem
 import com.roboticswala.hub.ui.components.StatusChip
+import com.roboticswala.hub.ui.theme.CircuitError
 import com.roboticswala.hub.ui.theme.CircuitSuccess
 import com.roboticswala.hub.ui.theme.CyberCyan
 import com.roboticswala.hub.ui.theme.DarkSurface
@@ -66,10 +72,12 @@ import com.roboticswala.hub.ui.theme.TextSecondaryLight
 fun AdminStudentsScreen(
     students: List<StudentDirectoryItem>,
     onApproveStudent: (String) -> Unit,
+    onDeleteStudent: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
     var searchQuery by remember { mutableStateOf("") }
+    var studentToDelete by remember { mutableStateOf<StudentDirectoryItem?>(null) }
 
     val filteredList = students.filter {
         it.name.contains(searchQuery, ignoreCase = true) ||
@@ -269,7 +277,23 @@ fun AdminStudentsScreen(
                             }
                         }
 
-                        StatusChip(status = student.status)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            StatusChip(status = student.status)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            IconButton(
+                                onClick = { studentToDelete = student },
+                                modifier = Modifier.size(32.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Delete,
+                                    contentDescription = "Remove Student",
+                                    tint = CircuitError.copy(alpha = 0.85f),
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
@@ -293,25 +317,52 @@ fun AdminStudentsScreen(
 
                     if (student.status == "Pending") {
                         Spacer(modifier = Modifier.height(12.dp))
-                        Button(
-                            onClick = { onApproveStudent(student.id) },
+                        Row(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(10.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = CircuitSuccess)
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Filled.Check,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp),
-                                tint = Color.Black
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = "Approve Lab Access",
-                                color = Color.Black,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 13.sp
-                            )
+                            Button(
+                                onClick = { onApproveStudent(student.id) },
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(10.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = CircuitSuccess)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Check,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp),
+                                    tint = Color.Black
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "Approve",
+                                    color = Color.Black,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp
+                                )
+                            }
+
+                            OutlinedButton(
+                                onClick = { studentToDelete = student },
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(10.dp),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, CircuitError.copy(alpha = 0.6f)),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = CircuitError)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Delete,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp),
+                                    tint = CircuitError
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "Reject",
+                                    color = CircuitError,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp
+                                )
+                            }
                         }
                     }
                 }
@@ -322,5 +373,45 @@ fun AdminStudentsScreen(
         item {
             Spacer(modifier = Modifier.height(40.dp))
         }
+    }
+
+    if (studentToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { studentToDelete = null },
+            containerColor = if (isDark) DarkSurfaceElevated else LightSurfaceElevated,
+            title = {
+                Text(
+                    text = "Remove Student",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                )
+            },
+            text = {
+                Text(
+                    text = "Are you sure you want to remove \"${studentToDelete?.name}\"? This will delete their lab access and profile.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        studentToDelete?.let { onDeleteStudent(it.id) }
+                        studentToDelete = null
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = CircuitError),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text("Remove", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { studentToDelete = null }
+                ) {
+                    Text("Cancel", color = if (isDark) TextSecondaryDark else TextSecondaryLight)
+                }
+            }
+        )
     }
 }
