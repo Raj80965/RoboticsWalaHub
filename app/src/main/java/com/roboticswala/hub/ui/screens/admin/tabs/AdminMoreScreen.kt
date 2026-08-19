@@ -56,10 +56,16 @@ import com.roboticswala.hub.ui.theme.TextPrimaryLight
 import com.roboticswala.hub.ui.theme.TextSecondaryDark
 import com.roboticswala.hub.ui.theme.TextSecondaryLight
 
+import android.graphics.BitmapFactory
+import android.util.Base64
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.filled.Person
+import coil.compose.AsyncImage
 import com.roboticswala.hub.data.models.UserProfile
 
 @Composable
@@ -332,6 +338,19 @@ fun AdminMoreScreen(
         return
     }
 
+    val adminPhotoUrl = adminProfile?.photoUrl.orEmpty()
+    val adminPhotoBitmap = remember(adminPhotoUrl) {
+        if (adminPhotoUrl.isNotBlank() && !adminPhotoUrl.startsWith("http")) {
+            try {
+                val clean = if (adminPhotoUrl.contains(",")) adminPhotoUrl.substringAfter(",") else adminPhotoUrl
+                val bytes = Base64.decode(clean, Base64.DEFAULT)
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            } catch (e: Exception) {
+                null
+            }
+        } else null
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -378,24 +397,40 @@ fun AdminMoreScreen(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(46.dp)
-                        .clip(RoundedCornerShape(12.dp))
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(14.dp))
                         .background(
                             if (isDark) CyberCyan.copy(alpha = 0.15f) else ElectricBlue.copy(alpha = 0.12f)
                         )
                         .border(
                             width = 1.dp,
                             color = if (isDark) CyberCyan.copy(alpha = 0.5f) else ElectricBlue.copy(alpha = 0.4f),
-                            shape = RoundedCornerShape(12.dp)
+                            shape = RoundedCornerShape(14.dp)
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.Person,
-                        contentDescription = "Admin Profile",
-                        tint = if (isDark) CyberCyan else ElectricBlue,
-                        modifier = Modifier.size(24.dp)
-                    )
+                    if (adminPhotoBitmap != null) {
+                        Image(
+                            bitmap = adminPhotoBitmap.asImageBitmap(),
+                            contentDescription = "Admin Profile Photo",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else if (adminPhotoUrl.startsWith("http")) {
+                        AsyncImage(
+                            model = adminPhotoUrl,
+                            contentDescription = "Admin Profile Photo",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Filled.Person,
+                            contentDescription = "Admin Profile",
+                            tint = if (isDark) CyberCyan else ElectricBlue,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(12.dp))
