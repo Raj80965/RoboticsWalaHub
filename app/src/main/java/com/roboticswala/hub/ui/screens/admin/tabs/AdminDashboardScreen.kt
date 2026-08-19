@@ -1,4 +1,4 @@
-﻿package com.roboticswala.hub.ui.screens.admin.tabs
+package com.roboticswala.hub.ui.screens.admin.tabs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -57,11 +57,18 @@ import com.roboticswala.hub.ui.theme.LightSurfaceElevated
 import com.roboticswala.hub.ui.theme.TextPrimaryDark
 import com.roboticswala.hub.ui.theme.TextPrimaryLight
 import com.roboticswala.hub.ui.theme.TextSecondaryDark
+import androidx.compose.foundation.clickable
 import com.roboticswala.hub.ui.theme.TextSecondaryLight
 
 @Composable
 fun AdminDashboardScreen(
     data: AdminDashboardData,
+    onNavigateToStudents: () -> Unit = {},
+    onNavigateToAttendance: () -> Unit = {},
+    onNavigateToBookings: () -> Unit = {},
+    onNavigateToProjects: () -> Unit = {},
+    onNavigateToEquipment: () -> Unit = {},
+    onNavigateToMore: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
@@ -120,7 +127,7 @@ fun AdminDashboardScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Real-time robotics facility monitoring, student rosters, and machine allocations.",
+                    text = "Real-time robotics facility monitoring, student rosters, and machine allocations. Tap any card below to manage records.",
                     style = MaterialTheme.typography.bodySmall,
                     color = if (isDark) TextSecondaryDark else TextSecondaryLight
                 )
@@ -137,19 +144,21 @@ fun AdminDashboardScreen(
             MetricCard(
                 title = "Total Students",
                 value = data.totalStudents.toString(),
-                subtitle = "Enrolled across all bays",
+                subtitle = "Enrolled • Tap to view",
                 icon = Icons.Filled.People,
                 modifier = Modifier.weight(1f),
-                accentColor = CyberCyan
+                accentColor = CyberCyan,
+                onClick = onNavigateToStudents
             )
 
             MetricCard(
                 title = "Pending Approvals",
                 value = data.pendingApprovals.toString(),
-                subtitle = "Action required",
+                subtitle = "Action required • Review",
                 icon = Icons.Filled.PersonAdd,
                 modifier = Modifier.weight(1f),
-                accentColor = CircuitWarning
+                accentColor = CircuitWarning,
+                onClick = onNavigateToStudents
             )
         }
 
@@ -163,19 +172,21 @@ fun AdminDashboardScreen(
             MetricCard(
                 title = "Active Students",
                 value = data.activeStudents.toString(),
-                subtitle = "Currently in lab session",
+                subtitle = "In lab session • View",
                 icon = Icons.Filled.HowToReg,
                 modifier = Modifier.weight(1f),
-                accentColor = CircuitSuccess
+                accentColor = CircuitSuccess,
+                onClick = onNavigateToAttendance
             )
 
             MetricCard(
                 title = "Today's Attendance",
                 value = "${data.todayAttendancePercentage}%",
-                subtitle = "Daily RFID clock-ins",
+                subtitle = "RFID clock-ins • Logs",
                 icon = Icons.Filled.AssignmentTurnedIn,
                 modifier = Modifier.weight(1f),
-                accentColor = ElectricBlue
+                accentColor = ElectricBlue,
+                onClick = onNavigateToAttendance
             )
         }
 
@@ -189,19 +200,21 @@ fun AdminDashboardScreen(
             MetricCard(
                 title = "Active Projects",
                 value = data.activeProjects.toString(),
-                subtitle = "Robotics prototypes",
+                subtitle = "Prototypes • Registry",
                 icon = Icons.Filled.Build,
                 modifier = Modifier.weight(1f),
-                accentColor = CyberCyan
+                accentColor = CyberCyan,
+                onClick = onNavigateToProjects
             )
 
             MetricCard(
                 title = "Pending Bookings",
                 value = data.pendingBookings.toString(),
-                subtitle = "Bays & 3D Printers",
+                subtitle = "Bays & 3D Printers • Manage",
                 icon = Icons.Filled.BookmarkBorder,
                 modifier = Modifier.weight(1f),
-                accentColor = CircuitWarning
+                accentColor = CircuitWarning,
+                onClick = onNavigateToBookings
             )
         }
 
@@ -209,7 +222,9 @@ fun AdminDashboardScreen(
 
         // Low Stock Equipment Alert Card
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onNavigateToEquipment() },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -241,6 +256,7 @@ fun AdminDashboardScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
+                .clickable { onNavigateToEquipment() }
                 .border(
                     width = 1.dp,
                     color = if (isDark) DarkSurfaceBorder else LightSurfaceBorder,

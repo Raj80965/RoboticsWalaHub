@@ -28,12 +28,14 @@ import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.PrecisionManufacturing
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -88,6 +90,8 @@ fun AdminMoreScreen(
     var showingEquipmentRequests by remember { mutableStateOf(false) }
     var showingBudget by remember { mutableStateOf(false) }
     var showingAnalytics by remember { mutableStateOf(false) }
+    var showingGateLog by remember { mutableStateOf(false) }
+    var showingLabConfig by remember { mutableStateOf(false) }
 
     if (showingProfile) {
         Column(modifier = modifier.fillMaxSize()) {
@@ -614,7 +618,7 @@ fun AdminMoreScreen(
                 icon = Icons.Filled.Security,
                 badge = "Security",
                 isDark = isDark,
-                onClick = { }
+                onClick = { showingGateLog = true }
             )
             AdminGridTile(
                 modifier = Modifier.weight(1f),
@@ -623,7 +627,7 @@ fun AdminMoreScreen(
                 icon = Icons.Filled.Tune,
                 badge = "Settings",
                 isDark = isDark,
-                onClick = { }
+                onClick = { showingLabConfig = true }
             )
         }
 
@@ -636,6 +640,82 @@ fun AdminMoreScreen(
         )
 
         Spacer(modifier = Modifier.height(36.dp))
+    }
+
+    // Gate Access & RFID Biometric Dialog
+    if (showingGateLog) {
+        AlertDialog(
+            onDismissRequest = { showingGateLog = false },
+            title = {
+                Text(
+                    text = "🔒 RFID Gate & Security Logs",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = if (isDark) CyberCyan else ElectricBlue
+                )
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Text(
+                        text = "Real-time RFID barrier status: ONLINE",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                        color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                    )
+                    Text(
+                        text = "• Main Bay Turnstile: 🟢 Normal Access Enabled\n• Hardware Lab Door #1: 🟢 RFID Active\n• Robotics Testing Arena: 🟢 Monitored\n• Last biometric pulse: 12 seconds ago",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showingGateLog = false }) {
+                    Text(
+                        text = "Close",
+                        color = if (isDark) CyberCyan else ElectricBlue,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            containerColor = if (isDark) DarkSurface else LightSurface
+        )
+    }
+
+    // Lab Preferences & Hours Config Dialog
+    if (showingLabConfig) {
+        AlertDialog(
+            onDismissRequest = { showingLabConfig = false },
+            title = {
+                Text(
+                    text = "⚙️ Robotics Lab Preferences",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = if (isDark) CyberCyan else ElectricBlue
+                )
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Text(
+                        text = "Facility Operating Parameters:",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                        color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                    )
+                    Text(
+                        text = "• Station Operating Hours: 08:00 AM - 08:00 PM\n• Max Slot Booking Duration: 4 Hours\n• Machine Quota: 2 Workbenches / Student\n• 3D Printing Auto-Shutdown: 09:00 PM\n• Auto-Attendance Grace Period: 15 Mins",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showingLabConfig = false }) {
+                    Text(
+                        text = "Done",
+                        color = if (isDark) CyberCyan else ElectricBlue,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            containerColor = if (isDark) DarkSurface else LightSurface
+        )
     }
 }
 

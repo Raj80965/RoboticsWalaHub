@@ -1,7 +1,8 @@
-﻿package com.roboticswala.hub.ui.components
+package com.roboticswala.hub.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,13 +50,18 @@ fun MetricCard(
     icon: ImageVector,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
-    accentColor: Color = CyberCyan
+    accentColor: Color = CyberCyan,
+    onClick: (() -> Unit)? = null
 ) {
     val isDark = isSystemInDarkTheme()
 
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .then(
+                if (onClick != null) Modifier.clickable { onClick() }
+                else Modifier
+            )
             .border(
                 width = 1.dp,
                 color = if (isDark) DarkSurfaceBorder else LightSurfaceBorder,
