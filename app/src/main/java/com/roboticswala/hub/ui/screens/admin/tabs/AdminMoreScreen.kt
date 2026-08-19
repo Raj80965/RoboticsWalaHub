@@ -56,6 +56,9 @@ import com.roboticswala.hub.ui.theme.TextPrimaryLight
 import com.roboticswala.hub.ui.theme.TextSecondaryDark
 import com.roboticswala.hub.ui.theme.TextSecondaryLight
 
+import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.filled.Person
 import com.roboticswala.hub.data.models.UserProfile
 
@@ -333,133 +336,263 @@ fun AdminMoreScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(horizontal = 20.dp, vertical = 16.dp)
+            .padding(horizontal = 16.dp, vertical = 14.dp)
     ) {
+        // Section Header
         Text(
-            text = "Admin Settings & Management",
-            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+            text = "Admin Control Center",
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.ExtraBold,
+                letterSpacing = (-0.3).sp
+            ),
             color = if (isDark) TextPrimaryDark else TextPrimaryLight
         )
         Text(
-            text = "Facility controls, achievement approvals, and task management",
+            text = "Facility management, approvals, inventory & system controls",
             style = MaterialTheme.typography.bodySmall,
             color = if (isDark) TextSecondaryDark else TextSecondaryLight
         )
 
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // 👑 HERO: ADMIN PROFILE & ID DOSSIER CARD (Compact & Sleek)
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { showingProfile = true }
+                .border(
+                    width = 1.dp,
+                    color = if (isDark) CyberCyan.copy(alpha = 0.45f) else ElectricBlue.copy(alpha = 0.35f),
+                    shape = RoundedCornerShape(18.dp)
+                ),
+            shape = RoundedCornerShape(18.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = if (isDark) DarkSurface else LightSurface
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(46.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            if (isDark) CyberCyan.copy(alpha = 0.15f) else ElectricBlue.copy(alpha = 0.12f)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = if (isDark) CyberCyan.copy(alpha = 0.5f) else ElectricBlue.copy(alpha = 0.4f),
+                            shape = RoundedCornerShape(12.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Person,
+                        contentDescription = "Admin Profile",
+                        tint = if (isDark) CyberCyan else ElectricBlue,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = adminProfile?.fullName ?: "Admin In-Charge",
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                            color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(
+                                    if (isDark) CyberCyan.copy(alpha = 0.2f) else ElectricBlue.copy(alpha = 0.15f)
+                                )
+                                .padding(horizontal = 5.dp, vertical = 1.5.dp)
+                        ) {
+                            Text(
+                                text = "ADMIN",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.ExtraBold
+                                ),
+                                color = if (isDark) CyberCyan else ElectricBlue
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "ID: ${adminProfile?.displayAdminId ?: "RWH-ADM-2026-001"} • Dossier & Permissions",
+                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                        color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                    )
+                }
+
+                Icon(
+                    imageVector = Icons.Filled.Tune,
+                    contentDescription = "Open Profile",
+                    tint = if (isDark) CyberCyan else ElectricBlue,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(18.dp))
 
-        // 👑 ADMIN PROFILE & ID CARD
-        AdminOptionCard(
-            title = "👑 My Admin Profile & ID Dossier",
-            subtitle = "ID: ${adminProfile?.displayAdminId ?: "RWH-ADM-2026-001"} • Designation, Permissions & Photo",
-            icon = Icons.Filled.Person,
-            isDark = isDark,
-            onClick = { showingProfile = true }
+        // Quick Grid Title
+        Text(
+            text = "MANAGEMENT MODULES",
+            style = MaterialTheme.typography.labelSmall.copy(
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp
+            ),
+            color = if (isDark) CyberCyan else ElectricBlue
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        // Day 10 Highlight Card: Achievements Approvals
-        AdminOptionCard(
-            title = "🏆 Achievement & Certificate Approvals",
-            subtitle = "Verify certificates, approve hackathon awards, and publish to profile",
-            icon = Icons.Filled.EmojiEvents,
-            isDark = isDark,
-            onClick = { showingAchievements = true }
-        )
+        // 2-COLUMN COMPACT GRID
+        // Row 1: Achievements & Tasks
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            AdminGridTile(
+                modifier = Modifier.weight(1f),
+                title = "Achievements",
+                subtitle = "Approve certs & awards",
+                icon = Icons.Filled.EmojiEvents,
+                badge = "Certificates",
+                isDark = isDark,
+                onClick = { showingAchievements = true }
+            )
+            AdminGridTile(
+                modifier = Modifier.weight(1f),
+                title = "Weekly Tasks",
+                subtitle = "Milestones & reviews",
+                icon = Icons.Filled.Assignment,
+                badge = "Assignments",
+                isDark = isDark,
+                onClick = { showingTasks = true }
+            )
+        }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        // Day 9 Highlight Card: Tasks Management
-        AdminOptionCard(
-            title = "📋 Weekly Tasks & Milestones",
-            subtitle = "Assign tasks to approved students & review submitted deliverables",
-            icon = Icons.Filled.Assignment,
-            isDark = isDark,
-            onClick = { showingTasks = true }
-        )
+        // Row 2: Projects & Inventory
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            AdminGridTile(
+                modifier = Modifier.weight(1f),
+                title = "Projects Hub",
+                subtitle = "Registry & mentors",
+                icon = Icons.Filled.PrecisionManufacturing,
+                badge = "Robotics Lab",
+                isDark = isDark,
+                onClick = { showingProjects = true }
+            )
+            AdminGridTile(
+                modifier = Modifier.weight(1f),
+                title = "Inventory",
+                subtitle = "Sensors & stock alerts",
+                icon = Icons.Filled.Inventory2,
+                badge = "Equipment",
+                isDark = isDark,
+                onClick = { showingEquipment = true }
+            )
+        }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        // Day 8 Highlight Card: Projects Registry
-        AdminOptionCard(
-            title = "⚡ Projects Registry & Mentorship",
-            subtitle = "Review all lab robotics projects, assign mentors, and audit budgets",
-            icon = Icons.Filled.PrecisionManufacturing,
-            isDark = isDark,
-            onClick = { showingProjects = true }
-        )
+        // Row 3: Notices & Events
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            AdminGridTile(
+                modifier = Modifier.weight(1f),
+                title = "Notice Board",
+                subtitle = "Broadcast lab alerts",
+                icon = Icons.Filled.Campaign,
+                badge = "Circulars",
+                isDark = isDark,
+                onClick = { showingNotices = true }
+            )
+            AdminGridTile(
+                modifier = Modifier.weight(1f),
+                title = "Events & Meets",
+                subtitle = "Hackathons & workshops",
+                icon = Icons.Filled.Event,
+                badge = "Schedules",
+                isDark = isDark,
+                onClick = { showingEvents = true }
+            )
+        }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        // Day 12 Highlight Card: Inventory & Equipment Stock
-        AdminOptionCard(
-            title = "📦 Inventory & Equipment Stock",
-            subtitle = "Manage microcontrollers, sensors, stock alerts & issue requests",
-            icon = Icons.Filled.Inventory2,
-            isDark = isDark,
-            onClick = { showingEquipment = true }
-        )
+        // Row 4: Budget & Analytics
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            AdminGridTile(
+                modifier = Modifier.weight(1f),
+                title = "Budget & Grants",
+                subtitle = "Expense audits & claims",
+                icon = Icons.Filled.Inventory2,
+                badge = "Finances",
+                isDark = isDark,
+                onClick = { showingBudget = true }
+            )
+            AdminGridTile(
+                modifier = Modifier.weight(1f),
+                title = "Hub Analytics",
+                subtitle = "Trends & export reports",
+                icon = Icons.Filled.PrecisionManufacturing,
+                badge = "Reports",
+                isDark = isDark,
+                onClick = { showingAnalytics = true }
+            )
+        }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        // Day 11 Highlight Card: Notice Board Management
-        AdminOptionCard(
-            title = "📢 Notice Board & Broadcasts",
-            subtitle = "Publish facility alerts, safety guidelines & announcements",
-            icon = Icons.Filled.Campaign,
-            isDark = isDark,
-            onClick = { showingNotices = true }
-        )
+        // Row 5: Security & Preferences
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            AdminGridTile(
+                modifier = Modifier.weight(1f),
+                title = "Gate Access",
+                subtitle = "Biometric & RFID log",
+                icon = Icons.Filled.Security,
+                badge = "Security",
+                isDark = isDark,
+                onClick = { }
+            )
+            AdminGridTile(
+                modifier = Modifier.weight(1f),
+                title = "Lab Config",
+                subtitle = "Operating hours & bays",
+                icon = Icons.Filled.Tune,
+                badge = "Settings",
+                isDark = isDark,
+                onClick = { }
+            )
+        }
 
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Day 11 Highlight Card: Event & Workshop Management
-        AdminOptionCard(
-            title = "📅 Event & Workshop Scheduler",
-            subtitle = "Create hackathons, seminars, and track student registrations",
-            icon = Icons.Filled.Event,
-            isDark = isDark,
-            onClick = { showingEvents = true }
-        )
-
-        // Day 13 Highlight Card: Budget & Expense Management
-        AdminOptionCard(
-            title = "💰 Budget & Expense Management",
-            subtitle = "Manage project grants, approve component receipts & audit finances",
-            icon = Icons.Filled.Inventory2,
-            isDark = isDark,
-            onClick = { showingBudget = true }
-        )
-
-        // Day 14 Highlight Card: Reports & Hub Analytics
-        AdminOptionCard(
-            title = "📊 Reports & Hub Analytics",
-            subtitle = "Performance dashboards, attendance trends & export PDF audit reports",
-            icon = Icons.Filled.PrecisionManufacturing,
-            isDark = isDark,
-            onClick = { showingAnalytics = true }
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        AdminOptionCard(
-            title = "Security & RFID Gate Log",
-            subtitle = "Live biometric access records and bay telemetry streams",
-            icon = Icons.Filled.Security,
-            isDark = isDark
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        AdminOptionCard(
-            title = "Robotics Lab Preferences",
-            subtitle = "Configure station operating hours and machine quotas",
-            icon = Icons.Filled.Tune,
-            isDark = isDark
-        )
-
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         RoboticsOutlinedButton(
             text = "Log Out of Admin Hub",
@@ -467,20 +600,22 @@ fun AdminMoreScreen(
             leadingIcon = Icons.Filled.Logout
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(36.dp))
     }
 }
 
 @Composable
-private fun AdminOptionCard(
+private fun AdminGridTile(
     title: String,
     subtitle: String,
     icon: ImageVector,
+    badge: String,
     isDark: Boolean,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .border(
@@ -493,45 +628,80 @@ private fun AdminOptionCard(
             containerColor = if (isDark) DarkSurface else LightSurface
         )
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(12.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .border(
-                        width = 1.dp,
-                        color = if (isDark) CyberCyan.copy(alpha = 0.4f) else ElectricBlue.copy(alpha = 0.3f),
-                        shape = RoundedCornerShape(12.dp)
-                    ),
-                contentAlignment = Alignment.Center
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = if (isDark) CyberCyan else ElectricBlue,
-                    modifier = Modifier.size(22.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .size(38.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(
+                            if (isDark) CyberCyan.copy(alpha = 0.12f) else ElectricBlue.copy(alpha = 0.1f)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = if (isDark) CyberCyan.copy(alpha = 0.4f) else ElectricBlue.copy(alpha = 0.3f),
+                            shape = RoundedCornerShape(10.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = title,
+                        tint = if (isDark) CyberCyan else ElectricBlue,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(
+                            if (isDark) DarkSurfaceBorder.copy(alpha = 0.6f) else LightSurfaceBorder.copy(alpha = 0.8f)
+                        )
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = badge,
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.width(14.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                    color = if (isDark) TextPrimaryDark else TextPrimaryLight
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = if (isDark) TextSecondaryDark else TextSecondaryLight
-                )
-            }
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 13.5.sp
+                ),
+                color = if (isDark) TextPrimaryDark else TextPrimaryLight,
+                maxLines = 1
+            )
+
+            Spacer(modifier = Modifier.height(2.dp))
+
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontSize = 10.5.sp,
+                    lineHeight = 13.sp
+                ),
+                color = if (isDark) TextSecondaryDark else TextSecondaryLight,
+                maxLines = 1
+            )
         }
     }
 }
