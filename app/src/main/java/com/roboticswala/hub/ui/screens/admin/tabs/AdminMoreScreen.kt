@@ -43,11 +43,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.roboticswala.hub.ui.components.RoboticsOutlinedButton
 import com.roboticswala.hub.ui.theme.CyberCyan
+import com.roboticswala.hub.ui.theme.CyberCyanGlow
 import com.roboticswala.hub.ui.theme.DarkSurface
 import com.roboticswala.hub.ui.theme.DarkSurfaceBorder
 import com.roboticswala.hub.ui.theme.ElectricBlue
@@ -401,15 +403,18 @@ fun AdminMoreScreen(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
-                        .clip(RoundedCornerShape(14.dp))
+                        .size(52.dp)
+                        .clip(RoundedCornerShape(15.dp))
                         .background(
-                            if (isDark) CyberCyan.copy(alpha = 0.15f) else ElectricBlue.copy(alpha = 0.12f)
+                            if (isDark) CyberCyan.copy(alpha = 0.25f) else ElectricBlue.copy(alpha = 0.18f)
                         )
                         .border(
-                            width = 1.dp,
-                            color = if (isDark) CyberCyan.copy(alpha = 0.5f) else ElectricBlue.copy(alpha = 0.4f),
-                            shape = RoundedCornerShape(14.dp)
+                            width = 2.dp,
+                            brush = Brush.linearGradient(
+                                colors = if (isDark) listOf(CyberCyan, CyberCyanGlow, ElectricBlue)
+                                else listOf(ElectricBlue, CyberCyan, ElectricBlue)
+                            ),
+                            shape = RoundedCornerShape(15.dp)
                         ),
                     contentAlignment = Alignment.Center
                 ) {
@@ -432,7 +437,7 @@ fun AdminMoreScreen(
                             imageVector = Icons.Filled.Person,
                             contentDescription = "Admin Profile",
                             tint = if (isDark) CyberCyan else ElectricBlue,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(26.dp)
                         )
                     }
                 }
@@ -755,15 +760,15 @@ private fun AdminGridTile(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(38.dp)
-                        .clip(RoundedCornerShape(10.dp))
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(12.dp))
                         .background(
-                            if (isDark) CyberCyan.copy(alpha = 0.12f) else ElectricBlue.copy(alpha = 0.1f)
+                            if (isDark) CyberCyan.copy(alpha = 0.22f) else ElectricBlue.copy(alpha = 0.16f)
                         )
                         .border(
-                            width = 1.dp,
-                            color = if (isDark) CyberCyan.copy(alpha = 0.4f) else ElectricBlue.copy(alpha = 0.3f),
-                            shape = RoundedCornerShape(10.dp)
+                            width = 1.5.dp,
+                            color = if (isDark) CyberCyan.copy(alpha = 0.85f) else ElectricBlue.copy(alpha = 0.7f),
+                            shape = RoundedCornerShape(12.dp)
                         ),
                     contentAlignment = Alignment.Center
                 ) {
@@ -771,7 +776,7 @@ private fun AdminGridTile(
                         imageVector = icon,
                         contentDescription = title,
                         tint = if (isDark) CyberCyan else ElectricBlue,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(22.dp)
                     )
                 }
 

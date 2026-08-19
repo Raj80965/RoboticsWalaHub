@@ -291,13 +291,16 @@ fun StudentHomeScreen(
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(46.dp)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(if (isDark) CyberCyan.copy(alpha = 0.15f) else ElectricBlue.copy(alpha = 0.12f))
+                                    .size(50.dp)
+                                    .clip(RoundedCornerShape(14.dp))
+                                    .background(if (isDark) CyberCyan.copy(alpha = 0.25f) else ElectricBlue.copy(alpha = 0.18f))
                                     .border(
-                                        width = 1.dp,
-                                        color = if (isDark) CyberCyan.copy(alpha = 0.5f) else ElectricBlue.copy(alpha = 0.4f),
-                                        shape = RoundedCornerShape(12.dp)
+                                        width = 1.8.dp,
+                                        brush = Brush.linearGradient(
+                                            colors = if (isDark) listOf(CyberCyan, CyberCyanGlow, ElectricBlue)
+                                            else listOf(ElectricBlue, CyberCyan, ElectricBlue)
+                                        ),
+                                        shape = RoundedCornerShape(14.dp)
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {
@@ -305,7 +308,7 @@ fun StudentHomeScreen(
                                     imageVector = Icons.Filled.SupervisorAccount,
                                     contentDescription = "Lab In-Charges",
                                     tint = if (isDark) CyberCyan else ElectricBlue,
-                                    modifier = Modifier.size(24.dp)
+                                    modifier = Modifier.size(26.dp)
                                 )
                             }
 
@@ -1774,13 +1777,16 @@ private fun AdminSquareCard(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(54.dp)
-                        .clip(RoundedCornerShape(14.dp))
-                        .background(if (isDark) CyberCyan.copy(alpha = 0.15f) else ElectricBlue.copy(alpha = 0.12f))
+                        .size(56.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(if (isDark) CyberCyan.copy(alpha = 0.25f) else ElectricBlue.copy(alpha = 0.18f))
                         .border(
-                            width = 1.5.dp,
-                            color = if (isDark) CyberCyan.copy(alpha = 0.6f) else ElectricBlue.copy(alpha = 0.5f),
-                            shape = RoundedCornerShape(14.dp)
+                            width = 2.dp,
+                            brush = Brush.linearGradient(
+                                colors = if (isDark) listOf(CyberCyan, CyberCyanGlow, ElectricBlue)
+                                else listOf(ElectricBlue, CyberCyan, ElectricBlue)
+                            ),
+                            shape = RoundedCornerShape(16.dp)
                         ),
                     contentAlignment = Alignment.Center
                 ) {

@@ -96,11 +96,16 @@ fun MetricCard(
 
                 Box(
                     modifier = Modifier
-                        .size(36.dp)
+                        .size(38.dp)
                         .clip(CircleShape)
                         .background(
-                            if (isDark) accentColor.copy(alpha = 0.15f)
-                            else ElectricBlue.copy(alpha = 0.12f)
+                            if (isDark) accentColor.copy(alpha = 0.25f)
+                            else ElectricBlue.copy(alpha = 0.18f)
+                        )
+                        .border(
+                            width = 1.5.dp,
+                            color = if (isDark) accentColor.copy(alpha = 0.8f) else ElectricBlue.copy(alpha = 0.65f),
+                            shape = CircleShape
                         ),
                     contentAlignment = Alignment.Center
                 ) {
@@ -108,7 +113,7 @@ fun MetricCard(
                         imageVector = icon,
                         contentDescription = null,
                         tint = if (isDark) accentColor else ElectricBlue,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(20.dp)
                     )
                 }
             }
