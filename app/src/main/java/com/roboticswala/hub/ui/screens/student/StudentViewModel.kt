@@ -41,6 +41,7 @@ data class StudentUiState(
     val tasks: List<StudentTask> = emptyList(),
     val latestNotice: NoticeItem? = null,
     val upcomingEvent: EventItem? = null,
+    val adminProfiles: List<UserProfile> = emptyList(),
 
     // ── Projects Tab (preserved static until Day 6+) ──
     val projectsList: List<ProjectItem> = listOf(
@@ -225,6 +226,17 @@ class StudentViewModel(
                 .collect { result ->
                     result.onSuccess { event ->
                         _uiState.update { it.copy(upcomingEvent = event) }
+                    }
+                }
+        }
+
+        // 8. Lab Administrators & Mentors — real-time
+        viewModelScope.launch {
+            dashboardRepo.observeAdminProfiles()
+                .catch { /* silent — fallback */ }
+                .collect { result ->
+                    result.onSuccess { admins ->
+                        _uiState.update { it.copy(adminProfiles = admins) }
                     }
                 }
         }

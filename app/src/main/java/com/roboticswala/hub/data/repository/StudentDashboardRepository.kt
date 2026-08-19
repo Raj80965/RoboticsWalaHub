@@ -35,4 +35,7 @@ interface StudentDashboardRepository {
 
     /** Real-time stream of next upcoming event (from /events, ordered by date asc, limit 1) */
     fun observeUpcomingEvent(): Flow<Result<EventItem?>>
+
+    /** Real-time stream of all registered Lab Administrators & Mentors (from /users where role == Admin) */
+    fun observeAdminProfiles(): Flow<Result<List<UserProfile>>>
 }

@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,6 +48,14 @@ import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.School
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material.icons.filled.SupervisorAccount
+import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -57,8 +66,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -123,6 +136,7 @@ fun StudentHomeScreen(
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
+    var showAdminDirectoryDialog by remember { mutableStateOf(false) }
 
     PullToRefreshBox(
         isRefreshing = uiState.isRefreshing,
@@ -242,6 +256,99 @@ fun StudentHomeScreen(
                             contentDescription = "Open Scanner",
                             tint = if (isDark) CyberCyan else ElectricBlue,
                             modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // ── 1B. Lab Administrators & Mentors Master Card ─────────
+                val adminCount = uiState.adminProfiles.size.coerceAtLeast(1)
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showAdminDirectoryDialog = true }
+                        .border(
+                            width = 1.dp,
+                            color = if (isDark) CyberCyan.copy(alpha = 0.45f) else ElectricBlue.copy(alpha = 0.35f),
+                            shape = RoundedCornerShape(18.dp)
+                        ),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isDark) DarkSurface else LightSurface
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(46.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(if (isDark) CyberCyan.copy(alpha = 0.15f) else ElectricBlue.copy(alpha = 0.12f))
+                                    .border(
+                                        width = 1.dp,
+                                        color = if (isDark) CyberCyan.copy(alpha = 0.5f) else ElectricBlue.copy(alpha = 0.4f),
+                                        shape = RoundedCornerShape(12.dp)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.SupervisorAccount,
+                                    contentDescription = "Lab In-Charges",
+                                    tint = if (isDark) CyberCyan else ElectricBlue,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.width(12.dp))
+
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = "Robotics Lab In-Charges",
+                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                        color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(if (isDark) CyberCyan.copy(alpha = 0.2f) else ElectricBlue.copy(alpha = 0.15f))
+                                            .padding(horizontal = 5.dp, vertical = 1.dp)
+                                    ) {
+                                        Text(
+                                            text = "$adminCount ADMIN${if (adminCount > 1) "S" else ""}",
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                fontSize = 8.5.sp,
+                                                fontWeight = FontWeight.ExtraBold
+                                            ),
+                                            color = if (isDark) CyberCyan else ElectricBlue
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = "Faculty In-Charge & Verified Lab Admins • Tap to View",
+                                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
+                                    color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                                )
+                            }
+                        }
+
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = "View Admins",
+                            tint = if (isDark) CyberCyan else ElectricBlue,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 }
@@ -642,6 +749,14 @@ fun StudentHomeScreen(
 
                 Spacer(modifier = Modifier.height(28.dp))
             }
+        }
+
+        if (showAdminDirectoryDialog) {
+            AdminDirectoryDialog(
+                adminProfiles = uiState.adminProfiles,
+                isDark = isDark,
+                onDismiss = { showAdminDirectoryDialog = false }
+            )
         }
     }
 }
@@ -1503,6 +1618,305 @@ private fun EmptyStateRow(
                 style = MaterialTheme.typography.bodySmall,
                 color = if (isDark) TextSecondaryDark.copy(alpha = 0.7f) else TextSecondaryLight.copy(alpha = 0.7f)
             )
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Lab Administrators & Mentors Directory Dialog
+// ─────────────────────────────────────────────────────────────────────────────
+
+@Composable
+private fun AdminDirectoryDialog(
+    adminProfiles: List<UserProfile>,
+    isDark: Boolean,
+    onDismiss: () -> Unit
+) {
+    val context = LocalContext.current
+    val list = if (adminProfiles.isNotEmpty()) adminProfiles else listOf(
+        UserProfile(
+            fullName = "Robotics Lab Admin In-Charge",
+            email = "admin@roboticswala.com",
+            studentId = "RWH-ADM-2026-001",
+            role = "Admin",
+            status = "Approved",
+            branch = "Robotics & AI Research Bay"
+        )
+    )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(38.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(if (isDark) CyberCyan.copy(alpha = 0.15f) else ElectricBlue.copy(alpha = 0.15f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.SupervisorAccount,
+                        contentDescription = null,
+                        tint = if (isDark) CyberCyan else ElectricBlue,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Column {
+                    Text(
+                        text = "Lab In-Charges & Mentors",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                    )
+                    Text(
+                        text = "${list.size} Verified Administrator${if (list.size > 1) "s" else ""}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (isDark) CyberCyan else ElectricBlue
+                    )
+                }
+            }
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                list.forEach { admin ->
+                    AdminSquareCard(
+                        admin = admin,
+                        isDark = isDark,
+                        onContactClick = {
+                            if (admin.phone.isNotBlank()) {
+                                try {
+                                    val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${admin.phone}"))
+                                    context.startActivity(intent)
+                                } catch (_: Exception) {}
+                            } else if (admin.email.isNotBlank()) {
+                                try {
+                                    val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:${admin.email}"))
+                                    context.startActivity(intent)
+                                } catch (_: Exception) {}
+                            }
+                        },
+                        onEmailClick = {
+                            if (admin.email.isNotBlank()) {
+                                try {
+                                    val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:${admin.email}"))
+                                    context.startActivity(intent)
+                                } catch (_: Exception) {}
+                            }
+                        }
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(
+                    text = "Close",
+                    fontWeight = FontWeight.Bold,
+                    color = if (isDark) CyberCyan else ElectricBlue
+                )
+            }
+        },
+        containerColor = if (isDark) DarkSurface else LightSurface,
+        shape = RoundedCornerShape(24.dp)
+    )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Admin Square / Compact Card
+// ─────────────────────────────────────────────────────────────────────────────
+
+@Composable
+private fun AdminSquareCard(
+    admin: UserProfile,
+    isDark: Boolean,
+    onContactClick: () -> Unit = {},
+    onEmailClick: () -> Unit = {}
+) {
+    val photoBitmap = remember(admin.photoUrl) {
+        if (admin.photoUrl.isNotBlank() && !admin.photoUrl.startsWith("http")) {
+            try {
+                val clean = if (admin.photoUrl.contains(",")) admin.photoUrl.substringAfter(",") else admin.photoUrl
+                val bytes = Base64.decode(clean, Base64.DEFAULT)
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            } catch (e: Exception) {
+                null
+            }
+        } else null
+    }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = if (isDark) DarkSurfaceBorder else LightSurfaceBorder,
+                shape = RoundedCornerShape(16.dp)
+            ),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isDark) DarkSurfaceElevated else LightSurfaceElevated
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(54.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(if (isDark) CyberCyan.copy(alpha = 0.15f) else ElectricBlue.copy(alpha = 0.12f))
+                        .border(
+                            width = 1.5.dp,
+                            color = if (isDark) CyberCyan.copy(alpha = 0.6f) else ElectricBlue.copy(alpha = 0.5f),
+                            shape = RoundedCornerShape(14.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (photoBitmap != null) {
+                        Image(
+                            bitmap = photoBitmap.asImageBitmap(),
+                            contentDescription = "Admin Photo",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else if (admin.photoUrl.startsWith("http")) {
+                        AsyncImage(
+                            model = admin.photoUrl,
+                            contentDescription = "Admin Photo",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Filled.Person,
+                            contentDescription = "Admin",
+                            tint = if (isDark) CyberCyan else ElectricBlue,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = admin.fullName.ifBlank { "Administrator" },
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                            color = if (isDark) TextPrimaryDark else TextPrimaryLight,
+                            maxLines = 1
+                        )
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(if (isDark) CyberCyan.copy(alpha = 0.2f) else ElectricBlue.copy(alpha = 0.15f))
+                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                        ) {
+                            Text(
+                                text = "ADMIN",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.ExtraBold
+                                ),
+                                color = if (isDark) CyberCyan else ElectricBlue
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    Text(
+                        text = "ID: ${admin.displayAdminId}",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = if (isDark) CyberCyanGlow else ElectricBlue
+                        )
+                    )
+
+                    Text(
+                        text = if (admin.branch.isNotBlank()) admin.branch else "Robotics Lab In-Charge",
+                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.5.sp),
+                        color = if (isDark) TextSecondaryDark else TextSecondaryLight,
+                        maxLines = 1
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Action row: Contact buttons
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (admin.phone.isNotBlank()) {
+                    Button(
+                        onClick = onContactClick,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(36.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isDark) CyberCyan.copy(alpha = 0.2f) else ElectricBlue.copy(alpha = 0.15f),
+                            contentColor = if (isDark) CyberCyan else ElectricBlue
+                        ),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Call,
+                            contentDescription = "Call",
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Call",
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                        )
+                    }
+                }
+
+                if (admin.email.isNotBlank()) {
+                    Button(
+                        onClick = onEmailClick,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(36.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isDark) DarkSurfaceBorder else LightSurfaceBorder,
+                            contentColor = if (isDark) TextPrimaryDark else TextPrimaryLight
+                        ),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Email,
+                            contentDescription = "Email",
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Email Admin",
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                        )
+                    }
+                }
+            }
         }
     }
 }

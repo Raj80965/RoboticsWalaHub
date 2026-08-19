@@ -236,4 +236,28 @@ class FirestoreStudentDashboardRepository(
         }
         awaitClose { listener?.remove() }
     }
+
+    // ── Lab Administrators & Mentors Directory ────────────────────────────────
+
+    override fun observeAdminProfiles(): Flow<Result<List<UserProfile>>> = callbackFlow {
+        var listener: ListenerRegistration? = null
+        try {
+            listener = firestore.collection("users")
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        trySend(Result.failure(error))
+                        return@addSnapshotListener
+                    }
+                    val admins = snapshot?.documents?.mapNotNull { doc ->
+                        val data = doc.data ?: return@mapNotNull null
+                        val profile = UserProfile.fromMap(data)
+                        if (profile.isAdmin) profile else null
+                    } ?: emptyList()
+                    trySend(Result.success(admins))
+                }
+        } catch (e: Exception) {
+            trySend(Result.failure(e))
+        }
+        awaitClose { listener?.remove() }
+    }
 }
