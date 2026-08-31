@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "RW HUB"
+rootProject.name = "RWHUB"
 include(":app")
