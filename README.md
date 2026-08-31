@@ -4,10 +4,10 @@ A complete, enterprise-grade, cyber-robotics Android application and management 
 
 ### 🚀 Quick Links & Downloads
 
-[![Download Android App](https://img.shields.io/badge/📲_Download_Android_App-(Direct_APK)-00E676?style=for-the-badge&logo=android&logoColor=black)](https://raj80965.github.io/RoboticsWalaHub/RoboticsWalaHub.apk)
+[![Download Android App](https://img.shields.io/badge/📲_Download_Android_App-(Direct_APK)-00E676?style=for-the-badge&logo=android&logoColor=black)](https://raj80965.github.io/RoboticsWalaHub/RW_HUB.apk)
 [![Live Web Portal](https://img.shields.io/badge/🌐_Open_Live_Web_Portal-Simulator-00B0FF?style=for-the-badge&logo=google-chrome&logoColor=white)](https://raj80965.github.io/RoboticsWalaHub/)
 
-* 📱 **Direct 1-Tap APK Download:** [`https://raj80965.github.io/RoboticsWalaHub/RoboticsWalaHub.apk`](https://raj80965.github.io/RoboticsWalaHub/RoboticsWalaHub.apk)
+* 📱 **Direct 1-Tap APK Download:** [`https://raj80965.github.io/RoboticsWalaHub/RW_HUB.apk`](https://raj80965.github.io/RoboticsWalaHub/RW_HUB.apk)
 * 🌐 **Live Interactive App Simulator:** [`https://raj80965.github.io/RoboticsWalaHub/`](https://raj80965.github.io/RoboticsWalaHub/)
 
 ---
