@@ -1,4 +1,4 @@
-# 🤖 Robotics Wala Hub — Complete User Guide & Feature Manual
+# 🤖 RW HUB — Complete User Guide & Feature Manual
 **Official Step-by-Step Operating Guide for Students & Admins**
 
 ---

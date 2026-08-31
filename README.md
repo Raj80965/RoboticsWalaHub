@@ -1,4 +1,4 @@
-# 🤖 Robotics Wala Hub
+# 🤖 RW HUB (Robotics Wala Hub)
 
 A complete, enterprise-grade, cyber-robotics Android application and management portal designed for robotics laboratories, research clubs, engineering students, faculty mentors, and lab administrators. Built using **Kotlin 2.0+**, **Jetpack Compose**, **Material Design 3 (M3)**, **MVVM Architecture**, and **Google Firebase Suite (Auth, Firestore, Storage)**.
 

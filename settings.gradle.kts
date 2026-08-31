@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Robotics Wala Hub"
+rootProject.name = "RW HUB"
 include(":app")

@@ -114,7 +114,7 @@ fun StudentMainScreen(
                             RoboticsLogo(size = 32.dp, animate = false)
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "Robotics Wala Hub",
+                                text = "RW HUB",
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.Bold,
                                     letterSpacing = (-0.3).sp

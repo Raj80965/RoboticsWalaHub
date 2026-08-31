@@ -101,7 +101,7 @@ fun SplashScreen(
 
                     // App Title
                     Text(
-                        text = "Robotics Wala Hub",
+                        text = "RW HUB",
                         style = MaterialTheme.typography.displayMedium.copy(
                             fontSize = 32.sp,
                             fontWeight = FontWeight.ExtraBold,

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Robotics Wala Hub</string>
+    <string name="app_name">RW HUB</string>
     <string name="tagline">Powering Next-Gen Robotics &amp; Automation</string>
     <string name="welcome_back">Welcome Back, Engineer!</string>
     <string name="login_subtitle">Sign in to access your robotics hub and projects</string>

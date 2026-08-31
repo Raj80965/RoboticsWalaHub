@@ -176,7 +176,7 @@ class FirestoreAttendanceRepository(
         // 2. Decode QR Payload
         val qrData = QRCodeGenerator.decodeSessionPayload(qrPayload)
         if (qrData == null) {
-            emit(AttendanceScanResult.Error("Invalid QR Code: Format not recognized. Please scan the official Robotics Wala Hub session QR."))
+            emit(AttendanceScanResult.Error("Invalid QR Code: Format not recognized. Please scan the official RW HUB session QR."))
             return@flow
         }
 

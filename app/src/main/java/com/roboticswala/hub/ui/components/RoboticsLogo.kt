@@ -127,7 +127,7 @@ fun RoboticsLogo(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.app_logo),
-                contentDescription = "Robotics Wala Hub Logo",
+                contentDescription = "RW HUB Logo",
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(CircleShape),

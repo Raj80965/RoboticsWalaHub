@@ -1,4 +1,4 @@
-﻿package com.roboticswala.hub.ui.screens.auth.login
+package com.roboticswala.hub.ui.screens.auth.login
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -118,7 +118,7 @@ fun LoginScreen(
 
                 // Screen Title & Subtitle
                 Text(
-                    text = "Robotics Wala Hub",
+                    text = "RW HUB",
                     style = MaterialTheme.typography.headlineLarge.copy(
                         fontWeight = FontWeight.ExtraBold,
                         letterSpacing = (-0.5).sp

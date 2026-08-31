@@ -122,7 +122,7 @@ fun ForgotPasswordDialog(
                     text = if (isSubmitted) {
                         "We've sent password reset instructions to:\n$email"
                     } else {
-                        "Enter the email associated with your Robotics Wala Hub account to receive recovery instructions."
+                        "Enter the email associated with your RW HUB account to receive recovery instructions."
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,

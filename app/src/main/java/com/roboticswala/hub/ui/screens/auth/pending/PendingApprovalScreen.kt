@@ -1,4 +1,4 @@
-﻿package com.roboticswala.hub.ui.screens.auth.pending
+package com.roboticswala.hub.ui.screens.auth.pending
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -215,7 +215,7 @@ fun PendingApprovalScreen(
                         Spacer(modifier = Modifier.height(10.dp))
 
                         Text(
-                            text = "Welcome to Robotics Wala Hub! Your student account has been registered in the Firebase database and is currently awaiting approval from the Lab Administrator.",
+                            text = "Welcome to RW HUB! Your student account has been registered in the Firebase database and is currently awaiting approval from the Lab Administrator.",
                             style = MaterialTheme.typography.bodySmall,
                             color = if (isDark) TextSecondaryDark else TextSecondaryLight,
                             lineHeight = 19.sp
