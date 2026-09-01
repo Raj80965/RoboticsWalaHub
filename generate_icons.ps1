@@ -1,10 +1,12 @@
 Add-Type -AssemblyName System.Drawing
 
-$src = "C:\Users\hp\.gemini\antigravity-ide\brain\132e4249-dc45-4f2f-9d62-29d4c90a3c99\.user_uploaded\media_1786986563375.jpg"
+$src = "C:\Users\RAJ RAJGURU\.gemini\antigravity-ide\brain\0872a164-2ddb-421e-964a-fc8920fc666f\.user_uploaded\media_1788274272683.jpg"
 $img = [System.Drawing.Image]::FromFile($src)
 
+$resDir = "d:\Project\RoboticsWalaHub-main\app\src\main\res"
+
 # Save full quality drawable
-$drawableDir = "c:\Users\hp\Desktop\robotics_hub\app\src\main\res\drawable"
+$drawableDir = "$resDir\drawable"
 if (!(Test-Path $drawableDir)) { New-Item -ItemType Directory -Path $drawableDir -Force }
 $img.Save("$drawableDir\app_logo.png", [System.Drawing.Imaging.ImageFormat]::Png)
 $img.Save("$drawableDir\ic_launcher.png", [System.Drawing.Imaging.ImageFormat]::Png)
@@ -20,7 +22,7 @@ $sizes = @{
 }
 
 foreach ($folder in $sizes.Keys) {
-    $targetDir = "c:\Users\hp\Desktop\robotics_hub\app\src\main\res\$folder"
+    $targetDir = "$resDir\$folder"
     if (!(Test-Path $targetDir)) { New-Item -ItemType Directory -Path $targetDir -Force }
     $dim = $sizes[$folder]
     $bmp = New-Object System.Drawing.Bitmap($dim, $dim)
@@ -37,3 +39,4 @@ foreach ($folder in $sizes.Keys) {
 
 $img.Dispose()
 Write-Host "Icons and drawables generated successfully!"
+
