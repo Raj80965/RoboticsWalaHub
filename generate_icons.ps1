@@ -57,12 +57,29 @@ foreach ($folder in $sizes.Keys) {
     $gSub.DrawImage($masterBmp, 0, 0, $size, $size)
     $bmp.Save("$targetDir\ic_launcher.png", [System.Drawing.Imaging.ImageFormat]::Png)
     $bmp.Save("$targetDir\ic_launcher_round.png", [System.Drawing.Imaging.ImageFormat]::Png)
+    $bmp.Save("$targetDir\ic_launcher_foreground.png", [System.Drawing.Imaging.ImageFormat]::Png)
     $gSub.Dispose()
     $bmp.Dispose()
 }
 
+# Create mipmap-anydpi-v26 adaptive icon XMLs for Android 8.0+ (API 26+)
+$anydpiDir = "$resDir\mipmap-anydpi-v26"
+if (!(Test-Path $anydpiDir)) { New-Item -ItemType Directory -Path $anydpiDir -Force }
+
+$adaptiveXml = @"
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/black" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+</adaptive-icon>
+"@
+
+$adaptiveXml | Out-File -FilePath "$anydpiDir\ic_launcher.xml" -Encoding utf8
+$adaptiveXml | Out-File -FilePath "$anydpiDir\ic_launcher_round.xml" -Encoding utf8
+
 $masterBmp.Dispose()
-Write-Host "New pristine clean high-res circular icon generated successfully!"
+Write-Host "New pristine clean high-res circular adaptive icon generated successfully!"
+
 
 
 

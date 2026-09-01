@@ -11,4 +11,5 @@
     <color name="text_secondary_dark">#8E9EB5</color>
     <color name="text_primary_light">#0D131E</color>
     <color name="text_secondary_light">#5C6B7E</color>
+    <color name="black">#000000</color>
 </resources>
