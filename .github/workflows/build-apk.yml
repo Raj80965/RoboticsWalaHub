@@ -1,18 +1,23 @@
-name: Build RW HUB APK
+name: Build and Update RW HUB APK
 
 on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
-    name: Build Android APK
+    name: Build Android APK & Update Repo
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -36,6 +41,11 @@ jobs:
         run: |
           gradle assembleDebug --stacktrace 2>&1 | tee build_log.txt
 
+      - name: Copy Built APK to Root
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk RW_HUB.apk
+          cp app/build/outputs/apk/debug/app-debug.apk RoboticsWalaHub.apk
+
       - name: Upload Debug APK Artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -45,3 +55,16 @@ jobs:
             app/build/outputs/apk/debug/*.apk
             build_log.txt
           retention-days: 30
+
+      - name: Commit and Push Updated APK
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add RW_HUB.apk RoboticsWalaHub.apk
+          if git diff --staged --quiet; then
+            echo "No changes in APK"
+          else
+            git commit -m "auto: update RW_HUB.apk and RoboticsWalaHub.apk binaries [skip ci]"
+            git push
+          fi
+
