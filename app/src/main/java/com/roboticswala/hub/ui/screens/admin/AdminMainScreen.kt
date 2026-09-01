@@ -246,8 +246,8 @@ fun AdminMainScreen(
                         onNavigateToStudents = { viewModel.onTabSelected(AdminNavRoute.Students.route) },
                         onNavigateToAttendance = { viewModel.onTabSelected(AdminNavRoute.Attendance.route) },
                         onNavigateToBookings = { viewModel.onTabSelected(AdminNavRoute.Bookings.route) },
-                        onNavigateToProjects = { viewModel.onTabSelected(AdminNavRoute.More.route) },
-                        onNavigateToEquipment = { viewModel.onTabSelected(AdminNavRoute.More.route) },
+                        onNavigateToProjects = { viewModel.onTabSelected(AdminNavRoute.More.route, subScreen = "projects") },
+                        onNavigateToEquipment = { viewModel.onTabSelected(AdminNavRoute.More.route, subScreen = "equipment") },
                         onNavigateToMore = { viewModel.onTabSelected(AdminNavRoute.More.route) }
                     )
                     AdminNavRoute.Attendance.route -> AdminAttendanceScreen()
@@ -261,15 +261,17 @@ fun AdminMainScreen(
                         adminProfile = uiState.adminProfile,
                         onUpdateProfile = viewModel::updateAdminProfile,
                         onUpdatePhoto = viewModel::updateAdminPhoto,
-                        onLogout = onLogout
+                        onLogout = onLogout,
+                        initialSubScreen = uiState.selectedSubScreen,
+                        onSubScreenCleared = { viewModel.onTabSelected(AdminNavRoute.More.route, null) }
                     )
                     else -> AdminDashboardScreen(
                         data = uiState.dashboardData,
                         onNavigateToStudents = { viewModel.onTabSelected(AdminNavRoute.Students.route) },
                         onNavigateToAttendance = { viewModel.onTabSelected(AdminNavRoute.Attendance.route) },
                         onNavigateToBookings = { viewModel.onTabSelected(AdminNavRoute.Bookings.route) },
-                        onNavigateToProjects = { viewModel.onTabSelected(AdminNavRoute.More.route) },
-                        onNavigateToEquipment = { viewModel.onTabSelected(AdminNavRoute.More.route) },
+                        onNavigateToProjects = { viewModel.onTabSelected(AdminNavRoute.More.route, subScreen = "projects") },
+                        onNavigateToEquipment = { viewModel.onTabSelected(AdminNavRoute.More.route, subScreen = "equipment") },
                         onNavigateToMore = { viewModel.onTabSelected(AdminNavRoute.More.route) }
                     )
                 }

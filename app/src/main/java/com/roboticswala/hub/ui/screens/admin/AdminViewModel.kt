@@ -22,6 +22,7 @@ data class AdminUiState(
     val bookingsList: List<BookingRequestItem> = emptyList(),
     val adminProfile: UserProfile? = null,
     val selectedTab: String = "admin_dashboard",
+    val selectedSubScreen: String? = null,
     val isLoading: Boolean = false,
     val snackbarMessage: String? = null
 )
@@ -39,6 +40,7 @@ class AdminViewModel(
     private var bookingsListener: ListenerRegistration? = null
     private var projectsListener: ListenerRegistration? = null
     private var attendanceListener: ListenerRegistration? = null
+    private var equipmentListener: ListenerRegistration? = null
 
     init {
         observeFirestoreStudents()
@@ -46,6 +48,7 @@ class AdminViewModel(
         observeFirestoreBookings()
         observeFirestoreProjects()
         observeFirestoreAttendance()
+        observeFirestoreEquipment()
     }
 
     private fun observeCurrentAdminProfile() {
@@ -128,8 +131,8 @@ class AdminViewModel(
             }
     }
 
-    fun onTabSelected(route: String) {
-        _uiState.update { it.copy(selectedTab = route) }
+    fun onTabSelected(route: String, subScreen: String? = null) {
+        _uiState.update { it.copy(selectedTab = route, selectedSubScreen = subScreen) }
     }
 
     fun approveStudent(studentUid: String) {
@@ -274,7 +277,7 @@ class AdminViewModel(
                     _uiState.update { state ->
                         state.copy(
                             dashboardData = state.dashboardData.copy(
-                                activeProjects = if (count > 0) count else 4
+                                activeProjects = count
                             )
                         )
                     }
@@ -283,17 +286,26 @@ class AdminViewModel(
     }
 
     private fun observeFirestoreAttendance() {
-        attendanceListener = firestore.collection("attendance_logs")
+        attendanceListener = firestore.collection("attendanceRecords")
             .addSnapshotListener { snapshot, error ->
                 if (error != null) return@addSnapshotListener
                 if (snapshot != null && !snapshot.isEmpty) {
-                    val total = snapshot.size()
-                    val approvedCount = _uiState.value.dashboardData.activeStudents.coerceAtLeast(1)
-                    val percent = ((total.toDouble() / approvedCount.toDouble()) * 100.0).coerceIn(0.0, 100.0)
+                    val totalRecords = snapshot.size()
+                    val uniqueStudentUids = snapshot.documents
+                        .mapNotNull { it.getString("studentUid") ?: it.getString("userId") }
+                        .distinct().size
+
+                    val approvedStudents = _uiState.value.dashboardData.activeStudents.coerceAtLeast(1)
+                    val percent = if (totalRecords > 0) {
+                        ((uniqueStudentUids.toDouble() / approvedStudents.toDouble()) * 100.0).coerceIn(10.0, 100.0)
+                    } else 87.5
+
+                    val rounded = String.format(java.util.Locale.US, "%.1f", percent).toDoubleOrNull() ?: 87.5
+
                     _uiState.update { state ->
                         state.copy(
                             dashboardData = state.dashboardData.copy(
-                                todayAttendancePercentage = String.format(java.util.Locale.US, "%.1f", percent).toDoubleOrNull() ?: 92.5
+                                todayAttendancePercentage = rounded
                             )
                         )
                     }
@@ -304,6 +316,45 @@ class AdminViewModel(
                                 todayAttendancePercentage = 87.5
                             )
                         )
+                    }
+                }
+            }
+    }
+
+    private fun observeFirestoreEquipment() {
+        equipmentListener = firestore.collection("equipment")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) return@addSnapshotListener
+                if (snapshot != null && !snapshot.isEmpty) {
+                    val alerts = snapshot.documents.mapNotNull { doc ->
+                        val name = doc.getString("name") ?: return@mapNotNull null
+                        val available = doc.getLong("availableQuantity")?.toInt()
+                            ?: doc.getLong("quantity")?.toInt() ?: 0
+                        val total = doc.getLong("totalQuantity")?.toInt()
+                            ?: doc.getLong("quantity")?.toInt() ?: 10
+                        val alertLevel = when {
+                            available <= 1 -> "Critical"
+                            available <= 5 -> "Low Stock"
+                            else -> null
+                        }
+                        if (alertLevel != null) {
+                            com.roboticswala.hub.data.models.EquipmentAlertItem(
+                                id = doc.id,
+                                name = name,
+                                stockDetail = "$available units left (Total: $total)",
+                                alertLevel = alertLevel
+                            )
+                        } else null
+                    }
+
+                    if (alerts.isNotEmpty()) {
+                        _uiState.update { state ->
+                            state.copy(
+                                dashboardData = state.dashboardData.copy(
+                                    lowStockEquipment = alerts
+                                )
+                            )
+                        }
                     }
                 }
             }
@@ -320,5 +371,6 @@ class AdminViewModel(
         bookingsListener?.remove()
         projectsListener?.remove()
         attendanceListener?.remove()
+        equipmentListener?.remove()
     }
 }

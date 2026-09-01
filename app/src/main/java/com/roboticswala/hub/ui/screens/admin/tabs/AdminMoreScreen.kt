@@ -72,12 +72,16 @@ import androidx.compose.material.icons.filled.Person
 import coil.compose.AsyncImage
 import com.roboticswala.hub.data.models.UserProfile
 
+import androidx.compose.runtime.LaunchedEffect
+
 @Composable
 fun AdminMoreScreen(
     onLogout: () -> Unit,
     adminProfile: UserProfile? = null,
     onUpdateProfile: (fullName: String, phone: String, college: String, branch: String, year: String, adminId: String, emergencyContact: String) -> Unit = { _, _, _, _, _, _, _ -> },
     onUpdatePhoto: (photoBase64: String) -> Unit = {},
+    initialSubScreen: String? = null,
+    onSubScreenCleared: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
@@ -94,6 +98,20 @@ fun AdminMoreScreen(
     var showingAnalytics by remember { mutableStateOf(false) }
     var showingGateLog by remember { mutableStateOf(false) }
     var showingLabConfig by remember { mutableStateOf(false) }
+
+    LaunchedEffect(initialSubScreen) {
+        when (initialSubScreen) {
+            "projects" -> showingProjects = true
+            "equipment" -> showingEquipment = true
+            "tasks" -> showingTasks = true
+            "achievements" -> showingAchievements = true
+            "notices" -> showingNotices = true
+            "events" -> showingEvents = true
+            "budget" -> showingBudget = true
+            "analytics" -> showingAnalytics = true
+            "equipment_requests" -> showingEquipmentRequests = true
+        }
+    }
 
     if (showingProfile) {
         Column(modifier = modifier.fillMaxSize()) {
