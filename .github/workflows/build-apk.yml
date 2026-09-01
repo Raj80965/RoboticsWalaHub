@@ -60,11 +60,8 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add RW_HUB.apk RoboticsWalaHub.apk
-          if git diff --staged --quiet; then
-            echo "No changes in APK"
-          else
-            git commit -m "auto: update RW_HUB.apk and RoboticsWalaHub.apk binaries [skip ci]"
-            git push
-          fi
+          git add -f RW_HUB.apk RoboticsWalaHub.apk
+          git commit -m "auto: update compiled RW_HUB.apk and RoboticsWalaHub.apk binaries [skip ci]" || echo "No changes to commit"
+          git push || echo "Push failed or nothing to push"
+
 
