@@ -28,26 +28,23 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Accept Licenses & Install SDK 35
-        run: |
-          yes | sdkmanager --licenses || true
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
 
-      - name: Download and Setup Gradle 8.12
-        run: |
-          wget -q https://services.gradle.org/distributions/gradle-8.12-bin.zip
-          unzip -q gradle-8.12-bin.zip
-          echo "$PWD/gradle-8.12/bin" >> $GITHUB_PATH
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
       - name: Build Debug APK
         run: |
-          gradle assembleDebug --stacktrace --no-daemon
+          ./gradlew assembleDebug --stacktrace
 
       - name: Copy Built APK to Root
         run: |
-          ls -la app/build/outputs/apk/debug/
-          cp app/build/outputs/apk/debug/*.apk RW_HUB.apk
-          cp app/build/outputs/apk/debug/*.apk RoboticsWalaHub.apk
+          find app/build/outputs/ -type f || true
+          APK_FILE=$(find app/build/outputs -name "*.apk" | head -n 1)
+          echo "Found APK: $APK_FILE"
+          cp "$APK_FILE" RW_HUB.apk
+          cp "$APK_FILE" RoboticsWalaHub.apk
           ls -lh RW_HUB.apk RoboticsWalaHub.apk
 
       - name: Upload Debug APK Artifact
