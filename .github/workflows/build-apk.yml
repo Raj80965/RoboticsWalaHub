@@ -31,28 +31,40 @@ jobs:
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
           $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Download and Setup Gradle 8.12
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.12-bin.zip
+          unzip -q gradle-8.12-bin.zip
+          echo "$PWD/gradle-8.12/bin" >> $GITHUB_PATH
 
       - name: Build Debug APK
         run: |
-          ./gradlew assembleDebug --stacktrace
+          gradle assembleDebug --stacktrace 2>&1 | tee build_log.txt
 
       - name: Copy Built APK to Root
         run: |
-          ls -la app/build/outputs/apk/debug/
-          APK_PATH=$(find app/build/outputs/apk/debug -name "*.apk" | head -n 1)
-          echo "Found APK at: $APK_PATH"
-          cp "$APK_PATH" RW_HUB.apk
-          cp "$APK_PATH" RoboticsWalaHub.apk
-          ls -lh RW_HUB.apk RoboticsWalaHub.apk
+          echo "Listing build output directory:"
+          find app/build/outputs -type f || true
+          APK_PATH=$(find app/build/outputs -name "*.apk" | head -n 1)
+          if [ -n "$APK_PATH" ]; then
+            echo "Found APK at: $APK_PATH"
+            cp "$APK_PATH" RW_HUB.apk
+            cp "$APK_PATH" RoboticsWalaHub.apk
+            ls -lh RW_HUB.apk RoboticsWalaHub.apk
+          else
+            echo "=== BUILD LOG FAILURE DETAILS ==="
+            tail -n 150 build_log.txt
+            exit 1
+          fi
 
       - name: Upload Debug APK Artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: RW_HUB_APK_DEBUG
-          path: app/build/outputs/apk/debug/*.apk
+          path: |
+            app/build/outputs/apk/debug/*.apk
+            build_log.txt
           retention-days: 30
 
       - name: Commit and Push Updated APK
