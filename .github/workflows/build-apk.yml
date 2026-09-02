@@ -43,8 +43,8 @@ jobs:
 
       - name: Copy Built APK to Root
         run: |
-          cp app/build/outputs/apk/debug/app-debug.apk RW_HUB.apk
-          cp app/build/outputs/apk/debug/app-debug.apk RoboticsWalaHub.apk
+          cp app/build/outputs/apk/debug/*.apk RW_HUB.apk
+          cp app/build/outputs/apk/debug/*.apk RoboticsWalaHub.apk
 
       - name: Upload Debug APK Artifact
         if: always()
