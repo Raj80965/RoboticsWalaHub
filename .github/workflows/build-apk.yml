@@ -27,24 +27,24 @@ jobs:
 
       - name: Setup Android SDK and Platform 35
         run: |
-          echo "sdk.dir=/usr/local/lib/android/sdk" > local.properties
-          yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
-      - name: Download and Setup Gradle 8.12
-        run: |
-          wget -q https://services.gradle.org/distributions/gradle-8.12-bin.zip
-          unzip -q gradle-8.12-bin.zip
-          echo "$PWD/gradle-8.12/bin" >> $GITHUB_PATH
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
       - name: Build Debug APK
         run: |
-          gradle assembleDebug --stacktrace
+          ./gradlew assembleDebug --stacktrace
 
       - name: Copy Built APK to Root
         run: |
-          cp app/build/outputs/apk/debug/app-debug.apk RW_HUB.apk
-          cp app/build/outputs/apk/debug/app-debug.apk RoboticsWalaHub.apk
+          ls -la app/build/outputs/apk/debug/
+          APK_PATH=$(find app/build/outputs/apk/debug -name "*.apk" | head -n 1)
+          echo "Found APK at: $APK_PATH"
+          cp "$APK_PATH" RW_HUB.apk
+          cp "$APK_PATH" RoboticsWalaHub.apk
           ls -lh RW_HUB.apk RoboticsWalaHub.apk
 
       - name: Upload Debug APK Artifact
