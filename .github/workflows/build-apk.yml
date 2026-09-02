@@ -25,11 +25,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK and Platform 35
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept Licenses & Install SDK 35
         run: |
-          echo "sdk.dir=$ANDROID_HOME" > local.properties
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          yes | sdkmanager --licenses || true
+          sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
       - name: Download and Setup Gradle 8.12
         run: |
@@ -39,32 +41,21 @@ jobs:
 
       - name: Build Debug APK
         run: |
-          gradle assembleDebug --stacktrace 2>&1 | tee build_log.txt
+          gradle assembleDebug --stacktrace --no-daemon
 
       - name: Copy Built APK to Root
         run: |
-          echo "Listing build output directory:"
-          find app/build/outputs -type f || true
-          APK_PATH=$(find app/build/outputs -name "*.apk" | head -n 1)
-          if [ -n "$APK_PATH" ]; then
-            echo "Found APK at: $APK_PATH"
-            cp "$APK_PATH" RW_HUB.apk
-            cp "$APK_PATH" RoboticsWalaHub.apk
-            ls -lh RW_HUB.apk RoboticsWalaHub.apk
-          else
-            echo "=== BUILD LOG FAILURE DETAILS ==="
-            tail -n 150 build_log.txt
-            exit 1
-          fi
+          ls -la app/build/outputs/apk/debug/
+          cp app/build/outputs/apk/debug/*.apk RW_HUB.apk
+          cp app/build/outputs/apk/debug/*.apk RoboticsWalaHub.apk
+          ls -lh RW_HUB.apk RoboticsWalaHub.apk
 
       - name: Upload Debug APK Artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: RW_HUB_APK_DEBUG
-          path: |
-            app/build/outputs/apk/debug/*.apk
-            build_log.txt
+          path: app/build/outputs/apk/debug/*.apk
           retention-days: 30
 
       - name: Commit and Push Updated APK
