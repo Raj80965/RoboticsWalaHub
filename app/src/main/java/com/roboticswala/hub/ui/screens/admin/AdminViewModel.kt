@@ -338,11 +338,11 @@ class AdminViewModel(
                             else -> null
                         }
                         if (alertLevel != null) {
-                            com.roboticswala.hub.data.models.EquipmentAlertItem(
-                                id = doc.id,
+                            com.roboticswala.hub.data.models.EquipmentItem(
                                 name = name,
                                 stockDetail = "$available units left (Total: $total)",
-                                alertLevel = alertLevel
+                                alertLevel = alertLevel,
+                                quantity = available
                             )
                         } else null
                     }
