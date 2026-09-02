@@ -41,8 +41,15 @@ jobs:
 
       - name: Build Debug APK
         run: |
-          set -o pipefail
-          ./gradlew assembleDebug --stacktrace --no-daemon 2>&1 | tee build_log.txt || { echo "=== GRADLE FAILED ==="; tail -n 120 build_log.txt; exit 1; }
+          ./gradlew assembleDebug --stacktrace --no-daemon > build_log.txt 2>&1 || BUILD_FAILED=true
+          if [ "$BUILD_FAILED" = "true" ]; then
+            echo "## Gradle Build Failed" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 120 build_log.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 120 build_log.txt
+            exit 1
+          fi
 
       - name: Copy Built APK to Root
         run: |
