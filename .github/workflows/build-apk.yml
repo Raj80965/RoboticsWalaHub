@@ -43,9 +43,16 @@ jobs:
 
       - name: Copy Built APK to Root
         run: |
-          APK_FILE=$(find app/build/outputs/apk/debug -name "*.apk" | head -n 1)
-          cp "$APK_FILE" RW_HUB.apk
-          cp "$APK_FILE" RoboticsWalaHub.apk
+          find . -type f -name "*.apk"
+          APK_FILE=$(find . -type f -name "*.apk" ! -name "RW_HUB.apk" ! -name "RoboticsWalaHub.apk" | head -n 1)
+          echo "Found APK: $APK_FILE"
+          if [ -n "$APK_FILE" ]; then
+            cp "$APK_FILE" RW_HUB.apk
+            cp "$APK_FILE" RoboticsWalaHub.apk
+          else
+            echo "No generated APK found!"
+            exit 1
+          fi
 
       - name: Upload Debug APK Artifact
         if: always()
