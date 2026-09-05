@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.activity.compose.BackHandler
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,8 +41,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import com.roboticswala.hub.ui.components.ChatInAppBanner
+import com.roboticswala.hub.utils.ChatNotificationHelper
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -57,6 +64,7 @@ import com.roboticswala.hub.ui.screens.admin.tabs.AdminBookingsScreen
 import com.roboticswala.hub.ui.screens.admin.tabs.AdminDashboardScreen
 import com.roboticswala.hub.ui.screens.admin.tabs.AdminMoreScreen
 import com.roboticswala.hub.ui.screens.admin.tabs.AdminStudentsScreen
+import com.roboticswala.hub.ui.theme.CircuitError
 import com.roboticswala.hub.ui.theme.CircuitWarning
 import com.roboticswala.hub.ui.theme.CyberCyan
 import com.roboticswala.hub.ui.theme.DarkBackground
@@ -77,17 +85,48 @@ import com.roboticswala.hub.ui.theme.TextSecondaryLight
 @Composable
 fun AdminMainScreen(
     onLogout: () -> Unit,
+    onNavigateToChat: () -> Unit = {},
     viewModel: AdminViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isDark = isSystemInDarkTheme()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val currentUid = remember { com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid.orEmpty() }
+    val chatRepository = remember { com.roboticswala.hub.data.repository.ChatRepository() }
+    val unreadCount by chatRepository.getUnreadCountFlow(context, currentUid).collectAsStateWithLifecycle(initialValue = 0)
+
+    var bannerMessage by remember { mutableStateOf<com.roboticswala.hub.data.models.ChatMessage?>(null) }
+    var showBanner by remember { mutableStateOf(false) }
+
+    LaunchedEffect(currentUid) {
+        if (currentUid.isNotBlank()) {
+            chatRepository.getLatestIncomingMessageFlow(currentUid).collect { newMsg ->
+                if (newMsg != null) {
+                    bannerMessage = newMsg
+                    showBanner = true
+                    ChatNotificationHelper.showChatNotification(
+                        context = context,
+                        senderName = newMsg.senderName,
+                        senderRole = newMsg.senderRole,
+                        messageText = newMsg.message
+                    )
+                    delay(4500)
+                    showBanner = false
+                }
+            }
+        }
+    }
 
     LaunchedEffect(uiState.snackbarMessage) {
         uiState.snackbarMessage?.let { msg ->
             snackbarHostState.showSnackbar(msg)
             viewModel.clearMessage()
         }
+    }
+
+    BackHandler(enabled = uiState.selectedTab != AdminNavRoute.Dashboard.route && uiState.selectedSubScreen == null) {
+        viewModel.onTabSelected(AdminNavRoute.Dashboard.route)
     }
 
     RoboticsBackground {
@@ -182,6 +221,31 @@ fun AdminMainScreen(
 
                         Spacer(modifier = Modifier.width(4.dp))
 
+                        IconButton(onClick = onNavigateToChat) {
+                            androidx.compose.material3.BadgedBox(
+                                badge = {
+                                    if (unreadCount > 0) {
+                                        androidx.compose.material3.Badge(
+                                            containerColor = CircuitError,
+                                            contentColor = Color.White
+                                        ) {
+                                            Text(
+                                                text = if (unreadCount > 99) "99+" else unreadCount.toString(),
+                                                fontSize = 9.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.Chat,
+                                    contentDescription = "Community Chat",
+                                    tint = if (isDark) CyberCyan else ElectricBlue
+                                )
+                            }
+                        }
+
                         IconButton(onClick = onLogout) {
                             Icon(
                                 imageVector = Icons.Filled.Logout,
@@ -203,16 +267,38 @@ fun AdminMainScreen(
                         color = if (isDark) DarkSurfaceBorder else LightSurfaceBorder
                     )
                 ) {
-                    AdminNavRoute.items.forEach { item ->
+                    AdminNavRoute.items.filterNotNull().forEach { item ->
                         val isSelected = uiState.selectedTab == item.route
                         NavigationBarItem(
                             selected = isSelected,
                             onClick = { viewModel.onTabSelected(item.route) },
                             icon = {
-                                Icon(
-                                    imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
-                                    contentDescription = item.title
-                                )
+                                if (item == AdminNavRoute.More && unreadCount > 0) {
+                                    androidx.compose.material3.BadgedBox(
+                                        badge = {
+                                            androidx.compose.material3.Badge(
+                                                containerColor = CircuitError,
+                                                contentColor = Color.White
+                                            ) {
+                                                Text(
+                                                    text = if (unreadCount > 99) "99+" else unreadCount.toString(),
+                                                    fontSize = 9.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                            }
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
+                                            contentDescription = item.title
+                                        )
+                                    }
+                                } else {
+                                    Icon(
+                                        imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
+                                        contentDescription = item.title
+                                    )
+                                }
                             },
                             label = {
                                 Text(
@@ -243,16 +329,23 @@ fun AdminMainScreen(
                 when (uiState.selectedTab) {
                     AdminNavRoute.Dashboard.route -> AdminDashboardScreen(
                         data = uiState.dashboardData,
-                        onNavigateToStudents = { viewModel.onTabSelected(AdminNavRoute.Students.route) },
+                        onNavigateToStudents = { filter ->
+                            viewModel.setStudentsFilter(filter)
+                            viewModel.onTabSelected(AdminNavRoute.Students.route)
+                        },
                         onNavigateToAttendance = { viewModel.onTabSelected(AdminNavRoute.Attendance.route) },
                         onNavigateToBookings = { viewModel.onTabSelected(AdminNavRoute.Bookings.route) },
-                        onNavigateToProjects = { viewModel.onTabSelected(AdminNavRoute.More.route, subScreen = "projects") },
-                        onNavigateToEquipment = { viewModel.onTabSelected(AdminNavRoute.More.route, subScreen = "equipment") },
-                        onNavigateToMore = { viewModel.onTabSelected(AdminNavRoute.More.route) }
+                        onNavigateToProjects = { viewModel.onTabSelected(AdminNavRoute.More.route, subScreen = "projects", returnToDashboard = true) },
+                        onNavigateToEquipment = { viewModel.onTabSelected(AdminNavRoute.More.route, subScreen = "equipment", returnToDashboard = true) },
+                        onNavigateToMore = { viewModel.onTabSelected(AdminNavRoute.More.route) },
+                        onNavigateToChat = onNavigateToChat,
+                        unreadChatCount = unreadCount
                     )
                     AdminNavRoute.Attendance.route -> AdminAttendanceScreen()
                     AdminNavRoute.Students.route -> AdminStudentsScreen(
                         students = uiState.studentsList,
+                        activeFilter = uiState.studentsFilter,
+                        onFilterChanged = viewModel::setStudentsFilter,
                         onApproveStudent = viewModel::approveStudent,
                         onDeleteStudent = viewModel::deleteStudent
                     )
@@ -262,19 +355,38 @@ fun AdminMainScreen(
                         onUpdateProfile = viewModel::updateAdminProfile,
                         onUpdatePhoto = viewModel::updateAdminPhoto,
                         onLogout = onLogout,
+                        onNavigateToChat = onNavigateToChat,
+                        unreadChatCount = unreadCount,
                         initialSubScreen = uiState.selectedSubScreen,
-                        onSubScreenCleared = { viewModel.onTabSelected(AdminNavRoute.More.route, null) }
+                        onSubScreenCleared = viewModel::onSubScreenDismissed
                     )
                     else -> AdminDashboardScreen(
                         data = uiState.dashboardData,
-                        onNavigateToStudents = { viewModel.onTabSelected(AdminNavRoute.Students.route) },
+                        onNavigateToStudents = { filter ->
+                            viewModel.setStudentsFilter(filter)
+                            viewModel.onTabSelected(AdminNavRoute.Students.route)
+                        },
                         onNavigateToAttendance = { viewModel.onTabSelected(AdminNavRoute.Attendance.route) },
                         onNavigateToBookings = { viewModel.onTabSelected(AdminNavRoute.Bookings.route) },
-                        onNavigateToProjects = { viewModel.onTabSelected(AdminNavRoute.More.route, subScreen = "projects") },
-                        onNavigateToEquipment = { viewModel.onTabSelected(AdminNavRoute.More.route, subScreen = "equipment") },
-                        onNavigateToMore = { viewModel.onTabSelected(AdminNavRoute.More.route) }
+                        onNavigateToProjects = { viewModel.onTabSelected(AdminNavRoute.More.route, subScreen = "projects", returnToDashboard = true) },
+                        onNavigateToEquipment = { viewModel.onTabSelected(AdminNavRoute.More.route, subScreen = "equipment", returnToDashboard = true) },
+                        onNavigateToMore = { viewModel.onTabSelected(AdminNavRoute.More.route) },
+                        onNavigateToChat = onNavigateToChat,
+                        unreadChatCount = unreadCount
                     )
                 }
+                
+                ChatInAppBanner(
+                    message = bannerMessage,
+                    visible = showBanner,
+                    onNavigateToChat = {
+                        showBanner = false
+                        onNavigateToChat()
+                    },
+                    onDismiss = { showBanner = false },
+                    isDark = isDark,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
             }
         }
     }

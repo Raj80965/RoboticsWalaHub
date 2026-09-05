@@ -1,68 +1,84 @@
 Add-Type -AssemblyName System.Drawing
 
-$srcPath = "C:\Users\RAJ RAJGURU\.gemini\antigravity-ide\brain\0872a164-2ddb-421e-964a-fc8920fc666f\.user_uploaded\media_1788275597372.jpg"
+$srcPath = "d:\Project\RoboticsWalaHub-main\app\src\main\res\drawable\app_logo.png"
 $src = [System.Drawing.Bitmap]::FromFile($srcPath)
-
 $resDir = "d:\Project\RoboticsWalaHub-main\app\src\main\res"
-$dimMaster = $src.Width
 
-# Create 32-bit ARGB image with high quality circular clip
-$masterBmp = New-Object System.Drawing.Bitmap($dimMaster, $dimMaster, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
-$g = [System.Drawing.Graphics]::FromImage($masterBmp)
-$g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::HighQuality
-$g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
-$g.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
-$g.Clear([System.Drawing.Color]::Transparent)
+# Densities configuration:
+# Legacy icons: 48, 72, 96, 144, 192
+# Adaptive foreground (108dp base): 108, 162, 216, 324, 432
+$densities = @(
+    @{ folder = "mipmap-mdpi"; legacy = 48; adaptive = 108 },
+    @{ folder = "mipmap-hdpi"; legacy = 72; adaptive = 162 },
+    @{ folder = "mipmap-xhdpi"; legacy = 96; adaptive = 216 },
+    @{ folder = "mipmap-xxhdpi"; legacy = 144; adaptive = 324 },
+    @{ folder = "mipmap-xxxhdpi"; legacy = 192; adaptive = 432 }
+)
 
-# Smooth circular clip path
-$path = New-Object System.Drawing.Drawing2D.GraphicsPath
-$path.AddEllipse(2, 2, $dimMaster - 4, $dimMaster - 4)
-$g.SetClip($path)
+$bgColor = [System.Drawing.Color]::FromArgb(255, 0, 0, 0)
 
-$g.DrawImage($src, 0, 0, $dimMaster, $dimMaster)
-$g.Dispose()
+foreach ($d in $densities) {
+    $dir = Join-Path $resDir $d.folder
+    if (!(Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force }
+
+    # 1. Generate Adaptive Foreground (108dp base)
+    $adSize = $d.adaptive
+    $adBmp = New-Object System.Drawing.Bitmap($adSize, $adSize, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $gAd = [System.Drawing.Graphics]::FromImage($adBmp)
+    $gAd.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::HighQuality
+    $gAd.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+    $gAd.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
+    $gAd.Clear($bgColor)
+
+    $contentSize = [int][Math]::Round($adSize * (254.0 / 432.0))
+    $contentOffset = [int][Math]::Round(($adSize - $contentSize) / 2)
+    $destAd = New-Object System.Drawing.Rectangle($contentOffset, $contentOffset, $contentSize, $contentSize)
+    $gAd.DrawImage($src, $destAd, 0, 0, $src.Width, $src.Height, [System.Drawing.GraphicsUnit]::Pixel)
+    $gAd.Dispose()
+
+    $adBmp.Save((Join-Path $dir "ic_launcher_foreground.png"), [System.Drawing.Imaging.ImageFormat]::Png)
+    $adBmp.Dispose()
+
+    # 2. Generate Legacy Square / Squircle Icon (ic_launcher.png) - 100% full-bleed
+    $legSize = $d.legacy
+    $legBmp = New-Object System.Drawing.Bitmap($legSize, $legSize, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $gLeg = [System.Drawing.Graphics]::FromImage($legBmp)
+    $gLeg.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::HighQuality
+    $gLeg.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+    $gLeg.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
+    $gLeg.Clear([System.Drawing.Color]::Transparent)
+    $gLeg.DrawImage($src, 0, 0, $legSize, $legSize)
+    $gLeg.Dispose()
+
+    $legBmp.Save((Join-Path $dir "ic_launcher.png"), [System.Drawing.Imaging.ImageFormat]::Png)
+    $legBmp.Dispose()
+
+    # 3. Generate Legacy Round Icon (ic_launcher_round.png)
+    $rndBmp = New-Object System.Drawing.Bitmap($legSize, $legSize, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $gRnd = [System.Drawing.Graphics]::FromImage($rndBmp)
+    $gRnd.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::HighQuality
+    $gRnd.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+    $gRnd.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
+    $gRnd.Clear([System.Drawing.Color]::Transparent)
+
+    $rndPath = New-Object System.Drawing.Drawing2D.GraphicsPath
+    $rndPath.AddEllipse(0, 0, $legSize, $legSize)
+    $gRnd.SetClip($rndPath)
+    $gRnd.Clear($bgColor)
+
+    $rndContentSize = [int][Math]::Round($legSize * 0.88)
+    $rndContentOffset = [int][Math]::Round(($legSize - $rndContentSize) / 2)
+    $destRnd = New-Object System.Drawing.Rectangle($rndContentOffset, $rndContentOffset, $rndContentSize, $rndContentSize)
+    $gRnd.DrawImage($src, $destRnd, 0, 0, $src.Width, $src.Height, [System.Drawing.GraphicsUnit]::Pixel)
+    $gRnd.Dispose()
+
+    $rndBmp.Save((Join-Path $dir "ic_launcher_round.png"), [System.Drawing.Imaging.ImageFormat]::Png)
+    $rndBmp.Dispose()
+}
+
 $src.Dispose()
 
-# Save drawable master icons
-$drawableDir = "$resDir\drawable"
-if (!(Test-Path $drawableDir)) { New-Item -ItemType Directory -Path $drawableDir -Force }
-$masterBmp.Save("$drawableDir\app_logo.png", [System.Drawing.Imaging.ImageFormat]::Png)
-$masterBmp.Save("$drawableDir\ic_launcher.png", [System.Drawing.Imaging.ImageFormat]::Png)
-$masterBmp.Save("$drawableDir\ic_launcher_round.png", [System.Drawing.Imaging.ImageFormat]::Png)
-
-# Generate densities for all launcher mipmap sizes
-$sizes = @{
-    "mipmap-mdpi" = 48
-    "mipmap-hdpi" = 72
-    "mipmap-xhdpi" = 96
-    "mipmap-xxhdpi" = 144
-    "mipmap-xxxhdpi" = 192
-}
-
-foreach ($folder in $sizes.Keys) {
-    $targetDir = "$resDir\$folder"
-    if (!(Test-Path $targetDir)) { New-Item -ItemType Directory -Path $targetDir -Force }
-    $size = $sizes[$folder]
-    $bmp = New-Object System.Drawing.Bitmap($size, $size, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
-    $gSub = [System.Drawing.Graphics]::FromImage($bmp)
-    $gSub.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::HighQuality
-    $gSub.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
-    $gSub.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
-    $gSub.Clear([System.Drawing.Color]::Transparent)
-    
-    $pathSub = New-Object System.Drawing.Drawing2D.GraphicsPath
-    $pathSub.AddEllipse(1, 1, $size - 2, $size - 2)
-    $gSub.SetClip($pathSub)
-    
-    $gSub.DrawImage($masterBmp, 0, 0, $size, $size)
-    $bmp.Save("$targetDir\ic_launcher.png", [System.Drawing.Imaging.ImageFormat]::Png)
-    $bmp.Save("$targetDir\ic_launcher_round.png", [System.Drawing.Imaging.ImageFormat]::Png)
-    $bmp.Save("$targetDir\ic_launcher_foreground.png", [System.Drawing.Imaging.ImageFormat]::Png)
-    $gSub.Dispose()
-    $bmp.Dispose()
-}
-
-# Create mipmap-anydpi-v26 adaptive icon XMLs for Android 8.0+ (API 26+)
+# Create mipmap-anydpi-v26 adaptive icon XMLs
 $anydpiDir = "$resDir\mipmap-anydpi-v26"
 if (!(Test-Path $anydpiDir)) { New-Item -ItemType Directory -Path $anydpiDir -Force }
 
@@ -77,9 +93,4 @@ $adaptiveXml = @"
 $adaptiveXml | Out-File -FilePath "$anydpiDir\ic_launcher.xml" -Encoding utf8
 $adaptiveXml | Out-File -FilePath "$anydpiDir\ic_launcher_round.xml" -Encoding utf8
 
-$masterBmp.Dispose()
-Write-Host "New pristine clean high-res circular adaptive icon generated successfully!"
-
-
-
-
+Write-Host "Accurate icons generated successfully!"

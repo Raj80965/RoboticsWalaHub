@@ -46,6 +46,7 @@ sealed class StudentNavRoute(
     )
 
     companion object {
-        val items = listOf(Home, Projects, Activity, Profile)
+        val items: List<StudentNavRoute>
+            get() = listOf(Home, Projects, Activity, Profile)
     }
 }

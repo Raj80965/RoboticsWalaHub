@@ -19,6 +19,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.AssignmentTurnedIn
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Build
@@ -63,12 +65,14 @@ import com.roboticswala.hub.ui.theme.TextSecondaryLight
 @Composable
 fun AdminDashboardScreen(
     data: AdminDashboardData,
-    onNavigateToStudents: () -> Unit = {},
+    onNavigateToStudents: (filter: String) -> Unit = {},
     onNavigateToAttendance: () -> Unit = {},
     onNavigateToBookings: () -> Unit = {},
     onNavigateToProjects: () -> Unit = {},
     onNavigateToEquipment: () -> Unit = {},
     onNavigateToMore: () -> Unit = {},
+    onNavigateToChat: () -> Unit = {},
+    unreadChatCount: Int = 0,
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
@@ -134,7 +138,91 @@ fun AdminDashboardScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // Community Group Chat & Live Discussion Alert Card
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = if (unreadChatCount > 0) CircuitError else if (isDark) CyberCyan.copy(alpha = 0.5f) else ElectricBlue.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .clickable(onClick = onNavigateToChat),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = if (unreadChatCount > 0) CircuitError.copy(alpha = 0.12f)
+                else if (isDark) DarkSurfaceElevated else LightSurfaceElevated
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(44.dp)
+                        .clip(CircleShape)
+                        .background(
+                            if (unreadChatCount > 0) CircuitError.copy(alpha = 0.2f)
+                            else if (isDark) CyberCyan.copy(alpha = 0.15f) else ElectricBlue.copy(alpha = 0.15f)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Chat,
+                        contentDescription = "Chat",
+                        tint = if (unreadChatCount > 0) CircuitError else if (isDark) CyberCyan else ElectricBlue,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            text = "Community Chat",
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                            color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                        )
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(if (unreadChatCount > 0) CircuitError.copy(alpha = 0.2f) else CircuitSuccess.copy(alpha = 0.2f))
+                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                        ) {
+                            Text(
+                                text = if (unreadChatCount > 0) "$unreadChatCount NEW" else "LIVE",
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 9.sp),
+                                color = if (unreadChatCount > 0) CircuitError else CircuitSuccess
+                            )
+                        }
+                    }
+                    Text(
+                        text = if (unreadChatCount > 0) "New messages from students waiting for review"
+                        else "Discussion box active • Tap to chat with all members",
+                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                        color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                    )
+                }
+
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = "Open",
+                    tint = if (isDark) TextSecondaryDark else TextSecondaryLight,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Row 1 Metrics: Total Students & Pending Approvals
         Row(
@@ -148,7 +236,7 @@ fun AdminDashboardScreen(
                 icon = Icons.Filled.People,
                 modifier = Modifier.weight(1f),
                 accentColor = CyberCyan,
-                onClick = onNavigateToStudents
+                onClick = { onNavigateToStudents("ALL") }
             )
 
             MetricCard(
@@ -158,7 +246,7 @@ fun AdminDashboardScreen(
                 icon = Icons.Filled.PersonAdd,
                 modifier = Modifier.weight(1f),
                 accentColor = CircuitWarning,
-                onClick = onNavigateToStudents
+                onClick = { onNavigateToStudents("PENDING") }
             )
         }
 
@@ -273,51 +361,90 @@ fun AdminDashboardScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                data.lowStockEquipment.forEach { item ->
+                if (data.lowStockEquipment.isEmpty()) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.weight(1f)
+                        Box(
+                            modifier = Modifier
+                                .size(34.dp)
+                                .clip(CircleShape)
+                                .background(CircuitSuccess.copy(alpha = 0.15f)),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(34.dp)
-                                    .clip(CircleShape)
-                                    .background(
-                                        if (item.alertLevel == "Critical") CircuitError.copy(alpha = 0.15f)
-                                        else CircuitWarning.copy(alpha = 0.15f)
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = if (item.alertLevel == "Critical") Icons.Filled.Warning else Icons.Filled.Inventory2,
-                                    contentDescription = null,
-                                    tint = if (item.alertLevel == "Critical") CircuitError else CircuitWarning,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            Column {
-                                Text(
-                                    text = item.name,
-                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                                    color = if (isDark) TextPrimaryDark else TextPrimaryLight
-                                )
-                                Text(
-                                    text = item.stockDetail,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = if (isDark) TextSecondaryDark else TextSecondaryLight
-                                )
-                            }
+                            Icon(
+                                imageVector = Icons.Filled.AssignmentTurnedIn,
+                                contentDescription = null,
+                                tint = CircuitSuccess,
+                                modifier = Modifier.size(18.dp)
+                            )
                         }
 
-                        StatusChip(status = item.alertLevel)
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Column {
+                            Text(
+                                text = "All Hardware Well Stocked",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                                color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                            )
+                            Text(
+                                text = "Zero critical component shortages • Tap to view catalog",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                            )
+                        }
+                    }
+                } else {
+                    data.lowStockEquipment.forEach { item ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(34.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            if (item.alertLevel == "Critical") CircuitError.copy(alpha = 0.15f)
+                                            else CircuitWarning.copy(alpha = 0.15f)
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = if (item.alertLevel == "Critical") Icons.Filled.Warning else Icons.Filled.Inventory2,
+                                        contentDescription = null,
+                                        tint = if (item.alertLevel == "Critical") CircuitError else CircuitWarning,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.width(12.dp))
+
+                                Column {
+                                    Text(
+                                        text = item.name,
+                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                                        color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                                    )
+                                    Text(
+                                        text = item.stockDetail,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = if (isDark) TextSecondaryDark else TextSecondaryLight
+                                    )
+                                }
+                            }
+
+                            StatusChip(status = item.alertLevel)
+                        }
                     }
                 }
             }

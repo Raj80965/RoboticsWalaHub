@@ -56,6 +56,7 @@ sealed class AdminNavRoute(
     )
 
     companion object {
-        val items = listOf(Dashboard, Attendance, Students, Bookings, More)
+        val items: List<AdminNavRoute>
+            get() = listOf(Dashboard, Attendance, Students, Bookings, More)
     }
 }

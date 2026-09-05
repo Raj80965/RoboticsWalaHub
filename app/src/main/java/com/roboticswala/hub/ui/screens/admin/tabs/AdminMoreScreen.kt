@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.activity.compose.BackHandler
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.EmojiEvents
@@ -80,6 +82,8 @@ fun AdminMoreScreen(
     adminProfile: UserProfile? = null,
     onUpdateProfile: (fullName: String, phone: String, college: String, branch: String, year: String, adminId: String, emergencyContact: String) -> Unit = { _, _, _, _, _, _, _ -> },
     onUpdatePhoto: (photoBase64: String) -> Unit = {},
+    onNavigateToChat: () -> Unit = {},
+    unreadChatCount: Int = 0,
     initialSubScreen: String? = null,
     onSubScreenCleared: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -99,6 +103,34 @@ fun AdminMoreScreen(
     var showingGateLog by remember { mutableStateOf(false) }
     var showingLabConfig by remember { mutableStateOf(false) }
 
+    val dismissSubScreen: () -> Unit = {
+        showingProfile = false
+        showingProjects = false
+        showingTasks = false
+        showingAchievements = false
+        showingNotices = false
+        showingEvents = false
+        showingEquipment = false
+        showingEquipmentRequests = false
+        showingBudget = false
+        showingAnalytics = false
+        showingGateLog = false
+        showingLabConfig = false
+        onSubScreenCleared()
+    }
+
+    val isAnySubScreenActive = showingProfile || showingProjects || showingTasks ||
+            showingAchievements || showingNotices || showingEvents || showingEquipment ||
+            showingEquipmentRequests || showingBudget || showingAnalytics
+
+    BackHandler(enabled = isAnySubScreenActive) {
+        if (showingEquipmentRequests && showingEquipment) {
+            showingEquipmentRequests = false
+        } else {
+            dismissSubScreen()
+        }
+    }
+
     LaunchedEffect(initialSubScreen) {
         when (initialSubScreen) {
             "projects" -> showingProjects = true
@@ -110,6 +142,7 @@ fun AdminMoreScreen(
             "budget" -> showingBudget = true
             "analytics" -> showingAnalytics = true
             "equipment_requests" -> showingEquipmentRequests = true
+            "profile" -> showingProfile = true
         }
     }
 
@@ -121,7 +154,7 @@ fun AdminMoreScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { showingProfile = false }) {
+                IconButton(onClick = dismissSubScreen) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back to Settings",
@@ -152,7 +185,7 @@ fun AdminMoreScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { showingAnalytics = false }) {
+                IconButton(onClick = dismissSubScreen) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back to Settings",
@@ -178,7 +211,7 @@ fun AdminMoreScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { showingBudget = false }) {
+                IconButton(onClick = dismissSubScreen) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back to Settings",
@@ -198,7 +231,12 @@ fun AdminMoreScreen(
 
     if (showingEquipmentRequests) {
         AdminEquipmentRequestsScreen(
-            onNavigateBack = { showingEquipmentRequests = false },
+            onNavigateBack = {
+                showingEquipmentRequests = false
+                if (!showingEquipment) {
+                    onSubScreenCleared()
+                }
+            },
             modifier = modifier
         )
         return
@@ -212,7 +250,7 @@ fun AdminMoreScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { showingEquipment = false }) {
+                IconButton(onClick = dismissSubScreen) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back to Settings",
@@ -240,7 +278,7 @@ fun AdminMoreScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { showingNotices = false }) {
+                IconButton(onClick = dismissSubScreen) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back to Settings",
@@ -266,7 +304,7 @@ fun AdminMoreScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { showingEvents = false }) {
+                IconButton(onClick = dismissSubScreen) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back to Settings",
@@ -292,7 +330,7 @@ fun AdminMoreScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { showingProjects = false }) {
+                IconButton(onClick = dismissSubScreen) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back to Settings",
@@ -318,7 +356,7 @@ fun AdminMoreScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { showingTasks = false }) {
+                IconButton(onClick = dismissSubScreen) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back to Settings",
@@ -344,7 +382,7 @@ fun AdminMoreScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { showingAchievements = false }) {
+                IconButton(onClick = dismissSubScreen) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back to Settings",
@@ -652,6 +690,25 @@ fun AdminMoreScreen(
                 isDark = isDark,
                 onClick = { showingLabConfig = true }
             )
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // Row 6: Community & Discussion
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            AdminGridTile(
+                modifier = Modifier.weight(1f),
+                title = "Community Chat",
+                subtitle = "Real-time lab discussion",
+                icon = Icons.AutoMirrored.Filled.Chat,
+                badge = if (unreadChatCount > 0) "$unreadChatCount NEW" else "Live Room",
+                isDark = isDark,
+                onClick = onNavigateToChat
+            )
+            Spacer(modifier = Modifier.weight(1f))
         }
 
         Spacer(modifier = Modifier.height(24.dp))

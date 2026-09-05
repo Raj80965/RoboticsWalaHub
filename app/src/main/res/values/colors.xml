@@ -12,4 +12,5 @@
     <color name="text_primary_light">#0D131E</color>
     <color name="text_secondary_light">#5C6B7E</color>
     <color name="black">#000000</color>
+    <color name="ic_launcher_background">#0B111D</color>
 </resources>

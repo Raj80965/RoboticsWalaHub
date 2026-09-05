@@ -383,6 +383,114 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
+    /* WhatsApp-Style Community Chat */
+    .chat-header {
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--surface-border);
+      background: var(--surface);
+      z-index: 10;
+    }
+    .chat-stream {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .chat-bubble {
+      max-width: 82%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 13px;
+      line-height: 1.45;
+      position: relative;
+      word-break: break-word;
+      animation: fadeInBubble 0.2s ease-out;
+    }
+    @keyframes fadeInBubble {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .chat-bubble.me {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #0066FF 0%, #0052cc 100%);
+      color: #ffffff;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 4px 14px rgba(0, 102, 255, 0.25);
+    }
+    .chat-bubble.other {
+      align-self: flex-start;
+      background: var(--surface-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--surface-border);
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+    }
+    .chat-sender-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .chat-sender-name {
+      color: var(--cyber-cyan);
+    }
+    .chat-meta {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      margin-top: 4px;
+      font-size: 10px;
+      opacity: 0.7;
+    }
+    .chat-input-bar {
+      padding: 10px 12px;
+      background: var(--surface);
+      border-top: 1px solid var(--surface-border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chat-input-field {
+      flex: 1;
+      background: var(--input-bg);
+      border: 1.5px solid var(--surface-border);
+      border-radius: 24px;
+      padding: 10px 16px;
+      color: var(--text-primary);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .chat-input-field:focus {
+      border-color: var(--cyber-cyan);
+    }
+    .chat-send-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00D4FF 0%, #0066FF 100%);
+      border: none;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      flex-shrink: 0;
+    }
+    .chat-send-btn:hover {
+      transform: scale(1.06);
+      box-shadow: 0 0 16px rgba(0, 212, 255, 0.5);
+    }
   </style>
 </head>
 <body data-theme="dark">
@@ -404,6 +512,8 @@
 
   <!-- Quick Screen Switcher -->
   <div class="quick-nav-bar">
+    <button class="quick-nav-btn" onclick="goToScreen('admin-dashboard')" style="background: rgba(0, 212, 255, 0.25); border-color: var(--cyber-cyan); color: #fff; font-weight: 700;">🛡️ Admin Dashboard</button>
+    <button class="quick-nav-btn" onclick="goToScreen('chat')" style="background: rgba(0, 212, 255, 0.2); border-color: var(--cyber-cyan); color: #fff; font-weight: 700;">💬 Community Chat <span class="unread-pill" style="background:#FF3B30; color:#fff; font-size:10px; padding:1px 6px; border-radius:10px; margin-left:4px; font-weight:800;">3</span></button>
     <button class="quick-nav-btn" onclick="goToScreen('leaderboard')">🏆 Leaderboard</button>
     <button class="quick-nav-btn" onclick="goToScreen('analytics')">📊 Admin Analytics</button>
     <button class="quick-nav-btn" onclick="goToScreen('expenses')">💰 Project Budget</button>
@@ -450,6 +560,7 @@
             </div>
           </div>
           <div style="display: flex; gap: 6px;">
+            <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px; background: rgba(0, 212, 255, 0.15); border-color: var(--cyber-cyan); color: var(--cyber-cyan); display: inline-flex; align-items: center; gap: 3px;" onclick="goToScreen('chat')" title="Community Chat">💬 <span class="unread-pill" style="background:#FF3B30; color:#fff; font-size:9px; padding:1px 5px; border-radius:10px; font-weight:800;">3</span></button>
             <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="goToScreen('equipment')">📦</button>
             <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="goToScreen('notices')">📢</button>
             <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="restartSplash()">🚪</button>
@@ -520,10 +631,151 @@
 
         <div class="bottom-nav">
           <button class="nav-item active"><span style="font-size:16px;">🏠</span><span>Home</span></button>
+          <button class="nav-item" onclick="goToScreen('chat')"><span style="font-size:16px;">💬</span><span>Chat</span></button>
           <button class="nav-item" onclick="goToScreen('equipment')"><span style="font-size:16px;">📦</span><span>Equipment</span></button>
           <button class="nav-item" onclick="goToScreen('notices')"><span style="font-size:16px;">📢</span><span>Notices</span></button>
-          <button class="nav-item" onclick="goToScreen('events')"><span style="font-size:16px;">📅</span><span>Events</span></button>
-          <button class="nav-item" onclick="goToScreen('admin-equipment')"><span style="font-size:16px;">🛡️</span><span>Admin</span></button>
+          <button class="nav-item" onclick="goToScreen('admin-dashboard')"><span style="font-size:16px;">🛡️</span><span>Admin</span></button>
+        </div>
+      </div>
+
+      <!-- 2B. ADMIN DASHBOARD / COMMAND CENTER -->
+      <div class="screen" id="screen-admin-dashboard" style="padding: 0;">
+        <!-- Top Bar -->
+        <div style="padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--surface-border); background: var(--surface);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 22px;">🛡️</span>
+            <div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; font-weight: 800; color: var(--text-primary);">RW HUB</span>
+                <span class="chip approved" style="font-size: 9px; padding: 1px 6px;">ADMIN</span>
+              </div>
+              <div style="font-size: 10px; color: var(--cyber-cyan); font-weight: 700;">COMMAND & CONTROL CENTER</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px; background: rgba(0, 212, 255, 0.15); border: 1px solid var(--cyber-cyan); color: var(--cyber-cyan); display: inline-flex; align-items: center; gap: 3px;" onclick="goToScreen('chat')">💬 Chat <span class="unread-pill" style="background:#FF3B30; color:#fff; font-size:9px; padding:1px 5px; border-radius:10px; font-weight:800;">3</span></button>
+            <button class="btn-toggle" style="padding: 4px 10px; font-size: 11px; background: rgba(0, 212, 255, 0.15); border: 1px solid var(--cyber-cyan); color: var(--cyber-cyan);" onclick="goToScreen('student')">🎓 Student View</button>
+          </div>
+        </div>
+
+        <div style="flex: 1; overflow-y: auto; padding: 14px;">
+          <!-- Status Banner -->
+          <div class="m3-card" style="margin-top: 0; background: linear-gradient(135deg, rgba(0, 102, 255, 0.18) 0%, rgba(0, 212, 255, 0.12) 100%); border-color: var(--cyber-cyan);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="chip approved">SYSTEM ONLINE</span>
+              <span style="font-size: 10px; color: var(--text-secondary);">Real-time Sync Active</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 800; margin-top: 6px;">Robotics Lab Facility Active</div>
+            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">All hardware bays, RFID gate sensors, and stations monitored.</div>
+          </div>
+
+          <!-- 4 Core Metrics Grid -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;">
+            <div class="m3-card" style="margin-top: 0; padding: 12px; cursor: pointer;" onclick="showToast('Students: 138 Approved, 4 Pending', '👥')">
+              <div style="font-size: 10px; color: var(--text-secondary); font-weight: bold; text-transform: uppercase;">Total Students</div>
+              <div style="font-size: 20px; font-weight: 800; color: var(--cyber-cyan); margin-top: 4px;">142</div>
+              <div style="font-size: 10px; color: var(--success); margin-top: 2px;">● 138 Active Members</div>
+            </div>
+
+            <div class="m3-card" style="margin-top: 0; padding: 12px; border-color: rgba(255, 179, 0, 0.6); cursor: pointer;" onclick="showToast('4 student admission registrations pending review', '⚠️')">
+              <div style="font-size: 10px; color: var(--warning); font-weight: bold; text-transform: uppercase;">Pending Approvals</div>
+              <div style="font-size: 20px; font-weight: 800; color: var(--warning); margin-top: 4px;">4</div>
+              <div style="font-size: 10px; color: var(--warning); margin-top: 2px;">⚡ Action Required</div>
+            </div>
+
+            <div class="m3-card" style="margin-top: 0; padding: 12px; cursor: pointer;" onclick="showToast('28 active research and build projects ongoing', '🤖')">
+              <div style="font-size: 10px; color: var(--text-secondary); font-weight: bold; text-transform: uppercase;">Active Projects</div>
+              <div style="font-size: 20px; font-weight: 800; color: var(--text-primary); margin-top: 4px;">28</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan); margin-top: 2px;">6 Mentors Assigned</div>
+            </div>
+
+            <div class="m3-card" style="margin-top: 0; padding: 12px; border-color: rgba(255, 59, 48, 0.4); cursor: pointer;" onclick="goToScreen('admin-equipment')">
+              <div style="font-size: 10px; color: var(--error); font-weight: bold; text-transform: uppercase;">Hardware Alerts</div>
+              <div style="font-size: 20px; font-weight: 800; color: var(--error); margin-top: 4px;">2</div>
+              <div style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">1 Out • 1 Low Stock ➔</div>
+            </div>
+          </div>
+
+          <!-- Section Title: Modules -->
+          <div style="font-size: 12px; font-weight: 800; color: var(--cyber-cyan); letter-spacing: 0.5px; text-transform: uppercase; margin-top: 16px; margin-bottom: 8px;">
+            Management Modules
+          </div>
+
+          <!-- 2-Column Grid of Navigation Modules -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <!-- Community Chat -->
+            <div class="m3-card" style="margin-top: 0; padding: 12px; cursor: pointer; transition: transform 0.15s; border-color: rgba(0, 212, 255, 0.5);" onclick="goToScreen('chat')" onmouseover="this.style.borderColor='var(--cyber-cyan)'" onmouseout="this.style.borderColor='rgba(0, 212, 255, 0.5)'">
+              <div style="font-size: 22px;">💬</div>
+              <div style="font-size: 13px; font-weight: 800; margin-top: 6px;">Community Chat</div>
+              <div style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">Discussion & doubt box</div>
+              <div style="margin-top: 8px;"><span class="chip approved">● 142 Members</span></div>
+            </div>
+
+            <!-- Equipment Inventory -->
+            <div class="m3-card" style="margin-top: 0; padding: 12px; cursor: pointer; transition: transform 0.15s;" onclick="goToScreen('admin-equipment')" onmouseover="this.style.borderColor='var(--cyber-cyan)'" onmouseout="this.style.borderColor='var(--surface-border)'">
+              <div style="font-size: 22px;">📦</div>
+              <div style="font-size: 13px; font-weight: 800; margin-top: 6px;">Inventory</div>
+              <div style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">Sensors & components</div>
+              <div style="margin-top: 8px;"><span class="chip approved">2 Requests</span></div>
+            </div>
+
+            <!-- Financial Budget -->
+            <div class="m3-card" style="margin-top: 0; padding: 12px; cursor: pointer; transition: transform 0.15s;" onclick="goToScreen('admin-budget')" onmouseover="this.style.borderColor='var(--cyber-cyan)'" onmouseout="this.style.borderColor='var(--surface-border)'">
+              <div style="font-size: 22px;">💰</div>
+              <div style="font-size: 13px; font-weight: 800; margin-top: 6px;">Grants & Budget</div>
+              <div style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">Claims & audit logs</div>
+              <div style="margin-top: 8px;"><span class="chip tag">₹1.5L Grants</span></div>
+            </div>
+
+            <!-- Notice Board -->
+            <div class="m3-card" style="margin-top: 0; padding: 12px; cursor: pointer; transition: transform 0.15s;" onclick="goToScreen('admin-notices')" onmouseover="this.style.borderColor='var(--cyber-cyan)'" onmouseout="this.style.borderColor='var(--surface-border)'">
+              <div style="font-size: 22px;">📢</div>
+              <div style="font-size: 13px; font-weight: 800; margin-top: 6px;">Notice Board</div>
+              <div style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">Broadcast alerts</div>
+              <div style="margin-top: 8px;"><span class="chip urgent">1 Urgent</span></div>
+            </div>
+
+            <!-- Events Scheduler -->
+            <div class="m3-card" style="margin-top: 0; padding: 12px; cursor: pointer; transition: transform 0.15s;" onclick="goToScreen('admin-events')" onmouseover="this.style.borderColor='var(--cyber-cyan)'" onmouseout="this.style.borderColor='var(--surface-border)'">
+              <div style="font-size: 22px;">📅</div>
+              <div style="font-size: 13px; font-weight: 800; margin-top: 6px;">Events & Meets</div>
+              <div style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">Hackathons & workshops</div>
+              <div style="margin-top: 8px;"><span class="chip upcoming">Hackathon</span></div>
+            </div>
+
+            <!-- Hub Analytics -->
+            <div class="m3-card" style="margin-top: 0; padding: 12px; cursor: pointer; transition: transform 0.15s;" onclick="goToScreen('analytics')" onmouseover="this.style.borderColor='var(--cyber-cyan)'" onmouseout="this.style.borderColor='var(--surface-border)'">
+              <div style="font-size: 22px;">📊</div>
+              <div style="font-size: 13px; font-weight: 800; margin-top: 6px;">Analytics</div>
+              <div style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">Reports & exports</div>
+              <div style="margin-top: 8px;"><span class="chip approved">Export PDF</span></div>
+            </div>
+
+            <!-- Leaderboard -->
+            <div class="m3-card" style="margin-top: 0; padding: 12px; cursor: pointer; transition: transform 0.15s;" onclick="goToScreen('leaderboard')" onmouseover="this.style.borderColor='var(--cyber-cyan)'" onmouseout="this.style.borderColor='var(--surface-border)'">
+              <div style="font-size: 22px;">🏆</div>
+              <div style="font-size: 13px; font-weight: 800; margin-top: 6px;">Leaderboard</div>
+              <div style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">Student scoring & rank</div>
+              <div style="margin-top: 8px;"><span class="chip tag">100-Pt Matrix</span></div>
+            </div>
+          </div>
+
+          <!-- Quick Lab Security / RFID Status -->
+          <div class="m3-card" style="margin-top: 12px; padding: 10px 14px; background: rgba(0, 230, 118, 0.06); border-color: rgba(0, 230, 118, 0.3);">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 11px; font-weight: 700; color: var(--success);">🔒 RFID Gate & Access Barriers: ONLINE</span>
+              <span style="font-size: 10px; color: var(--text-secondary);">Turnstile #1 Active</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Bottom Navigation -->
+        <div class="bottom-nav">
+          <button class="nav-item active" onclick="goToScreen('admin-dashboard')"><span style="font-size:16px;">🛡️</span><span>Dashboard</span></button>
+          <button class="nav-item" onclick="goToScreen('admin-equipment')"><span style="font-size:16px;">📦</span><span>Inventory</span></button>
+          <button class="nav-item" onclick="goToScreen('admin-budget')"><span style="font-size:16px;">💰</span><span>Budget</span></button>
+          <button class="nav-item" onclick="goToScreen('analytics')"><span style="font-size:16px;">📊</span><span>Analytics</span></button>
+          <button class="nav-item" onclick="goToScreen('student')"><span style="font-size:16px;">🎓</span><span>Student</span></button>
         </div>
       </div>
 
@@ -639,7 +891,7 @@
       <div class="screen" id="screen-admin-notices" style="padding: 0;">
         <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
           <div style="display: flex; align-items: center; gap: 8px;">
-            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
+            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('admin-dashboard')">⬅️</button>
             <div style="font-size: 15px; font-weight: 800;">Admin Notice Manager</div>
           </div>
           <button class="btn-toggle" style="padding: 4px 10px; font-size: 11px; background: var(--primary); border: none;" onclick="openCreateNoticeModal()">➕ New</button>
@@ -669,7 +921,7 @@
       <div class="screen" id="screen-admin-events" style="padding: 0;">
         <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
           <div style="display: flex; align-items: center; gap: 8px;">
-            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
+            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('admin-dashboard')">⬅️</button>
             <div style="font-size: 15px; font-weight: 800;">Admin Event Scheduler</div>
           </div>
           <button class="btn-toggle" style="padding: 4px 10px; font-size: 11px; background: var(--primary); border: none;" onclick="openCreateEventModal()">➕ New</button>
@@ -790,7 +1042,7 @@
       <div class="screen" id="screen-admin-equipment" style="padding: 0;">
         <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
           <div style="display: flex; align-items: center; gap: 8px;">
-            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
+            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('admin-dashboard')">⬅️</button>
             <div>
               <div style="font-size: 15px; font-weight: 800;">Inventory Control</div>
               <div style="font-size: 10px; color: var(--cyber-cyan);">ADMIN /equipment & requests</div>
@@ -937,7 +1189,7 @@
       <div class="screen" id="screen-admin-budget" style="padding: 0;">
         <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
           <div style="display: flex; align-items: center; gap: 8px;">
-            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
+            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('admin-dashboard')">⬅️</button>
             <div>
               <div style="font-size: 15px; font-weight: 800;">Financial Oversight</div>
               <div style="font-size: 10px; color: var(--cyber-cyan);">ADMIN /budget & claims</div>
@@ -1076,7 +1328,7 @@
       <div class="screen" id="screen-analytics" style="padding: 0;">
         <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
           <div style="display: flex; align-items: center; gap: 8px;">
-            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('student')">⬅️</button>
+            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('admin-dashboard')">⬅️</button>
             <div>
               <div style="font-size: 15px; font-weight: 800;">Reports & Analytics</div>
               <div style="font-size: 10px; color: var(--cyber-cyan);">DAY 14 COMPREHENSIVE DASHBOARD</div>
@@ -1125,6 +1377,105 @@
               <span>📥</span>
             </button>
           </div>
+        </div>
+      </div>
+
+      <!-- 2K. COMMUNITY CHAT SCREEN (WhatsApp Style) -->
+      <div class="screen" id="screen-chat" style="padding: 0;">
+        <!-- Chat Top Bar -->
+        <div class="chat-header">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="btn-toggle" style="padding: 4px 8px; font-size: 14px;" onclick="goToScreen('student')">←</button>
+            <div style="width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #00D4FF 0%, #0066FF 100%); display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);">
+              🤖
+            </div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 14px; font-weight: 800; color: var(--text-primary);">RW Community Chat</span>
+                <span class="chip approved" style="font-size: 8px; padding: 1px 5px;">LIVE</span>
+              </div>
+              <div id="chat-subtitle" style="font-size: 10px; color: var(--cyber-cyan); transition: all 0.2s;">142 members • Robotics & Lab Discussion</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <button class="btn-toggle" style="padding: 4px 8px; font-size: 11px;" onclick="showToast('Community: All members can chat in real time', 'ℹ️')">ℹ️</button>
+          </div>
+        </div>
+
+        <!-- System Notice Banner -->
+        <div style="padding: 6px 12px; background: rgba(0, 212, 255, 0.08); border-bottom: 1px solid rgba(0, 212, 255, 0.15); text-align: center; font-size: 10px; color: var(--cyber-cyan);">
+          🔒 End-to-end community discussion • Ask questions, share progress & hardware queries
+        </div>
+
+        <!-- Chat Messages Stream -->
+        <div class="chat-stream" id="chat-messages-list">
+          <!-- Message 1 (Student) -->
+          <div class="chat-bubble other">
+            <div class="chat-sender-info">
+              <span class="chip approved" style="font-size: 8px; padding: 1px 5px;">STUDENT</span>
+              <span class="chat-sender-name">Aarav Sharma</span>
+            </div>
+            <div>Sir, Autonomous Rover ka PID controller tune karne ke baad bhi thoda drift ho raha hai. LiPo voltage 11.1V par stable hai.</div>
+            <div class="chat-meta">
+              <span>10:42 AM</span>
+            </div>
+          </div>
+
+          <!-- Message 2 (Student) -->
+          <div class="chat-bubble other">
+            <div class="chat-sender-info">
+              <span class="chip approved" style="font-size: 8px; padding: 1px 5px;">STUDENT</span>
+              <span class="chat-sender-name">Neha Patel</span>
+            </div>
+            <div>Mera LIDAR sensor reading kabhi kabhi drop ho rahi hai, kya hum I2C pullup resistor check karein?</div>
+            <div class="chat-meta">
+              <span>10:45 AM</span>
+            </div>
+          </div>
+
+          <!-- Message 3 (Admin) -->
+          <div class="chat-bubble other" style="border-color: rgba(255, 179, 0, 0.4);">
+            <div class="chat-sender-info">
+              <span class="chip pending" style="font-size: 8px; padding: 1px 5px; background: rgba(255, 179, 0, 0.2); color: #FFB300; border-color: #FFB300;">🛡️ ADMIN</span>
+              <span class="chat-sender-name" style="color: #FFB300;">Admin Rajguru</span>
+            </div>
+            <div>Aarav, integral windup check karo aur Ki gain thoda reduce karo. Neha, 4.7kΩ pullup resistors Lab Bay 3 ke component rack me available hain.</div>
+            <div class="chat-meta">
+              <span>10:48 AM</span>
+            </div>
+          </div>
+
+          <!-- Message 4 (Student) -->
+          <div class="chat-bubble other">
+            <div class="chat-sender-info">
+              <span class="chip approved" style="font-size: 8px; padding: 1px 5px;">STUDENT</span>
+              <span class="chat-sender-name">Rohan Gupta</span>
+            </div>
+            <div>Thanks sir! 3D printer slot kal morning 10 AM ke liye open hai kya? Drone frame mount print karna hai.</div>
+            <div class="chat-meta">
+              <span>10:52 AM</span>
+            </div>
+          </div>
+
+          <!-- Message 5 (Self / Aarav) -->
+          <div class="chat-bubble me">
+            <div class="chat-sender-info" style="justify-content: flex-end;">
+              <span style="font-size: 10px; opacity: 0.85;">You</span>
+            </div>
+            <div>Got it sir! Ki gain 0.04 se reduce karke test karta hu. Bay 3 se logic analyzer bhi le liya.</div>
+            <div class="chat-meta">
+              <span>10:55 AM</span>
+              <span>✓✓</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Input Bar -->
+        <div class="chat-input-bar">
+          <input type="text" id="chat-input" class="chat-input-field" placeholder="Type a message or hardware query..." oninput="handleChatTyping()" onkeydown="if(event.key==='Enter') handleSendChatMessage()" />
+          <button class="chat-send-btn" onclick="handleSendChatMessage()" title="Send Message">
+            ➤
+          </button>
         </div>
       </div>
 
@@ -1388,6 +1739,9 @@
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       const target = document.getElementById(`screen-${screenName}`);
       if (target) target.classList.add('active');
+      if (screenName === 'chat') {
+        document.querySelectorAll('.unread-pill').forEach(el => el.style.display = 'none');
+      }
     }
 
     function restartSplash() {
@@ -1779,6 +2133,86 @@
       if (admSpent) admSpent.textContent = `₹${42500 + amt}`;
 
       showToast(`Expense of ₹${amt} approved! Remaining project budget: ₹${remaining}`, '✅');
+    }
+
+    // ── COMMUNITY CHAT HANDLERS ─────────────────────────
+    function handleSendChatMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const list = document.getElementById('chat-messages-list');
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+      const bubble = document.createElement('div');
+      bubble.className = 'chat-bubble me';
+      bubble.innerHTML = `
+        <div class="chat-sender-info" style="justify-content: flex-end;">
+          <span style="font-size: 10px; opacity: 0.85;">You</span>
+        </div>
+        <div>${escapeHtml(text)}</div>
+        <div class="chat-meta">
+          <span>${timeStr}</span>
+          <span style="color: #00E676;">✓✓</span>
+        </div>
+      `;
+
+      list.appendChild(bubble);
+      input.value = '';
+      list.scrollTop = list.scrollHeight;
+      showToast('Message sent to Community Chat!', '💬');
+
+      const sub = document.getElementById('chat-subtitle');
+      if (sub) sub.innerHTML = '142 members • Robotics & Lab Discussion';
+
+      // Simulated auto-reply with live typing indicator after 1.2s
+      setTimeout(() => {
+        const replies = [
+          { role: 'STUDENT', name: 'Kabir Verma', text: 'Great progress! Share your sensor graph in the lab group.' },
+          { role: 'ADMIN', name: 'Admin Rajguru', text: 'Noted! Agar aur component chahiye toh inventory request generate kar dena.' },
+          { role: 'STUDENT', name: 'Pooja Nair', text: 'Nice! Testing Bay 2 is free right now if you want to test motor load.' }
+        ];
+        const randomReply = replies[Math.floor(Math.random() * replies.length)];
+
+        // Show typing indicator for reply sender
+        if (sub) sub.innerHTML = `<span style="color:var(--cyber-cyan-glow); font-weight:700;">✍️ ${randomReply.name} is typing...</span>`;
+
+        setTimeout(() => {
+          if (sub) sub.innerHTML = '142 members • Robotics & Lab Discussion';
+          const replyBubble = document.createElement('div');
+          const isAdmin = randomReply.role === 'ADMIN';
+          replyBubble.className = 'chat-bubble other';
+          if (isAdmin) replyBubble.style.borderColor = 'rgba(255, 179, 0, 0.4)';
+          replyBubble.innerHTML = `
+            <div class="chat-sender-info">
+              <span class="chip ${isAdmin ? 'pending' : 'approved'}" style="font-size: 8px; padding: 1px 5px; ${isAdmin ? 'background: rgba(255, 179, 0, 0.2); color: #FFB300; border-color: #FFB300;' : ''}">${isAdmin ? '🛡️ ADMIN' : 'STUDENT'}</span>
+              <span class="chat-sender-name" style="${isAdmin ? 'color: #FFB300;' : ''}">${randomReply.name}</span>
+            </div>
+            <div>${randomReply.text}</div>
+            <div class="chat-meta">
+              <span>${timeStr}</span>
+            </div>
+          `;
+          list.appendChild(replyBubble);
+          list.scrollTop = list.scrollHeight;
+        }, 1500);
+      }, 1000);
+    }
+
+    let typingTimer = null;
+    function handleChatTyping() {
+      const sub = document.getElementById('chat-subtitle');
+      if (!sub) return;
+      sub.innerHTML = '<span style="color:var(--cyber-cyan-glow); font-weight:700;">✍️ You are typing...</span>';
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(() => {
+        sub.innerHTML = '142 members • Robotics & Lab Discussion';
+      }, 2000);
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
     // Toast

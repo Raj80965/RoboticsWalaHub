@@ -71,6 +71,7 @@ import com.roboticswala.hub.data.models.StudentDirectoryItem
 import com.roboticswala.hub.ui.components.StatusChip
 import com.roboticswala.hub.ui.theme.CircuitError
 import com.roboticswala.hub.ui.theme.CircuitSuccess
+import com.roboticswala.hub.ui.theme.CircuitWarning
 import com.roboticswala.hub.ui.theme.CyberCyan
 import com.roboticswala.hub.ui.theme.DarkSurface
 import com.roboticswala.hub.ui.theme.DarkSurfaceBorder
@@ -89,18 +90,30 @@ fun AdminStudentsScreen(
     students: List<StudentDirectoryItem>,
     onApproveStudent: (String) -> Unit,
     onDeleteStudent: (String) -> Unit,
+    activeFilter: String = "ALL",
+    onFilterChanged: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
     var searchQuery by remember { mutableStateOf("") }
+    var currentFilter by remember(activeFilter) { mutableStateOf(activeFilter) }
     var studentToDelete by remember { mutableStateOf<StudentDirectoryItem?>(null) }
     var selectedStudentAadhar by remember { mutableStateOf<StudentDirectoryItem?>(null) }
     var selectedStudentForFullDetails by remember { mutableStateOf<StudentDirectoryItem?>(null) }
 
-    val filteredList = students.filter {
-        it.name.contains(searchQuery, ignoreCase = true) ||
-        it.id.contains(searchQuery, ignoreCase = true) ||
-        it.currentProject.contains(searchQuery, ignoreCase = true)
+    val pendingCount = students.count { it.status.equals("Pending", ignoreCase = true) }
+    val approvedCount = students.count { it.status.equals("Approved", ignoreCase = true) }
+
+    val filteredList = students.filter { student ->
+        val matchesSearch = student.name.contains(searchQuery, ignoreCase = true) ||
+                student.id.contains(searchQuery, ignoreCase = true) ||
+                student.currentProject.contains(searchQuery, ignoreCase = true)
+        val matchesFilter = when (currentFilter.uppercase()) {
+            "PENDING" -> student.status.equals("Pending", ignoreCase = true)
+            "APPROVED" -> student.status.equals("Approved", ignoreCase = true)
+            else -> true
+        }
+        matchesSearch && matchesFilter
     }
 
     LazyColumn(
@@ -147,6 +160,61 @@ fun AdminStudentsScreen(
                 ),
                 singleLine = true
             )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Filter Tabs (All / Pending / Approved)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val filters = listOf(
+                    "ALL" to "All (${students.size})",
+                    "PENDING" to "Pending ($pendingCount)",
+                    "APPROVED" to "Approved ($approvedCount)"
+                )
+                filters.forEach { (filterKey, filterLabel) ->
+                    val isSelected = currentFilter.equals(filterKey, ignoreCase = true)
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(
+                                if (isSelected) {
+                                    if (filterKey == "PENDING") CircuitWarning.copy(alpha = 0.2f)
+                                    else if (isDark) CyberCyan.copy(alpha = 0.2f) else ElectricBlue.copy(alpha = 0.15f)
+                                } else {
+                                    if (isDark) DarkSurfaceBorder.copy(alpha = 0.5f) else LightSurfaceBorder.copy(alpha = 0.5f)
+                                }
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = if (isSelected) {
+                                    if (filterKey == "PENDING") CircuitWarning
+                                    else if (isDark) CyberCyan else ElectricBlue
+                                } else Color.Transparent,
+                                shape = RoundedCornerShape(20.dp)
+                            )
+                            .clickable {
+                                currentFilter = filterKey
+                                onFilterChanged(filterKey)
+                            }
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = filterLabel,
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                            ),
+                            color = if (isSelected) {
+                                if (filterKey == "PENDING") CircuitWarning
+                                else if (isDark) CyberCyan else ElectricBlue
+                            } else {
+                                if (isDark) TextSecondaryDark else TextSecondaryLight
+                            }
+                        )
+                    }
+                }
+            }
         }
 
         if (filteredList.isEmpty()) {

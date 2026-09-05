@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +14,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,6 +26,21 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import com.roboticswala.hub.ui.theme.CircuitError
+import com.roboticswala.hub.ui.theme.CyberCyan
+import com.roboticswala.hub.ui.theme.DarkBackground
+import com.roboticswala.hub.ui.theme.DarkSurface
+import com.roboticswala.hub.ui.theme.DarkSurfaceBorder
+import com.roboticswala.hub.ui.theme.DarkSurfaceElevated
+import com.roboticswala.hub.ui.theme.ElectricBlue
+import com.roboticswala.hub.ui.theme.LightBackground
+import com.roboticswala.hub.ui.theme.LightSurface
+import com.roboticswala.hub.ui.theme.LightSurfaceBorder
+import com.roboticswala.hub.ui.theme.LightSurfaceElevated
+import com.roboticswala.hub.ui.theme.TextPrimaryDark
+import com.roboticswala.hub.ui.theme.TextPrimaryLight
+import com.roboticswala.hub.ui.theme.TextSecondaryDark
+import com.roboticswala.hub.ui.theme.TextSecondaryLight
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -30,8 +49,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import com.roboticswala.hub.ui.components.ChatInAppBanner
+import com.roboticswala.hub.utils.ChatNotificationHelper
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -79,7 +103,8 @@ fun StudentMainScreen(
     onNavigateToEvents: () -> Unit = {},
     onNavigateToEquipment: () -> Unit = {},
     onNavigateToExpenses: () -> Unit = {},
-    onNavigateToLeaderboard: () -> Unit = {}
+    onNavigateToLeaderboard: () -> Unit = {},
+    onNavigateToChat: () -> Unit = {}
 ) {
     val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
     val viewModel: StudentViewModel = viewModel(
@@ -89,6 +114,31 @@ fun StudentMainScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isDark = isSystemInDarkTheme()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val chatRepository = remember { com.roboticswala.hub.data.repository.ChatRepository() }
+    val unreadCount by chatRepository.getUnreadCountFlow(context, currentUid).collectAsStateWithLifecycle(initialValue = 0)
+
+    var bannerMessage by remember { mutableStateOf<com.roboticswala.hub.data.models.ChatMessage?>(null) }
+    var showBanner by remember { mutableStateOf(false) }
+
+    LaunchedEffect(currentUid) {
+        if (currentUid.isNotBlank()) {
+            chatRepository.getLatestIncomingMessageFlow(currentUid).collect { newMsg ->
+                if (newMsg != null) {
+                    bannerMessage = newMsg
+                    showBanner = true
+                    ChatNotificationHelper.showChatNotification(
+                        context = context,
+                        senderName = newMsg.senderName,
+                        senderRole = newMsg.senderRole,
+                        messageText = newMsg.message
+                    )
+                    delay(4500)
+                    showBanner = false
+                }
+            }
+        }
+    }
 
     LaunchedEffect(uiState.error) {
         uiState.error?.let { msg ->
@@ -106,30 +156,43 @@ fun StudentMainScreen(
 
     RoboticsBackground {
         Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             containerColor = Color.Transparent,
             topBar = {
                 TopAppBar(
                     title = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            RoboticsLogo(size = 32.dp, animate = false)
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Text(
-                                text = "RW HUB",
-                                style = MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    letterSpacing = (-0.3).sp
-                                ),
-                                color = if (isDark) TextPrimaryDark else TextPrimaryLight
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
                             Box(
                                 modifier = Modifier
-                                    .clip(RoundedCornerShape(6.dp))
-                                    .background(ElectricBlue.copy(alpha = 0.15f))
-                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                                    .size(36.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(
+                                        if (isDark) DarkSurfaceElevated else LightSurfaceBorder.copy(alpha = 0.5f)
+                                    )
+                                    .border(
+                                        1.dp,
+                                        if (isDark) DarkSurfaceBorder else LightSurfaceBorder,
+                                        RoundedCornerShape(10.dp)
+                                    ),
+                                contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "STUDENT",
+                                    text = "🤖",
+                                    fontSize = 18.sp
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Column {
+                                Text(
+                                    text = "RW HUB",
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.ExtraBold,
+                                        letterSpacing = (-0.3).sp
+                                    ),
+                                    color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                                )
+                                Text(
+                                    text = "STUDENT PORTAL",
                                     style = MaterialTheme.typography.labelSmall.copy(
                                         fontSize = 9.sp,
                                         fontWeight = FontWeight.Bold
@@ -140,6 +203,30 @@ fun StudentMainScreen(
                         }
                     },
                     actions = {
+                        IconButton(onClick = onNavigateToChat) {
+                            BadgedBox(
+                                badge = {
+                                    if (unreadCount > 0) {
+                                        Badge(
+                                            containerColor = CircuitError,
+                                            contentColor = Color.White
+                                        ) {
+                                            Text(
+                                                text = if (unreadCount > 99) "99+" else unreadCount.toString(),
+                                                fontSize = 9.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.Chat,
+                                    contentDescription = "Community Chat",
+                                    tint = if (isDark) CyberCyan else ElectricBlue
+                                )
+                            }
+                        }
                         IconButton(onClick = onLogout) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.Logout,
@@ -161,7 +248,7 @@ fun StudentMainScreen(
                         color = if (isDark) DarkSurfaceBorder else LightSurfaceBorder
                     )
                 ) {
-                    StudentNavRoute.items.forEach { item ->
+                    StudentNavRoute.items.filterNotNull().forEach { item ->
                         val isSelected = uiState.selectedTab == item.route
                         NavigationBarItem(
                             selected = isSelected,
@@ -190,8 +277,7 @@ fun StudentMainScreen(
                         )
                     }
                 }
-            },
-            snackbarHost = { SnackbarHost(snackbarHostState) }
+            }
         ) { innerPadding ->
             Box(
                 modifier = Modifier
@@ -247,6 +333,18 @@ fun StudentMainScreen(
                             onNavigateToEvents = onNavigateToEvents
                         )
                     }
+
+                    ChatInAppBanner(
+                        message = bannerMessage,
+                        visible = showBanner,
+                        onNavigateToChat = {
+                            showBanner = false
+                            onNavigateToChat()
+                        },
+                        onDismiss = { showBanner = false },
+                        isDark = isDark,
+                        modifier = Modifier.align(Alignment.TopCenter)
+                    )
                 }
             }
         }

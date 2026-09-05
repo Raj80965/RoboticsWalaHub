@@ -300,6 +300,11 @@ fun AppNavigation(
                     navController.navigate(Screen.StudentLeaderboard.route) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateToChat = {
+                    navController.navigate(Screen.CommunityChat.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -777,6 +782,34 @@ fun AppNavigation(
                         popUpTo(Screen.AdminMain.route) { inclusive = true }
                         launchSingleTop = true
                     }
+                },
+                onNavigateToChat = {
+                    navController.navigate(Screen.CommunityChat.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        // 20. Community Group Chat Screen
+        composable(
+            route = Screen.CommunityChat.route,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(350)
+                ) + fadeIn(animationSpec = tween(350))
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(350)
+                ) + fadeOut(animationSpec = tween(350))
+            }
+        ) {
+            com.roboticswala.hub.ui.screens.chat.CommunityChatScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }

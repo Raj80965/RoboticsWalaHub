@@ -23,6 +23,8 @@ data class AdminUiState(
     val adminProfile: UserProfile? = null,
     val selectedTab: String = "admin_dashboard",
     val selectedSubScreen: String? = null,
+    val returnToDashboardOnSubScreenClose: Boolean = false,
+    val studentsFilter: String = "ALL",
     val isLoading: Boolean = false,
     val snackbarMessage: String? = null
 )
@@ -131,8 +133,39 @@ class AdminViewModel(
             }
     }
 
-    fun onTabSelected(route: String, subScreen: String? = null) {
-        _uiState.update { it.copy(selectedTab = route, selectedSubScreen = subScreen) }
+    fun onTabSelected(
+        route: String,
+        subScreen: String? = null,
+        returnToDashboard: Boolean = false
+    ) {
+        _uiState.update {
+            it.copy(
+                selectedTab = route,
+                selectedSubScreen = subScreen,
+                returnToDashboardOnSubScreenClose = returnToDashboard
+            )
+        }
+    }
+
+    fun setStudentsFilter(filter: String) {
+        _uiState.update { it.copy(studentsFilter = filter) }
+    }
+
+    fun onSubScreenDismissed() {
+        _uiState.update { state ->
+            if (state.returnToDashboardOnSubScreenClose) {
+                state.copy(
+                    selectedTab = "admin_dashboard",
+                    selectedSubScreen = null,
+                    returnToDashboardOnSubScreenClose = false
+                )
+            } else {
+                state.copy(
+                    selectedSubScreen = null,
+                    returnToDashboardOnSubScreenClose = false
+                )
+            }
+        }
     }
 
     fun approveStudent(studentUid: String) {
@@ -347,14 +380,20 @@ class AdminViewModel(
                         } else null
                     }
 
-                    if (alerts.isNotEmpty()) {
-                        _uiState.update { state ->
-                            state.copy(
-                                dashboardData = state.dashboardData.copy(
-                                    lowStockEquipment = alerts
-                                )
+                    _uiState.update { state ->
+                        state.copy(
+                            dashboardData = state.dashboardData.copy(
+                                lowStockEquipment = alerts
                             )
-                        }
+                        )
+                    }
+                } else if (snapshot != null && snapshot.isEmpty) {
+                    _uiState.update { state ->
+                        state.copy(
+                            dashboardData = state.dashboardData.copy(
+                                lowStockEquipment = emptyList()
+                            )
+                        )
                     }
                 }
             }
