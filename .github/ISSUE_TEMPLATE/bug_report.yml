@@ -1,0 +1,147 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior in Robotics Wala Hub
+title: "[Bug]: "
+labels: ["bug", "triage"]
+assignees: ["Raj80965"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🐛 Bug Report
+        Thank you for taking the time to report a bug! Please fill out the sections below to help us investigate and fix the issue.
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Where did you encounter this bug?
+      options:
+        - Android App (APK)
+        - Web Simulator (index.html / preview.html)
+        - GitHub Pages Live Site
+        - Android Studio Build
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: role
+    attributes:
+      label: User Role
+      description: Which role were you using when the bug occurred?
+      options:
+        - Student
+        - Admin
+        - Not Applicable
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature
+    attributes:
+      label: Affected Feature
+      description: Which feature area is affected?
+      options:
+        - Authentication & Login
+        - Dashboard & Home Screen
+        - QR Attendance Scanner
+        - Lab Slot Booking
+        - Project Management
+        - Weekly Tasks & Progress
+        - Hardware Inventory
+        - Budget & Expenses
+        - Achievements & Leaderboard
+        - Notices & Events
+        - Profile & Settings
+        - Achievement Carousel / Sliding Bar
+        - Admin Management
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: "When I click on the 'Book Lab Slot' button, the app crashes..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this bug?
+      placeholder: |
+        1. Open the app / web simulator
+        2. Navigate to '...'
+        3. Click on '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: "The booking form should submit successfully and show a confirmation."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: "The app crashes with a blank screen."
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device Model
+      description: "e.g., Samsung Galaxy S24, Pixel 8, OnePlus 12"
+      placeholder: "Samsung Galaxy S24"
+
+  - type: input
+    id: android-version
+    attributes:
+      label: Android Version
+      description: "e.g., Android 14, Android 15"
+      placeholder: "Android 14"
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser (for Web Simulator)
+      description: "e.g., Chrome 126, Firefox 128, Edge 126"
+      placeholder: "Chrome 126"
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots / Screen Recordings
+      description: If applicable, add screenshots or recordings to help explain your problem.
+      placeholder: "Drag and drop images here or paste URLs..."
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error Logs / Logcat Output
+      description: Paste any relevant error logs or Logcat output here.
+      render: shell
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched for existing issues to avoid duplicates
+          required: true
+        - label: I am using the latest version of the app
+          required: false

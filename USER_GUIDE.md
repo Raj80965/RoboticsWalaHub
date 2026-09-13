@@ -3,6 +3,36 @@
 
 ---
 
+## 📑 Table of Contents
+
+- [1. System Overview (परिचय)](#-1-system-overview-परिचय)
+- [2. Student User Guide (विद्यार्थी कैसे इस्तेमाल करेंगे)](#-2-student-user-guide-विद्यार्थी-कैसे-इस्तेमाल-करेंगे)
+  - [Step 1: Registration](#-step-1-registration-खाता-बनाना)
+  - [Step 2: Profile & Photo Setup](#-step-2-profile--photo-setup-प्रोफाइल-और-फोटो-अपलोड)
+  - [Step 3: QR Code Lab Attendance](#-step-3-qr-code-lab-attendance-डिजिटल-अटेंडेंस-लगाना)
+  - [Step 4: Lab Slot & Workstation Booking](#-step-4-lab-slot--workstation-booking-लैब-वर्कस्टेशन-बुक-करना)
+  - [Step 5: Robotics Project Management](#-step-5-robotics-project-management-प्रोजेक्ट-बनाना-और-अपडेट-करना)
+  - [Step 6: Weekly Tasks & Milestones](#-step-6-weekly-tasks--milestones-टास्क-और-डेडलाइन्स)
+  - [Step 7: Hardware Catalog & Component Request](#-step-7-hardware-catalog--component-request-हार्डवेयर-कंपोनेंट-देखना)
+  - [Step 8: Project Expenses & Budget](#-step-8-project-expenses--budget-प्रोजेक्ट-का-बजट-और-खर्चे)
+  - [Step 9: Achievements & Leaderboard](#-step-9-achievements--leaderboard-सर्टिफिकेट-और-रैंकिंग)
+  - [Step 10: Notices & Events](#-step-10-notices--events-सूचना-पटल-और-वर्कशॉप्स)
+  - [Step 11: Continuous Sliding Achievement Bar](#-step-11-continuous-sliding-achievement-bar-स्लाइडिंग-अचीवमेंट-बार)
+- [3. Admin Command Center Guide (एडमिन क्या-क्या करेंगे)](#-3-admin-command-center-guide-एडमिन-क्या-क्या-करेंगे)
+  - [Step 1: Admin Login & Overview](#-step-1-admin-login--overview)
+  - [Step 2: Student Verification & Directory](#-step-2-student-verification--directory-छात्रों-को-अप्रूव-करना)
+  - [Step 3: Dynamic Attendance QR Code Generator](#-step-3-dynamic-attendance-qr-code-generator-अटेंडेंस-क्यूआर-कोड-जनरेट-करना)
+  - [Step 4: Lab Slot Booking Approvals](#-step-4-lab-slot-booking-approvals-वर्कस्टेशन-बुकिंग-अप्रूव-करना)
+  - [Step 5: Hardware Inventory Management](#-step-5-hardware-inventory-management-हार्डवेयर-स्टॉक-मैनेज-करना)
+  - [Step 6: Project Budget & Expense Audits](#-step-6-project-budget--expense-audits-खर्चे-पास-करना)
+  - [Step 7: Broadcast Notices & Event Publishing](#-step-7-broadcast-notices--event-publishing-नोटिस-और-इवेंट्स-डालना)
+  - [Step 8: Reports & Analytics](#-step-8-reports--analytics-रिपोर्ट्स-और-डेटा-एनालिसिस)
+  - [Step 9: Achievement Banners Manager](#-step-9-achievement-banners-manager-अचीवमेंट-फोटो-अपलोड-और-मैनेज-करना)
+- [4. Quick Feature Summary Table](#-4-quick-feature-summary-table)
+- [5. Links & Access Points](#-5-links--access-points)
+
+---
+
 ## 🌟 1. System Overview (परिचय)
 
 **Robotics Wala Hub** ek comprehensive, enterprise-grade robotics laboratory management aur research ecosystem hai. Isme do alag-alag roles hain:
@@ -43,18 +73,17 @@
 ---
 
 ### 🔹 Step 4: Lab Slot & Workstation Booking (लैब वर्कस्टेशन बुक करना)
-1. Home screen par **"🗓️ Book Lab Slot"** par tap karein.
-2. Apni pasandida **Date**, **Time Slot** (e.g. 02:00 PM - 05:00 PM), aur **Workstation/Bay No.** (e.g. Robotics Bay 3, Soldering Station, 3D Print Fab Station) select karein.
-3. Purpose me project ka naam likhkar request submit karein.
-4. Admin ke approve karte hi aapko confirmed slot mil jayega!
+1. Dashboard par **"🗓️ Book Lab Slot"** par tap karein.
+2. Desired **Date**, **Time Slot** (Morning, Afternoon, Evening), aur **Workstation/Equipment** (e.g. 3D Printer Bench, Soldering Station, Drone Test Bed) select karein.
+3. **"Submit Booking Request"** dabayein. Request Admin ke paas approval ke liye jayegi. Status aapke dashboard par real-time dikhega.
 
 ---
 
-### 🔹 Step 5: Robotics Projects Tracking (रोबोटिक्स प्रोजेक्ट्स बनाना)
-1. Bottom bar me **"Projects"** tab par tap karein.
-2. Naya project jodne ke liye **"+ Create Project"** par tap karein.
-3. Project Title, Description, Tech Stack (ROS2, Arduino, Jetson, OpenCV), aur Team Members add karein.
-4. Project progress percentage bar ko live update karein taaki mentor aapki progress dekh sakein.
+### 🔹 Step 5: Robotics Project Management (प्रोजेक्ट बनाना और अपडेट करना)
+1. Dashboard par **"🚀 Projects"** section me jayein.
+2. **"Create New Project"** click karein: Project Title, Category (e.g., Autonomous Rover, Robotic Arm, Drone), description aur team members add karein.
+3. Project progress slider se progress % update karein (0% se 100%).
+4. Daily milestones aur hardware requirements log karein.
 
 ---
 
@@ -88,6 +117,13 @@
 
 ---
 
+### 🔹 Step 11: Continuous Sliding Achievement Bar (स्लाइडिंग अचीवमेंट बार)
+1. Student Home Dashboard ke top par continuous auto-sliding achievement showcase display hota hai jo har 3.5 seconds me smoothly rotate hota hai.
+2. Kisi bhi achievement card par click karke full-resolution photo, award description, event date, aur official verification badge modal me dekh sakte hain.
+3. Bottom dots indicator ya left/right navigation arrows se manual swipe bhi kar sakte hain.
+
+---
+
 ## 🛡️ 3. ADMIN COMMAND CENTER GUIDE (एडमिन क्या-क्या करेंगे)
 
 ```
@@ -108,22 +144,23 @@
 
 ---
 
-### 🔸 Step 3: Dynamic QR Code Generator (अटेंडेंस क्यूआर कोड बनाना)
-1. Admin panel me **"Generate QR Code"** par tap karein.
-2. Screen par lab ka dynamic attendance QR code display hoga.
-3. Is screen ko lab monitor ya projector par dikha dijiye — aane wale sabhi students ise scan karke attendance lagayenge!
+### 🔸 Step 3: Dynamic Attendance QR Code Generator (अटेंडेंस क्यूआर कोड जनरेट करना)
+1. Admin Dashboard par **"📷 Generate Attendance QR"** button par click karein.
+2. Screen par lab ka active QR code display hoga.
+3. Ise lab screen/projector par display karein taaki students aate-jaate scan kar sakein.
 
 ---
 
-### 🔸 Step 4: Workstation Booking Approvals (बुकिंग अप्रूव करना)
-1. **"Lab Bookings"** section me sabhi students ki slot requests date-wise dikhti hain.
-2. Admin unhe **Approve** ya **Reschedule** kar sakte hain taaki lab me ek hi bench par bheed na ho.
+### 🔸 Step 4: Lab Slot Booking Approvals (वर्कस्टेशन बुकिंग अप्रूव करना)
+1. **"Pending Bookings"** list me jayein.
+2. Check karein ki workstation available hai ya nahi.
+3. **"Approve"** ya **"Decline"** button dabayein. Student ko instant alert chala jayega.
 
 ---
 
-### 🔸 Step 5: Hardware Inventory Management (स्टॉक जोड़ना और ट्रैक करना)
-1. **"🛡️ Admin Inventory"** section me jakar naye hardware items (e.g. Servo Motors, Jetson Nano, 3D Filaments) add karein.
-2. Available quantity update karein aur kis student ke paas konsa component issue hua hai track karein.
+### 🔸 Step 5: Hardware Inventory Management (हार्डवेयर स्टॉक मैनेज करना)
+1. **"⚙️ Hardware Inventory"** tab me sabhi lab equipment ki list dekhein.
+2. Naye components add karein, stock quantity update karein, aur kis student ne konsa component issue karwaya hai wo track karein.
 
 ---
 
@@ -145,6 +182,16 @@
 
 ---
 
+### 🔸 Step 9: Achievement Banners Manager (अचीवमेंट फोटो अपलोड और मैनेज करना)
+1. Admin Command Center me **"🏆 Achievement Banners Manager"** card par click karein.
+2. **Nayi Photo Upload**:
+   - Title (e.g. "Smart India Hackathon 1st Prize"), Winner Names, Event/Date enter karein.
+   - **"📸 Choose Banner Photo"** se photo select karein (JPG/PNG).
+   - **"Publish Achievement Banner"** dabate hi showcase instant sabhi student dashboards par live ho jayega!
+3. **Manage & Delete**: Purani photos ko preview karein aur **"Delete Banner"** se kabhi bhi hata sakte hain.
+
+---
+
 ## ⚡ 4. Quick Feature Summary Table
 
 | Feature | Student Role | Admin Role |
@@ -159,6 +206,7 @@
 | **Notices** | Read alerts & updates | Write & Broadcast to all students |
 | **Events** | View & Join workshops | Create & Manage registrations |
 | **Leaderboard** | View rank & submit certs | Verify achievements & award points |
+| **Achievement Carousel** | View dynamic sliding showcase & full details | Upload photos, set badges, edit & delete slides |
 
 ---
 

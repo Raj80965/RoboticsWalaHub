@@ -1,22 +1,61 @@
+# ─── Android / Gradle ─────────────────────────────────
 *.iml
-.gradle
-/local.properties
-/.idea/
-.DS_Store
-/build
-/*/build
-/captures
-.externalNativeBuild
-.cxx
+.gradle/
+/build/
+/*/build/
+/captures/
+.externalNativeBuild/
+.cxx/
+.kotlin/
 local.properties
-.kotlin
 
-# Keystore & Signing Secrets
+# ─── IDE ──────────────────────────────────────────────
+.idea/
+*.swp
+*.swo
+*~
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# ─── Keystore & Secrets ──────────────────────────────
 *.jks
 *.keystore
 secrets.properties
+keystore.properties
 
-# Android Studio Navigation / Layout editor caches
-# Build artifacts
+# ─── OS Generated ────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ─── Build Artifacts ─────────────────────────────────
 app/build/
 build/
+*.apk.idsig
+
+# ─── Logs ─────────────────────────────────────────────
+*.log
+build_log.txt
+
+# ─── Firebase Emulator ───────────────────────────────
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# ─── Node (if applicable) ────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# ─── Misc ─────────────────────────────────────────────
+*.tmp
+*.bak
+*.orig
