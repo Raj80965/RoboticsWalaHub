@@ -69,9 +69,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -195,6 +197,14 @@ fun StudentHomeScreen(
                 StudentHeaderCard(
                     profile = uiState.userProfile,
                     isDark = isDark
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // ── 1.05 Continuous Sliding Achievement Banner Carousel ───
+                AchievementBannerCarousel(
+                    isDark = isDark,
+                    onNavigateToAchievements = onNavigateToAchievements
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -1926,3 +1936,234 @@ private fun AdminSquareCard(
         }
     }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Continuous Sliding Achievement Banner Carousel
+// ─────────────────────────────────────────────────────────────────────────────
+
+data class AchievementBannerItem(
+    val id: String,
+    val title: String,
+    val badge: String,
+    val category: String,
+    val team: String,
+    val date: String,
+    val imageUrl: String,
+    val description: String
+)
+
+@Composable
+fun AchievementBannerCarousel(
+    isDark: Boolean,
+    onNavigateToAchievements: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val defaultBanners = remember {
+        listOf(
+            AchievementBannerItem(
+                id = "ach_1",
+                title = "1st Place - Autonomous Swarm Drone Grand Prix 2026",
+                badge = "🥇 1st Prize Gold",
+                category = "Drone Hackathon",
+                team = "Team AeroRobotics",
+                date = "2026-08-10",
+                imageUrl = "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?w=800&auto=format&fit=crop&q=80",
+                description = "Our autonomous quadcopter swarm completed dynamic 3D obstacle avoidance and multi-agent payload delivery."
+            ),
+            AchievementBannerItem(
+                id = "ach_2",
+                title = "Gold Trophy - National Combat Robowars Heavyweight",
+                badge = "🏆 National Champion",
+                category = "RoboWars",
+                team = "Team IronClad",
+                date = "2026-07-28",
+                imageUrl = "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&auto=format&fit=crop&q=80",
+                description = "Custom engineered 30kg titanium spinner combat bot remained undefeated across 5 elimination rounds."
+            ),
+            AchievementBannerItem(
+                id = "ach_3",
+                title = "Best Innovation Award - AI Bipedal Humanoid Rover",
+                badge = "🌟 Best Innovation",
+                category = "Innovation",
+                team = "Robotics Research Wing",
+                date = "2026-06-15",
+                imageUrl = "https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=800&auto=format&fit=crop&q=80",
+                description = "Reinforcement learning based dynamic balance control on Jetson Orin Nano with real-time terrain mapping."
+            ),
+            AchievementBannerItem(
+                id = "ach_4",
+                title = "NASA Space Apps Hackathon Global Finalist",
+                badge = "🚀 Global Finalist",
+                category = "Space Robotics",
+                team = "Team CosmoBot",
+                date = "2026-05-20",
+                imageUrl = "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=800&auto=format&fit=crop&q=80",
+                description = "Autonomous Martian regolith sampling rover prototype selected for global round judging."
+            )
+        )
+    }
+
+    var currentIndex by remember { mutableStateOf(0) }
+
+    // Auto-advance sliding timer every 3.5 seconds
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(3500)
+            currentIndex = (currentIndex + 1) % defaultBanners.size
+        }
+    }
+
+    val currentBanner = defaultBanners[currentIndex]
+
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "🏆 Lab Achievements",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = if (isDark) TextPrimaryDark else TextPrimaryLight
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(CircuitSuccess.copy(alpha = 0.2f))
+                        .border(1.dp, CircuitSuccess.copy(alpha = 0.5f), RoundedCornerShape(6.dp))
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = "LIVE SHOWCASE",
+                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp, fontWeight = FontWeight.Bold),
+                        color = CircuitSuccess
+                    )
+                }
+            }
+            Text(
+                text = "View All ➔",
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                color = if (isDark) CyberCyan else ElectricBlue,
+                modifier = Modifier.clickable { onNavigateToAchievements() }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Sliding Card
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(180.dp)
+                .clip(RoundedCornerShape(18.dp))
+                .clickable { onNavigateToAchievements() },
+            shape = RoundedCornerShape(18.dp),
+            colors = CardDefaults.cardColors(containerColor = if (isDark) DarkSurfaceElevated else LightSurfaceElevated),
+            border = androidx.compose.foundation.BorderStroke(1.5.dp, if (isDark) CyberCyan.copy(alpha = 0.5f) else ElectricBlue.copy(alpha = 0.4f))
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                AsyncImage(
+                    model = currentBanner.imageUrl,
+                    contentDescription = currentBanner.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+
+                // Dark gradient overlay for cyber look
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Black.copy(alpha = 0.2f),
+                                    Color.Black.copy(alpha = 0.65f),
+                                    Color.Black.copy(alpha = 0.95f)
+                                )
+                            )
+                        )
+                )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(14.dp),
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(CyberCyan.copy(alpha = 0.25f))
+                                .border(1.dp, CyberCyan, RoundedCornerShape(8.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = currentBanner.badge,
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                color = Color.White
+                            )
+                        }
+
+                        Text(
+                            text = currentBanner.category,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = CyberCyan
+                        )
+                    }
+
+                    Column {
+                        Text(
+                            text = currentBanner.title,
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = Color.White,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "👥 " + currentBanner.team,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = CyberCyan
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "• 📅 " + currentBanner.date,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color.White.copy(alpha = 0.7f)
+                            )
+                        }
+                    }
+                }
+
+                // Slide Indicators (dots)
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    defaultBanners.indices.forEach { index ->
+                        Box(
+                            modifier = Modifier
+                                .height(6.dp)
+                                .width(if (index == currentIndex) 18.dp else 6.dp)
+                                .clip(CircleShape)
+                                .background(if (index == currentIndex) CyberCyan else Color.White.copy(alpha = 0.4f))
+                                .clickable { currentIndex = index }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+

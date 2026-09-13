@@ -110,6 +110,43 @@ fun AdminAchievementsScreen(
                 }
             }
 
+            // Dashboard Sliding Showcase Notice Card
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(14.dp)),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isDark) CyberCyan.copy(alpha = 0.12f) else ElectricBlue.copy(alpha = 0.08f)
+                    ),
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        if (isDark) CyberCyan.copy(alpha = 0.5f) else ElectricBlue.copy(alpha = 0.4f)
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = "🏆", fontSize = 24.sp)
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = "Live Dashboard Sliding Showcase Active",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                color = if (isDark) CyberCyan else ElectricBlue
+                            )
+                            Text(
+                                text = "Approved achievements and uploaded competition photos continuously slide on the main student dashboard.",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = textSecColor
+                            )
+                        }
+                    }
+                }
+            }
+
             // Search bar
             item {
                 OutlinedTextField(

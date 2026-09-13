@@ -487,9 +487,151 @@
       transition: transform 0.15s, box-shadow 0.15s;
       flex-shrink: 0;
     }
-    .chat-send-btn:hover {
-      transform: scale(1.06);
-      box-shadow: 0 0 16px rgba(0, 212, 255, 0.5);
+    /* Continuous Sliding Achievement Carousel */
+    .achievement-carousel-container {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      margin-top: 8px;
+      border: 1.5px solid rgba(0, 212, 255, 0.4);
+      box-shadow: 0 10px 28px -6px rgba(0, 102, 255, 0.35);
+      background: #080C14;
+      user-select: none;
+    }
+    .carousel-track {
+      display: flex;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      width: 100%;
+    }
+    .carousel-slide {
+      min-width: 100%;
+      height: 180px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .carousel-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.85);
+      transition: transform 0.45s ease;
+    }
+    .carousel-slide:hover .carousel-img {
+      transform: scale(1.05);
+      filter: brightness(0.95);
+    }
+    .carousel-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(8,12,20,0.15) 0%, rgba(8,12,20,0.6) 45%, rgba(5,8,14,0.96) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 14px;
+      box-sizing: border-box;
+    }
+    .carousel-badge {
+      align-self: flex-start;
+      background: rgba(0, 212, 255, 0.2);
+      border: 1px solid var(--cyber-cyan);
+      color: #FFFFFF;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 8px;
+      backdrop-filter: blur(8px);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 2px 10px rgba(0, 212, 255, 0.35);
+      letter-spacing: 0.3px;
+    }
+    .carousel-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.25;
+      margin-top: 4px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.9);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .carousel-subtitle {
+      font-size: 10.5px;
+      color: var(--cyber-cyan);
+      margin-top: 3px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .carousel-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(8, 12, 20, 0.8);
+      border: 1px solid rgba(0, 212, 255, 0.4);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      cursor: pointer;
+      z-index: 10;
+      opacity: 0.6;
+      transition: all 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    .achievement-carousel-container:hover .carousel-nav-btn {
+      opacity: 1;
+    }
+    .carousel-nav-btn:hover {
+      background: var(--cyber-cyan);
+      color: #000;
+      border-color: var(--cyber-cyan);
+      box-shadow: 0 0 10px var(--cyber-cyan);
+    }
+    .carousel-dots {
+      position: absolute;
+      bottom: 8px;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      z-index: 10;
+    }
+    .carousel-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.35);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .carousel-dot.active {
+      width: 18px;
+      background: var(--cyber-cyan);
+      box-shadow: 0 0 8px var(--cyber-cyan);
+    }
+    .image-dropzone {
+      border: 2px dashed var(--cyber-cyan);
+      border-radius: 14px;
+      padding: 14px;
+      text-align: center;
+      background: rgba(0, 212, 255, 0.05);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .image-dropzone:hover {
+      background: rgba(0, 212, 255, 0.12);
+      border-color: #fff;
     }
   </style>
 </head>
@@ -522,6 +664,7 @@
     <button class="quick-nav-btn" onclick="goToScreen('admin-equipment')">🛡️ Admin Inventory</button>
     <button class="quick-nav-btn" onclick="goToScreen('notices')">📢 Student Notices</button>
     <button class="quick-nav-btn" onclick="goToScreen('events')">📅 Student Events</button>
+    <button class="quick-nav-btn" onclick="goToScreen('admin-achievements')" style="background: rgba(255, 215, 0, 0.2); border-color: #FFD700; color: #fff; font-weight: 700;">🏆 Achievement Banners</button>
     <button class="quick-nav-btn" onclick="goToScreen('student')">🎓 Student Dashboard</button>
   </div>
 
@@ -580,6 +723,26 @@
                 AS
               </div>
             </div>
+          </div>
+
+          <!-- CONTINUOUS SLIDING ACHIEVEMENT IMAGE BAR -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; margin-bottom: 4px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 14px; font-weight: 800;">🏆 Lab Achievements</span>
+              <span class="chip approved" style="font-size: 8px; padding: 1px 5px; box-shadow: 0 0 8px rgba(0,230,118,0.4);">LIVE SHOWCASE</span>
+            </div>
+            <span style="font-size: 11px; color: var(--cyber-cyan); font-weight: 700; cursor: pointer;" onclick="goToScreen('admin-achievements')">Admin Edit ⚙️</span>
+          </div>
+
+          <div class="achievement-carousel-container" id="achievement-carousel-box" onmouseenter="pauseAchievementSlide()" onmouseleave="resumeAchievementSlide()">
+            <div class="carousel-track" id="achievement-carousel-track">
+              <!-- Dynamically populated slides -->
+            </div>
+            <!-- Navigation arrows -->
+            <button class="carousel-nav-btn" style="left: 8px;" onclick="prevAchievementSlide(event)" title="Previous Slide">❮</button>
+            <button class="carousel-nav-btn" style="right: 8px;" onclick="nextAchievementSlide(event)" title="Next Slide">❯</button>
+            <!-- Dot indicators -->
+            <div class="carousel-dots" id="achievement-carousel-dots"></div>
           </div>
 
           <!-- Lab Equipment & Components (Day 12) -->
@@ -757,6 +920,20 @@
               <div style="font-size: 13px; font-weight: 800; margin-top: 6px;">Leaderboard</div>
               <div style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">Student scoring & rank</div>
               <div style="margin-top: 8px;"><span class="chip tag">100-Pt Matrix</span></div>
+            </div>
+
+            <!-- Achievement Banners Manager -->
+            <div class="m3-card" style="margin-top: 0; padding: 12px; cursor: pointer; transition: transform 0.15s; border-color: rgba(255, 215, 0, 0.45); grid-column: span 2;" onclick="goToScreen('admin-achievements')" onmouseover="this.style.borderColor='#FFD700'" onmouseout="this.style.borderColor='rgba(255, 215, 0, 0.45)'">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div style="font-size: 26px;">🏆</div>
+                  <div>
+                    <div style="font-size: 14px; font-weight: 800;">Achievement Banners Manager</div>
+                    <div style="font-size: 10.5px; color: var(--text-secondary); margin-top: 1px;">Upload photos, edit sliding bar & trophy showcases</div>
+                  </div>
+                </div>
+                <span class="chip approved" id="adm-achieve-count-chip">● 4 Active</span>
+              </div>
             </div>
           </div>
 
@@ -945,6 +1122,50 @@
 
         <button class="fab" onclick="openCreateEventModal()">
           <span>➕</span> <span>Schedule Event</span>
+        </button>
+      </div>
+
+      <!-- 6B. ADMIN ACHIEVEMENTS BANNER MANAGER SCREEN -->
+      <div class="screen" id="screen-admin-achievements" style="padding: 0;">
+        <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--surface-border);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn-toggle" style="padding: 4px 8px;" onclick="goToScreen('admin-dashboard')">⬅️</button>
+            <div>
+              <div style="font-size: 15px; font-weight: 800;">Achievement Banners Manager</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan);">DASHBOARD CONTINUOUS SLIDING SHOWCASE</div>
+            </div>
+          </div>
+          <button class="btn-toggle" style="padding: 4px 10px; font-size: 11px; background: linear-gradient(135deg, #00D4FF, #0066FF); color:#fff; border: none; font-weight: bold;" onclick="openUploadAchievementModal()">➕ Upload Photo</button>
+        </div>
+
+        <div style="flex: 1; overflow-y: auto; padding: 14px;">
+          <!-- Informational Banner -->
+          <div class="m3-card" style="margin-top: 0; background: linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(0, 212, 255, 0.08) 100%); border-color: rgba(255, 215, 0, 0.4);">
+            <div style="display: flex; align-items: flex-start; gap: 10px;">
+              <span style="font-size: 24px;">🏆</span>
+              <div>
+                <div style="font-size: 13px; font-weight: 800; color: #FFD700;">Continuous Sliding Showcase Active</div>
+                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">
+                  All achievement photos and certificates listed below will automatically slide on the student and public dashboard. Upload new robotics award photos to inspire lab students!
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action: Upload Bar -->
+          <div style="margin-top: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 13px; font-weight: 800; text-transform: uppercase; color: var(--cyber-cyan); letter-spacing: 0.5px;">Active Slides (<span id="adm-achieve-count-num">4</span>)</span>
+            <button class="btn-outlined" style="height: 28px; font-size: 11px; width: auto; padding: 0 10px; border-color: var(--cyber-cyan); color: var(--cyber-cyan);" onclick="goToScreen('student')">👁️ View on Live Dashboard</button>
+          </div>
+
+          <!-- Dynamic List of Achievement Banners -->
+          <div style="display: flex; flex-direction: column; gap: 12px;" id="admin-achievements-list">
+            <!-- Populated dynamically by JS -->
+          </div>
+        </div>
+
+        <button class="fab" onclick="openUploadAchievementModal()" style="background: linear-gradient(135deg, #FFD700 0%, #FF8C00 100%); color: #000; font-weight: 800;">
+          <span>📸</span> <span>Upload Photo</span>
         </button>
       </div>
 
@@ -1706,6 +1927,109 @@
       </div>
     </div>
 
+    <!-- UPLOAD / EDIT ACHIEVEMENT BANNER MODAL -->
+    <div id="upload-achievement-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px;">
+      <div class="m3-card" style="width: 100%; max-height: 90vh; overflow-y: auto; border-color: var(--cyber-cyan); margin: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <b style="font-size: 16px;" id="ach-modal-heading">🏆 Upload Achievement Photo & Banner</b>
+          <button class="btn-toggle" style="padding: 2px 8px;" onclick="closeUploadAchievementModal()">✕</button>
+        </div>
+
+        <form onsubmit="handleSaveAchievementBanner(event)" style="margin-top: 12px;">
+          <input type="hidden" id="ach-edit-id" value="">
+
+          <!-- File Upload Dropzone -->
+          <div class="field-group">
+            <label class="field-label">Achievement Photo (Upload from PC / Device) *</label>
+            <div class="image-dropzone" onclick="document.getElementById('ach-file-input').click()">
+              <input type="file" id="ach-file-input" accept="image/*" style="display: none;" onchange="handleAchievementFileSelected(event)">
+              <div id="ach-preview-placeholder">
+                <div style="font-size: 30px;">📸</div>
+                <div style="font-size: 12px; font-weight: 700; color: var(--cyber-cyan); margin-top: 4px;">Click to select photo from computer</div>
+                <div style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">PNG, JPG, WebP supported</div>
+              </div>
+              <img id="ach-image-preview" src="" style="display: none; width: 100%; max-height: 140px; object-fit: cover; border-radius: 10px; border: 1px solid var(--cyber-cyan); margin-top: 4px;" alt="Preview">
+            </div>
+          </div>
+
+          <!-- Or Image URL -->
+          <div class="field-group">
+            <label class="field-label">Or Direct Image URL (Optional fallback)</label>
+            <input type="url" id="ach-img-url" class="m3-input" placeholder="https://example.com/robotics-trophy.jpg" style="padding-left: 12px;" oninput="handleImageUrlInput(this.value)">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Achievement Title *</label>
+            <input type="text" id="ach-title" class="m3-input" placeholder="e.g. 1st Place - Autonomous Swarm Drone Grand Prix 2026" style="padding-left: 12px;" required>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Badge / Award Level *</label>
+              <input type="text" id="ach-badge" class="m3-input" placeholder="🥇 1st Prize Gold" style="padding-left: 12px;" required>
+            </div>
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Category</label>
+              <select id="ach-category" class="m3-input" style="padding-left: 12px;">
+                <option>Competition</option>
+                <option>Hackathon</option>
+                <option>RoboWars</option>
+                <option>Workshop</option>
+                <option>Research Paper</option>
+                <option>Patent</option>
+                <option>Innovation</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Team / Student Name *</label>
+              <input type="text" id="ach-team" class="m3-input" placeholder="Team AeroRobotics" style="padding-left: 12px;" required>
+            </div>
+            <div class="field-group" style="flex: 1;">
+              <label class="field-label">Date (yyyy-MM-dd) *</label>
+              <input type="date" id="ach-date" class="m3-input" value="2026-08-20" style="padding-left: 12px;" required>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Achievement Summary / Description *</label>
+            <textarea id="ach-desc" class="m3-input" rows="2" style="height: 60px; padding-left: 12px; resize: none;" placeholder="Brief details about the robot, technology used, and competition results..." required></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary" style="margin-top: 6px; background: linear-gradient(135deg, #00D4FF 0%, #0066FF 100%);">
+            🚀 Publish to Dashboard Carousel
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ACHIEVEMENT DETAIL POPUP MODAL -->
+    <div id="achievement-detail-modal" style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px;">
+      <div class="m3-card" style="width: 100%; max-height: 90vh; overflow-y: auto; border-color: var(--cyber-cyan); margin: 0; padding: 0;">
+        <div style="position: relative; height: 180px; overflow: hidden; background: #000;">
+          <img id="detail-ach-img" src="" style="width: 100%; height: 100%; object-fit: cover;" alt="Achievement Photo">
+          <button class="btn-toggle" style="position: absolute; top: 10px; right: 10px; padding: 4px 8px; background: rgba(0,0,0,0.65); border: 1px solid #fff;" onclick="closeAchievementDetailModal()">✕</button>
+          <div style="position: absolute; bottom: 10px; left: 12px;">
+            <span class="carousel-badge" id="detail-ach-badge">🥇 1st Prize Gold</span>
+          </div>
+        </div>
+        <div style="padding: 14px;">
+          <div style="font-size: 16px; font-weight: 800; color: #fff;" id="detail-ach-title">Title</div>
+          <div style="display: flex; gap: 8px; align-items: center; margin-top: 6px; font-size: 11px; color: var(--cyber-cyan);">
+            <span id="detail-ach-team">Team</span> • <span id="detail-ach-date">Date</span> • <span class="chip tag" id="detail-ach-cat">Category</span>
+          </div>
+          <div style="font-size: 12px; color: var(--text-secondary); margin-top: 10px; line-height: 1.5;" id="detail-ach-desc">Description</div>
+          <div style="margin-top: 14px; padding: 10px; border-radius: 12px; background: rgba(0, 230, 118, 0.08); border: 1px solid rgba(0, 230, 118, 0.3); display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 18px;">🛡️</span>
+            <div style="font-size: 11px; color: var(--success); font-weight: 700;">Verified & Authenticated by Robotics Lab Admin</div>
+          </div>
+          <button class="btn-outlined" style="margin-top: 12px;" onclick="closeAchievementDetailModal()">Close Preview</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Toast Feedback -->
     <div class="toast-msg" id="toast">
       <span>⚡</span> <span id="toast-text">Message</span>
@@ -2214,6 +2538,394 @@
     function escapeHtml(str) {
       return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
+
+    // ── CONTINUOUS SLIDING ACHIEVEMENT CAROUSEL & ADMIN PHOTO UPLOAD ──
+    const defaultAchievements = [
+      {
+        id: 'ach_1',
+        title: '1st Place - Autonomous Swarm Drone Grand Prix 2026',
+        badge: '🥇 1st Prize Gold',
+        category: 'Competition',
+        team: 'Team AeroRobotics (Aarav & Kabir)',
+        date: '2026-08-10',
+        imageUrl: 'https://images.unsplash.com/photo-1527977966376-1c8408f9f108?w=800&auto=format&fit=crop&q=80',
+        desc: 'Our autonomous quadcopter swarm completed dynamic 3D obstacle avoidance and multi-agent payload delivery in record time with zero human intervention.'
+      },
+      {
+        id: 'ach_2',
+        title: 'Gold Trophy - National Combat Robowars Heavyweight',
+        badge: '🏆 National Champion',
+        category: 'RoboWars',
+        team: 'Team IronClad (Pooja & Rohan)',
+        date: '2026-07-28',
+        imageUrl: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&auto=format&fit=crop&q=80',
+        desc: 'Custom engineered 30kg titanium spinner combat bot remained undefeated across 5 elimination rounds with custom brushless ESC driver.'
+      },
+      {
+        id: 'ach_3',
+        title: 'Best Innovation Award - AI Bipedal Humanoid Rover',
+        badge: '🌟 Best Innovation',
+        category: 'Innovation',
+        team: 'Robotics Research Wing (Aarav, Diya)',
+        date: '2026-06-15',
+        imageUrl: 'https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=800&auto=format&fit=crop&q=80',
+        desc: 'Reinforcement learning based dynamic balance control on Jetson Orin Nano with real-time terrain mapping and LiDAR SLAM.'
+      },
+      {
+        id: 'ach_4',
+        title: 'NASA Space Apps Hackathon Global Finalist',
+        badge: '🚀 Global Finalist',
+        category: 'Hackathon',
+        team: 'Team CosmoBot',
+        date: '2026-05-20',
+        imageUrl: 'https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=800&auto=format&fit=crop&q=80',
+        desc: 'Martian soil sampling autonomous rover with robotic arm and onboard spectroscopy analysis nominated for global NASA evaluation.'
+      }
+    ];
+
+    let achievementsList = [];
+    try {
+      const saved = localStorage.getItem('rwhub_achievement_banners');
+      if (saved) {
+        achievementsList = JSON.parse(saved);
+      } else {
+        achievementsList = [...defaultAchievements];
+        localStorage.setItem('rwhub_achievement_banners', JSON.stringify(achievementsList));
+      }
+    } catch (err) {
+      achievementsList = [...defaultAchievements];
+    }
+
+    let currentAchievementSlideIndex = 0;
+    let achievementSlideTimer = null;
+    let tempAchievementImageBase64 = '';
+
+    function renderAchievementCarousel() {
+      const track = document.getElementById('achievement-carousel-track');
+      const dots = document.getElementById('achievement-carousel-dots');
+      if (!track || !dots) return;
+
+      if (!achievementsList.length) {
+        track.innerHTML = `
+          <div class="carousel-slide" style="display: flex; align-items: center; justify-content: center; background: #0c121e;">
+            <div style="text-align: center; color: var(--text-secondary);">
+              <div style="font-size: 28px;">🏆</div>
+              <div style="font-size: 13px; font-weight: 700; margin-top: 4px;">No achievement banners uploaded yet</div>
+              <button class="btn-outlined" style="width: auto; margin: 8px auto 0; padding: 4px 12px; font-size: 11px;" onclick="goToScreen('admin-achievements')">Upload Photo</button>
+            </div>
+          </div>
+        `;
+        dots.innerHTML = '';
+        return;
+      }
+
+      track.innerHTML = achievementsList.map((item, idx) => `
+        <div class="carousel-slide" onclick="openAchievementDetail('${item.id}')" title="Click to view details">
+          <img class="carousel-img" src="${item.imageUrl}" alt="${escapeHtml(item.title)}" onerror="this.src='https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&auto=format&fit=crop&q=80'">
+          <div class="carousel-overlay">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="carousel-badge">${escapeHtml(item.badge || '🏆 Achievement')}</span>
+              <span class="chip tag" style="font-size: 9px; padding: 2px 6px; background: rgba(0,0,0,0.5);">${escapeHtml(item.category || 'Robotics')}</span>
+            </div>
+            <div>
+              <div class="carousel-title">${escapeHtml(item.title)}</div>
+              <div class="carousel-subtitle">
+                <span>👥 ${escapeHtml(item.team || 'Robotics Team')}</span>
+                <span>•</span>
+                <span>📅 ${escapeHtml(item.date || '2026')}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      dots.innerHTML = achievementsList.map((_, idx) => `
+        <div class="carousel-dot ${idx === currentAchievementSlideIndex ? 'active' : ''}" onclick="goToAchievementSlide(${idx}, event)"></div>
+      `).join('');
+
+      goToAchievementSlide(currentAchievementSlideIndex);
+      startAchievementSlideTimer();
+    }
+
+    function goToAchievementSlide(idx, event) {
+      if (event) event.stopPropagation();
+      if (!achievementsList.length) return;
+      currentAchievementSlideIndex = (idx + achievementsList.length) % achievementsList.length;
+
+      const track = document.getElementById('achievement-carousel-track');
+      if (track) {
+        track.style.transform = `translateX(-${currentAchievementSlideIndex * 100}%)`;
+      }
+
+      const dots = document.querySelectorAll('#achievement-carousel-dots .carousel-dot');
+      dots.forEach((dot, dIdx) => {
+        dot.classList.toggle('active', dIdx === currentAchievementSlideIndex);
+      });
+    }
+
+    function nextAchievementSlide(event) {
+      if (event) event.stopPropagation();
+      goToAchievementSlide(currentAchievementSlideIndex + 1);
+    }
+
+    function prevAchievementSlide(event) {
+      if (event) event.stopPropagation();
+      goToAchievementSlide(currentAchievementSlideIndex - 1);
+    }
+
+    function startAchievementSlideTimer() {
+      stopAchievementSlideTimer();
+      if (achievementsList.length > 1) {
+        achievementSlideTimer = setInterval(() => {
+          goToAchievementSlide(currentAchievementSlideIndex + 1);
+        }, 3500);
+      }
+    }
+
+    function stopAchievementSlideTimer() {
+      if (achievementSlideTimer) {
+        clearInterval(achievementSlideTimer);
+        achievementSlideTimer = null;
+      }
+    }
+
+    function pauseAchievementSlide() {
+      stopAchievementSlideTimer();
+    }
+
+    function resumeAchievementSlide() {
+      startAchievementSlideTimer();
+    }
+
+    // Admin Achievement Management View
+    function renderAdminAchievementList() {
+      const list = document.getElementById('admin-achievements-list');
+      const countChip = document.getElementById('adm-achieve-count-chip');
+      const countNum = document.getElementById('adm-achieve-count-num');
+      if (countChip) countChip.textContent = `● ${achievementsList.length} Active Slides`;
+      if (countNum) countNum.textContent = achievementsList.length;
+
+      if (!list) return;
+
+      if (!achievementsList.length) {
+        list.innerHTML = `
+          <div class="m3-card" style="text-align: center; padding: 24px;">
+            <div style="font-size: 32px;">📸</div>
+            <div style="font-size: 14px; font-weight: 800; margin-top: 6px;">No Achievement Photos Uploaded</div>
+            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Click the button below to upload your first robotics award photo.</div>
+            <button class="btn-primary" style="margin-top: 12px; width: auto; padding: 0 16px; margin-inline: auto;" onclick="openUploadAchievementModal()">➕ Upload Achievement Photo</button>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = achievementsList.map(item => `
+        <div class="m3-card" style="margin-top: 0; padding: 12px; border-color: rgba(0, 212, 255, 0.3);">
+          <div style="display: flex; gap: 12px;">
+            <img src="${item.imageUrl}" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--surface-border);" onerror="this.src='https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&auto=format&fit=crop&q=80'">
+            <div style="flex: 1; min-width: 0;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 4px;">
+                <span class="carousel-badge" style="font-size: 9px; padding: 2px 6px;">${escapeHtml(item.badge || 'Achievement')}</span>
+                <span class="chip tag" style="font-size: 9px;">${escapeHtml(item.category || 'General')}</span>
+              </div>
+              <div style="font-size: 13px; font-weight: 800; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(item.title)}</div>
+              <div style="font-size: 10px; color: var(--cyber-cyan); margin-top: 2px;">👥 ${escapeHtml(item.team || 'Robotics Team')} • 📅 ${escapeHtml(item.date)}</div>
+              <div style="font-size: 10px; color: var(--text-secondary); margin-top: 3px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">${escapeHtml(item.desc || '')}</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button class="btn-outlined" style="height: 28px; font-size: 11px; flex: 1;" onclick="handleEditAchievementBanner('${item.id}')">✏️ Edit Slide</button>
+            <button class="btn-outlined" style="height: 28px; font-size: 11px; color: var(--error); border-color: rgba(255,59,48,0.4); flex: 1;" onclick="handleDeleteAchievementBanner('${item.id}')">🗑️ Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Upload & Edit Modal Controls
+    function openUploadAchievementModal() {
+      document.getElementById('ach-edit-id').value = '';
+      document.getElementById('ach-modal-heading').textContent = '🏆 Upload Achievement Photo & Banner';
+      document.getElementById('ach-title').value = '';
+      document.getElementById('ach-badge').value = '🥇 1st Prize Gold';
+      document.getElementById('ach-category').value = 'Competition';
+      document.getElementById('ach-team').value = 'Team AeroRobotics';
+      document.getElementById('ach-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('ach-desc').value = '';
+      document.getElementById('ach-img-url').value = '';
+      document.getElementById('ach-file-input').value = '';
+      tempAchievementImageBase64 = '';
+
+      const previewImg = document.getElementById('ach-image-preview');
+      const placeholder = document.getElementById('ach-preview-placeholder');
+      if (previewImg) { previewImg.src = ''; previewImg.style.display = 'none'; }
+      if (placeholder) placeholder.style.display = 'block';
+
+      document.getElementById('upload-achievement-modal').style.display = 'flex';
+    }
+
+    function closeUploadAchievementModal() {
+      document.getElementById('upload-achievement-modal').style.display = 'none';
+      tempAchievementImageBase64 = '';
+    }
+
+    function handleAchievementFileSelected(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        tempAchievementImageBase64 = e.target.result;
+        const previewImg = document.getElementById('ach-image-preview');
+        const placeholder = document.getElementById('ach-preview-placeholder');
+        if (previewImg) {
+          previewImg.src = tempAchievementImageBase64;
+          previewImg.style.display = 'block';
+        }
+        if (placeholder) placeholder.style.display = 'none';
+        showToast('Photo loaded ready to publish!', '📸');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleImageUrlInput(url) {
+      if (!url.trim()) return;
+      const previewImg = document.getElementById('ach-image-preview');
+      const placeholder = document.getElementById('ach-preview-placeholder');
+      if (previewImg) {
+        previewImg.src = url.trim();
+        previewImg.style.display = 'block';
+      }
+      if (placeholder) placeholder.style.display = 'none';
+    }
+
+    function handleSaveAchievementBanner(e) {
+      e.preventDefault();
+      const editId = document.getElementById('ach-edit-id').value;
+      const title = document.getElementById('ach-title').value.trim();
+      const badge = document.getElementById('ach-badge').value.trim();
+      const category = document.getElementById('ach-category').value;
+      const team = document.getElementById('ach-team').value.trim();
+      const date = document.getElementById('ach-date').value;
+      const desc = document.getElementById('ach-desc').value.trim();
+      const urlInput = document.getElementById('ach-img-url').value.trim();
+
+      let finalImageUrl = tempAchievementImageBase64 || urlInput;
+      if (!finalImageUrl) {
+        // Fallback robotics illustration
+        finalImageUrl = 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&auto=format&fit=crop&q=80';
+      }
+
+      if (editId) {
+        // Edit existing
+        const idx = achievementsList.findIndex(a => a.id === editId);
+        if (idx !== -1) {
+          achievementsList[idx] = {
+            ...achievementsList[idx],
+            title,
+            badge,
+            category,
+            team,
+            date,
+            desc,
+            imageUrl: finalImageUrl || achievementsList[idx].imageUrl
+          };
+          showToast('Achievement banner updated successfully!', '✅');
+        }
+      } else {
+        // Create new
+        const newAchievement = {
+          id: 'ach_' + Date.now(),
+          title,
+          badge,
+          category,
+          team,
+          date,
+          desc,
+          imageUrl: finalImageUrl
+        };
+        achievementsList.unshift(newAchievement);
+        showToast('New achievement photo published to dashboard!', '🎉');
+      }
+
+      try {
+        localStorage.setItem('rwhub_achievement_banners', JSON.stringify(achievementsList));
+      } catch (err) {
+        console.warn('Storage quota note:', err);
+      }
+
+      closeUploadAchievementModal();
+      currentAchievementSlideIndex = 0;
+      renderAchievementCarousel();
+      renderAdminAchievementList();
+    }
+
+    function handleEditAchievementBanner(id) {
+      const item = achievementsList.find(a => a.id === id);
+      if (!item) return;
+
+      openUploadAchievementModal();
+      document.getElementById('ach-edit-id').value = item.id;
+      document.getElementById('ach-modal-heading').textContent = '✏️ Edit Achievement Banner';
+      document.getElementById('ach-title').value = item.title;
+      document.getElementById('ach-badge').value = item.badge;
+      document.getElementById('ach-category').value = item.category || 'Competition';
+      document.getElementById('ach-team').value = item.team || '';
+      document.getElementById('ach-date').value = item.date || '';
+      document.getElementById('ach-desc').value = item.desc || '';
+      document.getElementById('ach-img-url').value = item.imageUrl.startsWith('data:') ? '' : item.imageUrl;
+      tempAchievementImageBase64 = item.imageUrl.startsWith('data:') ? item.imageUrl : '';
+
+      const previewImg = document.getElementById('ach-image-preview');
+      const placeholder = document.getElementById('ach-preview-placeholder');
+      if (previewImg) {
+        previewImg.src = item.imageUrl;
+        previewImg.style.display = 'block';
+      }
+      if (placeholder) placeholder.style.display = 'none';
+    }
+
+    function handleDeleteAchievementBanner(id) {
+      achievementsList = achievementsList.filter(a => a.id !== id);
+      try {
+        localStorage.setItem('rwhub_achievement_banners', JSON.stringify(achievementsList));
+      } catch (err) {}
+      showToast('Achievement slide deleted', '🗑️');
+      currentAchievementSlideIndex = 0;
+      renderAchievementCarousel();
+      renderAdminAchievementList();
+    }
+
+    // Detail Modal Controls
+    function openAchievementDetail(id) {
+      const item = achievementsList.find(a => a.id === id);
+      if (!item) return;
+
+      document.getElementById('detail-ach-img').src = item.imageUrl;
+      document.getElementById('detail-ach-badge').textContent = item.badge || '🏆 Achievement';
+      document.getElementById('detail-ach-title').textContent = item.title;
+      document.getElementById('detail-ach-team').textContent = item.team || 'Robotics Team';
+      document.getElementById('detail-ach-date').textContent = item.date || '2026';
+      document.getElementById('detail-ach-cat').textContent = item.category || 'Competition';
+      document.getElementById('detail-ach-desc').textContent = item.desc || 'No additional details provided.';
+
+      document.getElementById('achievement-detail-modal').style.display = 'flex';
+      pauseAchievementSlide();
+    }
+
+    function closeAchievementDetailModal() {
+      document.getElementById('achievement-detail-modal').style.display = 'none';
+      resumeAchievementSlide();
+    }
+
+    // Initialize Achievement Carousel & Admin List on Page Load
+    document.addEventListener('DOMContentLoaded', () => {
+      renderAchievementCarousel();
+      renderAdminAchievementList();
+    });
+    setTimeout(() => {
+      renderAchievementCarousel();
+      renderAdminAchievementList();
+    }, 100);
 
     // Toast
     let toastTimeout = null;
